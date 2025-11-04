@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phỏng vấn Video</title>
+    <style>
+        /* (Bạn có thể thêm CSS vào đây để trang đẹp hơn) */
+        body { font-family: sans-serif; max-width: 700px; margin: auto; padding: 20px; }
+        video { background-color: #eee; width: 100%; border-radius: 8px; }
+        #resultArea { margin-top: 20px; padding: 10px; background-color: #f4f4f4; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <h1>Ghi hình phỏng vấn</h1>
+    <p>Camera của bạn sẽ tự động bật. Vui lòng cấp quyền nếu được hỏi.</p>
+    <p>Khi sẵn sàng, nhấn "Bắt đầu" để ghi. Nhấn "Dừng" để nộp bài.</p>
+
+    <video id="videoPreview" width="640" height="480" autoplay muted></video>
+    
+    <div>
+        <button id="recordButton">Bắt đầu Ghi (OK)</button>
+        <button id="stopButton" disabled>Dừng và Nộp bài</button>
+    </div>
+    
+    <div id="resultArea">
+        <p>Trạng thái: Đang chờ cấp quyền camera...</p>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
