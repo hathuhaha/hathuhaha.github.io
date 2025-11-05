@@ -1,0 +1,179 @@
+/* =================================== */
+/* 1. KIỂU DÁNG CHUNG (Tất cả các trang) */
+/* =================================== */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #f0f2f5; /* Màu nền chung */
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* =================================== */
+/* 2. KIỂU DÁNG TRANG LOGIN (page-login) */
+/* =================================== */
+
+.page-login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 350px;
+    overflow: hidden;
+}
+
+.tab-nav {
+    display: flex;
+    background-color: #eee;
+}
+
+.tab-btn {
+    width: 50%;
+    padding: 1rem;
+    border: none;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #555;
+    transition: background-color 0.3s ease;
+}
+
+.tab-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.tab-btn.active {
+    background-color: #ffffff;
+    color: #007bff;
+    font-weight: bold;
+    border-bottom: 2px solid #007bff;
+}
+
+.tab-content {
+    padding: 2rem;
+}
+
+.form-content {
+    display: none; 
+}
+
+.form-content.active {
+    display: block;
+}
+
+.form-content h2 {
+    text-align: center;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #555;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.login-button {
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 1rem;
+}
+
+.login-button:hover {
+    background-color: #0056b3;
+}
+
+.login-button:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
+}
+
+
+/* ================================================= */
+/* 3. KIỂU DÁNG CÁC TRANG NỘI DUNG (Interviewer, Interviewee) */
+/* ================================================= */
+
+.page-interviewer,
+.page-interviewee {
+    padding: 40px;
+    text-align: center;
+}
+
+.page-interviewer h1 {
+    color: #007bff; /* Màu xanh dương */
+}
+
+/* (Đây là trang chờ cũ, bạn có thể xóa nếu không dùng) */
+.page-interviewee h1 {
+    color: #28a745; /* Màu xanh lá */
+}
+
+/* ================================================= */
+/* 4. KIỂU DÁNG TRANG INDEX (VIDEO) (NẾU BẠN DÙNG)   */
+/* ================================================= */
+.page-video-index {
+    max-width: 700px;
+    margin: auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.page-video-index .login-button {
+    margin-top: 10px;
+    margin-right: 10px;
+    width: auto;
+    padding: 10px 15px;
+}
+/* ... (Thêm các style khác cho trang video nếu cần) ... */
+
+
+/* =================================== */
+/* 5. KIỂU DÁNG LỖI (Đã xóa lịch sử)   */
+/* =================================== */
+
+.error-message {
+    color: red;
+    text-align: center;
+    min-height: 1.2em;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
