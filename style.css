@@ -19,7 +19,6 @@ a:hover {
 
 /* =================================== */
 /* 2. KIỂU DÁNG TRANG LOGIN (page-login) */
-/* (Class này sẽ SỬA LỖI CĂN LỀ) */
 /* =================================== */
 
 .page-login {
@@ -126,14 +125,27 @@ a:hover {
 }
 
 
-/* ... (Các class cũ của bạn) ... */
+/* ================================================= */
+/* 3. KIỂU DÁNG CÁC TRANG NỘI DUNG (Interviewer, Interviewee) */
+/* ================================================= */
+
 .page-interviewer,
 .page-interviewee {
     padding: 40px;
     text-align: center;
 }
-.page-interviewer h1 { color: #007bff; }
-.page-interviewee h1 { color: #28a745; }
+
+.page-interviewer h1 {
+    color: #007bff;
+}
+
+.page-interviewee h1 {
+    color: #28a745;
+}
+
+/* ================================================= */
+/* 4. KIỂU DÁNG TRANG INDEX (VIDEO)                  */
+/* ================================================= */
 .page-video-index {
     display: flex;
     justify-content: center;
@@ -149,7 +161,18 @@ a:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     box-sizing: border-box; 
 }
-/* ... */
+.page-video-index .login-button {
+    margin-top: 10px;
+    margin-right: 10px;
+    width: auto;
+    padding: 10px 15px;
+}
+
+
+/* =================================== */
+/* 5. KIỂU DÁNG LỖI (VÀ LỊCH SỬ CŨ)   */
+/* =================================== */
+
 .error-message {
     color: red;
     text-align: center;
@@ -177,22 +200,18 @@ a:hover {
 
 
 /* ======================================== */
-/* 6. PHẦN CSS MỚI CHO CON MẮT (THÊM VÀO)  */
+/* 6. CSS CHO CON MẮT                       */
 /* ======================================== */
 
-/* 1. Div bọc (wrapper) */
 .password-wrapper {
     position: relative;
     width: 100%;
 }
 
-/* 2. Căn chỉnh input bên trong wrapper */
 .password-wrapper input {
-    /* Thêm padding bên phải để chừa chỗ cho icon */
     padding-right: 2.5rem; /* 40px */
 }
 
-/* 3. Biểu tượng con mắt */
 .toggle-password {
     position: absolute;
     top: 0;
@@ -200,16 +219,15 @@ a:hover {
     height: 100%;
     width: 2.5rem; /* 40px */
     
-    /* Căn giữa icon (SVG) */
     display: flex;
     align-items: center;
     justify-content: center;
     
     cursor: pointer;
-    color: #999; /* Màu icon */
-    user-select: none; /* Không cho phép bôi đen icon */
+    color: #999;
+    user-select: none;
 }
 
 .toggle-password:hover {
-    color: #333; /* Đổi màu khi di chuột */
+    color: #333;
 }
