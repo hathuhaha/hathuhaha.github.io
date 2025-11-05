@@ -1,12 +1,32 @@
-/* Thiết lập cơ bản */
+/* =================================== */
+/* 1. KIỂU DÁNG CHUNG (Tất cả các trang) */
+/* =================================== */
 body {
     font-family: Arial, sans-serif;
+    margin: 0;
     background-color: #f0f2f5;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* =================================== */
+/* 2. KIỂU DÁNG TRANG LOGIN (page-login) */
+/* (Class này sẽ SỬA LỖI CĂN LỀ) */
+/* =================================== */
+
+.page-login {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    margin: 0;
 }
 
 .login-container {
@@ -14,10 +34,9 @@ body {
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     width: 350px;
-    overflow: hidden; /* Quan trọng để giữ bo góc đẹp */
+    overflow: hidden;
 }
 
-/* === Kiểu dáng cho Tab === */
 .tab-nav {
     display: flex;
     background-color: #eee;
@@ -38,7 +57,6 @@ body {
     background-color: #e0e0e0;
 }
 
-/* Đây là chìa khóa: Tab nào active sẽ có màu nền khác */
 .tab-btn.active {
     background-color: #ffffff;
     color: #007bff;
@@ -46,17 +64,14 @@ body {
     border-bottom: 2px solid #007bff;
 }
 
-/* === Kiểu dáng cho Form === */
 .tab-content {
     padding: 2rem;
 }
 
-/* Đây là chìa khóa: Mặc định ẩn tất cả các form */
 .form-content {
     display: none; 
 }
 
-/* Chỉ hiện form nào có class "active" (sẽ được JS thêm vào) */
 .form-content.active {
     display: block;
 }
@@ -104,58 +119,97 @@ body {
 .login-button:hover {
     background-color: #0056b3;
 }
-/* =================================== */
-/* 4. KIỂU DÁNG TRANG INDEX (VIDEO)   */
-/* (Đây là code bạn thêm vào)          */
-/* =================================== */
 
-/* Chỉ áp dụng cho body có class .page-video-index */
+.login-button:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
+}
+
+
+/* ... (Các class cũ của bạn) ... */
+.page-interviewer,
+.page-interviewee {
+    padding: 40px;
+    text-align: center;
+}
+.page-interviewer h1 { color: #007bff; }
+.page-interviewee h1 { color: #28a745; }
 .page-video-index {
-    max-width: 700px; /* Định dạng chiều rộng tối đa */
-    margin: auto; /* Tự động căn giữa theo chiều ngang */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+    max-width: 700px;
+    width: 100%;
+    margin: 20px;
     padding: 20px;
-    
-    /* Thêm các định dạng này để trông đẹp hơn trên nền xám */
     background-color: #ffffff;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    margin-top: 20px;
-    margin-bottom: 20px;
+    box-sizing: border-box; 
 }
-
-/* Các quy tắc này sẽ tự động được áp dụng 
-   bên trong .page-video-index */
-
-.page-video-index h1 {
-    color: #333;
+/* ... */
+.error-message {
+    color: red;
     text-align: center;
+    min-height: 1.2em; 
+    font-size: 0.9rem;
+    margin-bottom: 10px;
 }
+.history-section {
+    margin-top: 30px;
+    text-align: left; 
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.history-section h2 { text-align: center; color: #444; }
+.history-section ul {
+    list-style-type: none;
+    padding: 0;
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 5px;
+}
+.history-section li { padding: 10px 15px; border-bottom: 1px solid #eee; }
+.history-section li:last-child { border-bottom: none; }
 
-.page-video-index video {
-    background-color: #eee;
+
+/* ======================================== */
+/* 6. PHẦN CSS MỚI CHO CON MẮT (THÊM VÀO)  */
+/* ======================================== */
+
+/* 1. Div bọc (wrapper) */
+.password-wrapper {
+    position: relative;
     width: 100%;
-    border-radius: 8px;
-    border: 1px solid #ddd;
 }
 
-.page-video-index #resultArea {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #f4f4f4;
-    border-radius: 8px;
+/* 2. Căn chỉnh input bên trong wrapper */
+.password-wrapper input {
+    /* Thêm padding bên phải để chừa chỗ cho icon */
+    padding-right: 2.5rem; /* 40px */
 }
 
-/* Tùy chỉnh lại class .login-button 
-  khi nó nằm trên trang video
-*/
-.page-video-index .login-button {
-    margin-top: 10px;
-    margin-right: 10px;
-    width: auto; /* Không để nút rộng 100% */
-    padding: 10px 15px;
+/* 3. Biểu tượng con mắt */
+.toggle-password {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 2.5rem; /* 40px */
+    
+    /* Căn giữa icon (SVG) */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    cursor: pointer;
+    color: #999; /* Màu icon */
+    user-select: none; /* Không cho phép bôi đen icon */
 }
 
-.page-video-index .login-button:disabled {
-    background-color: #aaa;
-    cursor: not-allowed;
+.toggle-password:hover {
+    color: #333; /* Đổi màu khi di chuột */
 }
