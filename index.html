@@ -5,14 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Phỏng vấn Video</title>
     <link rel="icon" href="/image/favicon.jpg" type="image/jpg">
-    <style>
-        /* (Bạn có thể thêm CSS vào đây để trang đẹp hơn) */
-        body { font-family: sans-serif; max-width: 700px; margin: auto; padding: 20px; }
-        video { background-color: #eee; width: 100%; border-radius: 8px; }
-        #resultArea { margin-top: 20px; padding: 10px; background-color: #f4f4f4; border-radius: 8px; }
-    </style>
+    
+    <link rel="stylesheet" href="style.css">
+
 </head>
-<body>
+<body class="page-video-index">
     <h1>Ghi hình phỏng vấn</h1>
     <p>Camera của bạn sẽ tự động bật. Vui lòng cấp quyền nếu được hỏi.</p>
     <p>Khi sẵn sàng, nhấn "Bắt đầu" để ghi. Nhấn "Dừng" để nộp bài.</p>
@@ -20,8 +17,8 @@
     <video id="videoPreview" width="640" height="480" autoplay muted></video>
     
     <div>
-        <button id="recordButton">Bắt đầu Ghi (OK)</button>
-        <button id="stopButton" disabled>Dừng và Nộp bài</button>
+        <button id="recordButton" class="login-button">Bắt đầu Ghi (OK)</button>
+        <button id="stopButton" class="login-button" disabled>Dừng và Nộp bài</button>
     </div>
     
     <div id="resultArea">
