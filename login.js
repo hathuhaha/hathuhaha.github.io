@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
         interviewerForm.addEventListener('submit', function(event) {
             event.preventDefault(); 
             console.log('Đăng nhập với tư cách Người khởi tạo...');
-            window.location.href = 'Interviewer.html';
+            window.location.href = 'interviewer.html';
         });
     }
 
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
         participantForm.addEventListener('submit', function(event) {
             event.preventDefault(); 
             console.log('Đăng nhập với tư cách Người tham gia...');
-            window.location.href = 'Interviewee.html';
+            window.location.href = 'interviewee.html';
         });
     }
 
@@ -86,5 +86,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
 
 });
