@@ -59,7 +59,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 submitButton.disabled = false;
                 const textResponse = await response.text();
                 
-                // ĐÃ SỬA LỖI: Chỉ chuyển trang khi response.ok VÀ text là "OK"
                 if (response.ok && textResponse.trim() === 'OK') {
                     // THÀNH CÔNG: Chuyển trang (ĐÃ SỬA ĐƯỜNG DẪN)
                     window.location.href = 'interviewer.html';
@@ -69,9 +68,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 
             } catch (error) {
-                // Lỗi này chỉ là lỗi mạng/kết nối
+                // Lỗi này là lỗi mạng/kết nối (ĐÃ ĐỔI TIN NHẮN)
                 submitButton.disabled = false;
-                interviewerErrorMsg.textContent = 'Lỗi kết nối máy chủ. Vui lòng thử lại.';
+                interviewerErrorMsg.textContent = 'Đăng nhập không thành công. Vui lòng thử lại';
                 console.error('Lỗi khi gọi API đăng nhập:', error);
             }
         });
@@ -87,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==========================================================
-    // PHẦN 3: LOGIC HIỆN/ẨN MẬT KHẨU (ĐÃ SỬA)
+    // PHẦN 3: LOGIC HIỆN/ẨN MẬT KHẨU (ĐÃ THÊM LẠI)
     // ==========================================================
     
     const togglePassword = document.getElementById('togglePassword');
