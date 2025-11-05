@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Máy chủ của bạn (login.php) PHẢI echo "OK" khi thành công
                 if (textResponse.trim() === 'OK') {
                     // THÀNH CÔNG: Chuyển trang
-                    window.location.href = 'Interviewer.html';
+                    window.location.href = 'interviewer.html';
                 } else {
                     // THẤT BẠI: Hiển thị lỗi mà PHP gửi về
                     interviewerErrorMsg.textContent = textResponse;
@@ -99,7 +99,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (participantForm) {
         participantForm.addEventListener('submit', function(event) {
             event.preventDefault(); 
-            window.location.href = 'Interviewee.html';
+            window.location.href = 'interviewee.html';
         });
     }
+
 });
