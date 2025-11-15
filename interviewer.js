@@ -1,12 +1,12 @@
 // Script này chạy ngay lập tức (IIFE)
 (async function() {
     
-    // URL đến "người kiểm tra vé" trên máy chủ
-    const CHECK_URL = 'https://nondistinguished-contemplable-della.ngrok-free.dev/interviewer.php';
+    // (!!!) THAY ĐỔI ĐỊA CHỈ NGROK CỦA BẠN TẠI ĐÂY (!!!)
+    const NGROK_BASE_URL = 'https://nondistinguished-contemplable-della.ngrok-free.dev';
 
     try {
         // 1. KIỂM TRA PHIÊN ĐĂNG NHẬP (Gác cổng)
-        const response = await fetch(CHECK_URL, {
+        const response = await fetch(`${NGROK_BASE_URL}/interviewer.php`, {
             method: 'GET',
             headers: {
                 'ngrok-skip-browser-warning': 'true'
@@ -25,49 +25,62 @@
             // ĐÃ ĐĂNG NHẬP THÀNH CÔNG
             console.log('Chào mừng, ' + data.username);
             
-            // Hàm này sẽ chạy khi DOM sẵn sàng
+            // === LOGIC MỚI ĐỂ ĐIỀN THÔNG TIN ===
             const setupInterviewerPage = () => {
                 
-                // Tác vụ A: Cập nhật tên người dùng
+                // Tác vụ A: Cập nhật lời chào ở nội dung chính
                 const userDisplay = document.getElementById('username-display');
                 if (userDisplay) {
                     userDisplay.textContent = data.username;
                 }
 
-                // Tác vụ B: Gắn logic 'fetch' cho nút Đăng xuất
+                // Tác vụ B: Điền thông tin vào cột bên trái (sidebar)
+                const infoUsername = document.getElementById('info-username');
+                if (infoUsername) {
+                    infoUsername.textContent = data.username;
+                }
+
+                const infoFullname = document.getElementById('info-fullname');
+                if (infoFullname) {
+                    infoFullname.textContent = data.fullname || 'Chưa cập nhật';
+                }
+
+                const infoDob = document.getElementById('info-dob');
+                if (infoDob) {
+                    infoDob.textContent = data.dob || 'Chưa cập nhật';
+                }
+
+
+                // Tác vụ C: Gắn logic 'fetch' cho nút Đăng xuất (Như cũ)
                 const logoutButton = document.getElementById('logout-button');
                 if (logoutButton) {
                     logoutButton.addEventListener('click', async () => {
                         
                         console.log('Nút đăng xuất đã được nhấp. Đang gọi fetch...');
-                        const LOGOUT_URL = 'https://nondistinguished-contemplable-della.ngrok-free.dev/logout.php';
                         
                         try {
                             logoutButton.disabled = true;
                             logoutButton.textContent = "Đang đăng xuất...";
 
-                            // Gọi "ngầm" đến logout.php với header bỏ qua cảnh báo
-                            await fetch(LOGOUT_URL, {
+                            await fetch(`${NGROK_BASE_URL}/logout.php`, {
                                 method: 'GET',
                                 headers: {
                                     'ngrok-skip-browser-warning': 'true'
                                 },
-                                credentials: 'include' // Gửi cookie để server biết ai logout
+                                credentials: 'include' 
                             });
 
-                            // Sau khi fetch (dù thành công hay lỗi),
-                            // luôn đưa người dùng về trang login.
                             window.location.href = 'login.html';
 
                         } catch (error) {
                             console.error('Lỗi khi đăng xuất:', error);
-                            window.location.href = 'login.html'; // Vẫn đưa về login
+                            window.location.href = 'login.html'; 
                         }
                     });
                 }
             };
 
-            // Chờ DOM sẵn sàng rồi mới chạy 2 tác vụ A và B
+            // Chờ DOM sẵn sàng rồi mới chạy các tác vụ
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', setupInterviewerPage);
             } else {
