@@ -1,54 +1,77 @@
-// Chạy ngay lập tức khi tài liệu bắt đầu tải
+// Script này chạy ngay lập tức (IIFE)
 (async function() {
     
     // URL đến "người kiểm tra vé" trên máy chủ
     const CHECK_URL = 'https://nondistinguished-contemplable-della.ngrok-free.dev/interviewer.php';
 
     try {
+        // 1. KIỂM TRA PHIÊN ĐĂNG NHẬP (Gác cổng)
         const response = await fetch(CHECK_URL, {
             method: 'GET',
             headers: {
                 'ngrok-skip-browser-warning': 'true'
             },
-            
-            // Bắt buộc trình duyệt gửi cookie (PHPSESSID)
-            credentials: 'include' 
+            credentials: 'include' // Bắt buộc gửi cookie (PHPSESSID)
         });
 
         if (!response.ok) {
-            // Nếu server trả về lỗi 404, 500, v.v.
             throw new Error('Server trả về lỗi: ' + response.status);
         }
 
         const data = await response.json();
 
+        // 2. XỬ LÝ KẾT QUẢ
         if (data.success === true) {
-            // =========================================================
-            // === SỬA LỖI RACE CONDITION LÀ Ở ĐÂY ===
-            // 
-            // Vấn đề: Script này chạy trong <head> trước khi DOM sẵn sàng.
-            // Chúng ta cần một cách an toàn để cập nhật DOM.
-            //
-            // Giải pháp: Kiểm tra xem DOM đã tải xong chưa.
-            // 1. Nếu chưa (loading), thì đợi sự kiện DOMContentLoaded.
-            // 2. Nếu rồi (interactive/complete), thì cập nhật ngay.
-            // =========================================================
-            
+            // ĐÃ ĐĂNG NHẬP THÀNH CÔNG
             console.log('Chào mừng, ' + data.username);
             
-            const updateUsername = () => {
+            // Hàm này sẽ chạy khi DOM sẵn sàng
+            const setupInterviewerPage = () => {
+                
+                // Tác vụ A: Cập nhật tên người dùng
                 const userDisplay = document.getElementById('username-display');
                 if (userDisplay) {
                     userDisplay.textContent = data.username;
                 }
+
+                // Tác vụ B: Gắn logic 'fetch' cho nút Đăng xuất
+                const logoutButton = document.getElementById('logout-button');
+                if (logoutButton) {
+                    logoutButton.addEventListener('click', async () => {
+                        
+                        console.log('Nút đăng xuất đã được nhấp. Đang gọi fetch...');
+                        const LOGOUT_URL = 'https://nondistinguished-contemplable-della.ngrok-free.dev/logout.php';
+                        
+                        try {
+                            logoutButton.disabled = true;
+                            logoutButton.textContent = "Đang đăng xuất...";
+
+                            // Gọi "ngầm" đến logout.php với header bỏ qua cảnh báo
+                            await fetch(LOGOUT_URL, {
+                                method: 'GET',
+                                headers: {
+                                    'ngrok-skip-browser-warning': 'true'
+                                },
+                                credentials: 'include' // Gửi cookie để server biết ai logout
+                            });
+
+                            // Sau khi fetch (dù thành công hay lỗi),
+                            // luôn đưa người dùng về trang login.
+                            window.location.href = 'login.html';
+
+                        } catch (error) {
+                            console.error('Lỗi khi đăng xuất:', error);
+                            window.location.href = 'login.html'; // Vẫn đưa về login
+                        }
+                    });
+                }
             };
 
+            // Chờ DOM sẵn sàng rồi mới chạy 2 tác vụ A và B
             if (document.readyState === 'loading') {
-                // DOM chưa sẵn sàng, chờ...
-                document.addEventListener('DOMContentLoaded', updateUsername);
+                document.addEventListener('DOMContentLoaded', setupInterviewerPage);
             } else {
-                // DOM đã sẵn sàng, cập nhật ngay
-                updateUsername();
+                setupInterviewerPage(); // DOM đã sẵn sàng
             }
 
         } else {
@@ -58,9 +81,8 @@
         }
 
     } catch (error) {
-        // Lỗi (mất mạng, server sập, lỗi CORS, hoặc response không phải JSON)
+        // LỖI NGHIÊM TRỌNG (Mất mạng, Server sập, Lỗi JSON): Ném về login
         console.error('Lỗi xác thực nghiêm trọng:', error);
-        // Ném về trang login cho an toàn
         window.location.href = 'login.html';
     }
 
