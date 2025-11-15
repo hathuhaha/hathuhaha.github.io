@@ -152,20 +152,39 @@ a:hover {
     align-items: center;
     height: 100vh;
     flex-direction: column;
-    max-width: 700px;
     width: 100%;
-    margin: 20px;
+    margin: 0; /* Sửa lại từ margin: 20px */
     padding: 20px;
     background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     box-sizing: border-box; 
 }
+
+/* Đây là class cho các nút (Bắt đầu, Dừng) trên trang video */
 .page-video-index .login-button {
     margin-top: 10px;
     margin-right: 10px;
     width: auto;
     padding: 10px 15px;
+}
+
+/* CSS cho khu vực video và kết quả trên trang index */
+.page-video-index video {
+    background-color: #eee;
+    width: 100%;
+    max-width: 700px; /* Thêm max-width */
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.page-video-index #resultArea {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f4f4f4;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 700px;
+    box-sizing: border-box;
+    text-align: center;
 }
 
 
@@ -230,4 +249,28 @@ a:hover {
 
 .toggle-password:hover {
     color: #333;
+}
+
+/* ======================================== */
+/* 7. === SỬA LỖI CSS 4 ===                */
+/* Thêm styling cho nút Đăng xuất       */
+/* ======================================== */
+
+.logout-button {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #dc3545; /* Màu đỏ cho đăng xuất */
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 1rem;
+    text-align: center;
+}
+.logout-button:hover {
+    background-color: #c82333;
+    text-decoration: none; /* Bỏ gạch chân khi hover */
 }
