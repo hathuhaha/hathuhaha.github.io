@@ -98,7 +98,7 @@ a:hover {
     padding: 0.75rem;
     border: 1px solid #ddd;
     border-radius: 4px;
-    box-sizing: border-box;
+    box-sizing: border-box; /* Quan trọng */
 }
 
 .login-button {
@@ -126,22 +126,83 @@ a:hover {
 
 
 /* ================================================= */
-/* 3. KIỂU DÁNG CÁC TRANG NỘI DUNG (Interviewer, Interviewee) */
+/* 3. KIỂU DÁNG CÁC TRANG NỘI DUNG (Interviewer) */
 /* ================================================= */
 
-.page-interviewer,
+.page-interviewer {
+    /* Xóa text-align: center cũ, vì giờ ta dùng layout */
+    padding: 20px; /* Giảm padding một chút */
+}
+
 .page-interviewee {
     padding: 40px;
     text-align: center;
 }
 
-.page-interviewer h1 {
-    color: #007bff;
-}
-
 .page-interviewee h1 {
     color: #28a745;
 }
+
+/* === (!!!) CSS MỚI CHO LAYOUT TRANG INTERVIEWER (!!!) === */
+
+.interviewer-container {
+    display: flex;
+    flex-wrap: wrap; /* Cho phép xuống hàng trên di động */
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 20px; /* Khoảng cách giữa 2 cột */
+}
+
+.sidebar {
+    flex: 1; /* Cột trái chiếm 1 phần */
+    min-width: 250px; /* Độ rộng tối thiểu */
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    height: fit-content; /* Chỉ cao bằng nội dung */
+    text-align: left;
+}
+
+.sidebar h3 {
+    margin-top: 0;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 10px;
+    color: #007bff;
+}
+
+.info-group {
+    margin-bottom: 15px;
+}
+
+.info-group strong {
+    display: block;
+    color: #555;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.info-group span {
+    color: #111;
+    font-size: 1rem;
+}
+
+.main-content {
+    flex: 3; /* Cột phải chiếm 3 phần */
+    min-width: 300px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 40px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    text-align: center;
+}
+
+.main-content h1 {
+    color: #007bff;
+    margin-top: 0;
+}
+/* === KẾT THÚC CSS MỚI === */
+
 
 /* ================================================= */
 /* 4. KIỂU DÁNG TRANG INDEX (VIDEO)                  */
@@ -153,13 +214,12 @@ a:hover {
     height: 100vh;
     flex-direction: column;
     width: 100%;
-    margin: 0; /* Sửa lại từ margin: 20px */
+    margin: 0;
     padding: 20px;
     background-color: #ffffff;
     box-sizing: border-box; 
 }
 
-/* Đây là class cho các nút (Bắt đầu, Dừng) trên trang video */
 .page-video-index .login-button {
     margin-top: 10px;
     margin-right: 10px;
@@ -167,11 +227,10 @@ a:hover {
     padding: 10px 15px;
 }
 
-/* CSS cho khu vực video và kết quả trên trang index */
 .page-video-index video {
     background-color: #eee;
     width: 100%;
-    max-width: 700px; /* Thêm max-width */
+    max-width: 700px; 
     border-radius: 8px;
     margin-bottom: 10px;
 }
@@ -189,7 +248,7 @@ a:hover {
 
 
 /* =================================== */
-/* 5. KIỂU DÁNG LỖI (VÀ LỊCH SỬ CŨ)   */
+/* 5. KIỂU DÁNG LỖI                   */
 /* =================================== */
 
 .error-message {
@@ -199,27 +258,9 @@ a:hover {
     font-size: 0.9rem;
     margin-bottom: 10px;
 }
-.history-section {
-    margin-top: 30px;
-    text-align: left; 
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
-}
-.history-section h2 { text-align: center; color: #444; }
-.history-section ul {
-    list-style-type: none;
-    padding: 0;
-    background-color: #f9f9f9;
-    border: 1px solid #eee;
-    border-radius: 5px;
-}
-.history-section li { padding: 10px 15px; border-bottom: 1px solid #eee; }
-.history-section li:last-child { border-bottom: none; }
-
 
 /* ======================================== */
-/* 6. CSS CHO CON MẮT (ĐÃ THÊM LẠI)         */
+/* 6. CSS CHO CON MẮT (PASSWORD)         */
 /* ======================================== */
 
 .password-wrapper {
@@ -228,7 +269,7 @@ a:hover {
 }
 
 .password-wrapper input {
-    padding-right: 2.5rem; /* 40px */
+    padding-right: 2.5rem; 
 }
 
 .toggle-password {
@@ -236,12 +277,10 @@ a:hover {
     top: 0;
     right: 0;
     height: 100%;
-    width: 2.5rem; /* 40px */
-    
+    width: 2.5rem; 
     display: flex;
     align-items: center;
     justify-content: center;
-    
     cursor: pointer;
     color: #999;
     user-select: none;
@@ -252,8 +291,7 @@ a:hover {
 }
 
 /* ======================================== */
-/* 7. === SỬA LỖI CSS 4 ===                */
-/* Thêm styling cho nút Đăng xuất       */
+/* 7. CSS CHO NÚT ĐĂNG XUẤT               */
 /* ======================================== */
 
 .logout-button {
@@ -261,7 +299,7 @@ a:hover {
     padding: 0.75rem 1.5rem;
     border: none;
     border-radius: 4px;
-    background-color: #dc3545; /* Màu đỏ cho đăng xuất */
+    background-color: #dc3545; /* Màu đỏ */
     color: white;
     font-size: 1rem;
     font-weight: bold;
@@ -272,5 +310,5 @@ a:hover {
 }
 .logout-button:hover {
     background-color: #c82333;
-    text-decoration: none; /* Bỏ gạch chân khi hover */
+    text-decoration: none; 
 }
