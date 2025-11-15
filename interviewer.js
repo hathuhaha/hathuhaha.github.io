@@ -135,7 +135,7 @@
             listLoadingMsg.style.display = 'block';
             interviewList.innerHTML = '';
             try {
-                const response = await fetch(`${NGROK_BASE_URL}/listInterviews.php`, {
+                const response = await fetch(`${NGROK_BASE_URL}/listInterview.php`, {
                     method: 'GET', credentials: 'include', headers: { 'ngrok-skip-browser-warning': 'true' }
                 });
                 const data = await response.json();
@@ -428,3 +428,4 @@
     }
 
 })();
+
