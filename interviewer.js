@@ -11,9 +11,7 @@
                 'ngrok-skip-browser-warning': 'true'
             },
             
-            // === DÒNG QUAN TRỌNG NHẤT ===
-            // Bắt buộc trình duyệt gửi cookie (PHPSESSID) 
-            // đến domain Ngrok
+            // Bắt buộc trình duyệt gửi cookie (PHPSESSID)
             credentials: 'include' 
         });
 
@@ -27,7 +25,9 @@
             // ĐÃ ĐĂNG NHẬP:
             console.log('Chào mừng, ' + data.username);
             
-            // Điền tên user vào trang
+            // === ĐÃ SỬA LẠI ===
+            // Chỉ điền Tên tài khoản (username)
+            // (Vì file PHP đơn giản không gửi Tên, Ngày sinh)
             document.addEventListener('DOMContentLoaded', () => {
                 const userDisplay = document.getElementById('username-display');
                 if (userDisplay) {
@@ -48,5 +48,10 @@
         window.location.href = 'login.html';
     }
 
+})(); // Chạy hàm "gác cổng" này ngay lập tức
 
-})(); // Chạy hàm này ngay lập tức
+//
+// === ĐÃ XÓA ===
+// Toàn bộ logic "profileForm.addEventListener('submit', ...)"
+// đã được xóa, vì chúng ta chưa xử lý phần cập nhật.
+//
