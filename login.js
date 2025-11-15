@@ -53,6 +53,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         'Content-Type': 'application/x-www-form-urlencoded',
                         'ngrok-skip-browser-warning': 'true' 
                     },
+                    
+                    // === DÒNG SỬA LỖI QUAN TRỌNG NHẤT LÀ ĐÂY ===
+                    // Bắt buộc trình duyệt chấp nhận (set) cookie
+                    // từ máy chủ Ngrok (cross-origin)
+                    credentials: 'include', 
+                    
                     body: data
                 });
 
