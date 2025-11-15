@@ -93,13 +93,24 @@ a:hover {
     font-weight: bold;
 }
 
-.form-group input {
+/* (!!!) Style chung cho input (!!!) */
+.form-input {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid #ddd;
     border-radius: 4px;
-    box-sizing: border-box; /* Quan trọng */
+    box-sizing: border-box; 
 }
+/* Áp dụng cho trang login */
+.form-group input {
+    /* Kế thừa từ .form-input nhưng đảm bảo nó vẫn hoạt động */
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box; 
+}
+
 
 .login-button {
     width: 100%;
@@ -130,8 +141,7 @@ a:hover {
 /* ================================================= */
 
 .page-interviewer {
-    /* Xóa text-align: center cũ, vì giờ ta dùng layout */
-    padding: 20px; /* Giảm padding một chút */
+    padding: 20px;
 }
 
 .page-interviewee {
@@ -143,36 +153,52 @@ a:hover {
     color: #28a745;
 }
 
-/* === (!!!) CSS MỚI CHO LAYOUT TRANG INTERVIEWER (!!!) === */
+/* === CSS LAYOUT TRANG INTERVIEWER === */
 
 .interviewer-container {
     display: flex;
-    flex-wrap: wrap; /* Cho phép xuống hàng trên di động */
+    flex-wrap: wrap; 
     max-width: 1200px;
     margin: 0 auto;
-    gap: 20px; /* Khoảng cách giữa 2 cột */
+    gap: 20px; 
 }
 
 .sidebar {
-    flex: 1; /* Cột trái chiếm 1 phần */
-    min-width: 250px; /* Độ rộng tối thiểu */
+    flex: 1; 
+    min-width: 250px; 
     background-color: #ffffff;
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    height: fit-content; /* Chỉ cao bằng nội dung */
+    height: fit-content; 
     text-align: left;
 }
 
-.sidebar h3 {
-    margin-top: 0;
+/* (!!!) CSS MỚI CHO TÍNH NĂNG SỬA (!!!) */
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     border-bottom: 2px solid #f0f0f0;
     padding-bottom: 10px;
+}
+.sidebar-header h3 {
+    margin: 0;
     color: #007bff;
+}
+.edit-icon {
+    color: #007bff;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+.edit-icon:hover {
+    opacity: 1;
 }
 
 .info-group {
     margin-bottom: 15px;
+    margin-top: 15px; /* Thêm margin top */
 }
 
 .info-group strong {
@@ -187,8 +213,52 @@ a:hover {
     font-size: 1rem;
 }
 
+.info-group .form-input {
+    /* Đảm bảo input trong sidebar cũng full width */
+    width: 100%;
+}
+
+/* Logic ẩn/hiện */
+.edit-info,
+.edit-controls {
+    display: none; /* Ẩn ô input và nút bấm mặc định */
+}
+
+.sidebar.is-editing .display-info,
+.sidebar.is-editing .edit-icon {
+    display: none; /* Ẩn text và icon bút khi đang sửa */
+}
+
+.sidebar.is-editing .edit-info,
+.sidebar.is-editing .edit-controls {
+    display: block; /* Hiện ô input và nút bấm khi đang sửa */
+}
+
+/* Style cho các nút điều khiển */
+.edit-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+.edit-controls .login-button {
+    width: 50%; /* Chia đều 2 nút */
+    margin-top: 0;
+}
+.edit-controls .save-btn {
+    /* Đã có style .login-button (màu xanh) */
+}
+.edit-controls .cancel-btn {
+    background-color: #6c757d; /* Màu xám */
+}
+.edit-controls .cancel-btn:hover {
+    background-color: #5a6268;
+}
+
+/* (!!!) KẾT THÚC CSS MỚI (!!!) */
+
+
 .main-content {
-    flex: 3; /* Cột phải chiếm 3 phần */
+    flex: 3; 
     min-width: 300px;
     background-color: #ffffff;
     border-radius: 8px;
@@ -201,7 +271,7 @@ a:hover {
     color: #007bff;
     margin-top: 0;
 }
-/* === KẾT THÚC CSS MỚI === */
+/* === KẾT THÚC CSS LAYOUT === */
 
 
 /* ================================================= */
@@ -210,7 +280,7 @@ a:hover {
 .page-video-index {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: center; /* Đã sửa lỗi chính tả từ align-itemss */
     height: 100vh;
     flex-direction: column;
     width: 100%;
@@ -253,11 +323,19 @@ a:hover {
 
 .error-message {
     color: red;
-    text-align: center;
+    text-align: left; /* Sửa lại cho thông báo lỗi sửa */
     min-height: 1.2em; 
     font-size: 0.9rem;
-    margin-bottom: 10px;
+    margin-top: 10px; /* Thêm margin top */
+    margin-bottom: 0;
 }
+/* Lỗi ở trang login vẫn căn giữa */
+.login-container .error-message {
+    text-align: center;
+    margin-bottom: 10px;
+    margin-top: 0;
+}
+
 
 /* ======================================== */
 /* 6. CSS CHO CON MẮT (PASSWORD)         */
