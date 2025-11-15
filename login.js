@@ -53,12 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         'Content-Type': 'application/x-www-form-urlencoded',
                         'ngrok-skip-browser-warning': 'true' 
                     },
-                    
-                    // === DÒNG SỬA LỖI QUAN TRỌNG NHẤT LÀ ĐÂY ===
-                    // Bắt buộc trình duyệt chấp nhận (set) cookie
-                    // từ máy chủ Ngrok (cross-origin)
                     credentials: 'include', 
-                    
                     body: data
                 });
 
@@ -66,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const textResponse = await response.text();
                 
                 if (response.ok && textResponse.trim() === 'OK') {
-                    // THÀNH CÔNG: Chuyển trang (ĐÃ SỬA ĐƯỜNG DẪN)
+                    // THÀNH CÔNG: Chuyển trang
                     window.location.href = 'interviewer.html';
                 } else {
                     // THẤT BẠI: Hiển thị lỗi server (kể cả 401)
@@ -74,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 
             } catch (error) {
-                // Lỗi này là lỗi mạng/kết nối (ĐÃ ĐỔI TIN NHẮN)
+                // Lỗi này là lỗi mạng/kết nối
                 submitButton.disabled = false;
                 interviewerErrorMsg.textContent = 'Đăng nhập không thành công. Vui lòng thử lại';
                 console.error('Lỗi khi gọi API đăng nhập:', error);
@@ -86,20 +81,22 @@ document.addEventListener('DOMContentLoaded', function() {
     if (participantForm) {
         participantForm.addEventListener('submit', function(event) {
             event.preventDefault(); 
-            // ĐÃ SỬA ĐƯỜNG DẪN
-            window.location.href = 'interviewee.html';
+            
+            // ==========================================
+            // === SỬA LỖI LOGIC CHÍNH LÀ Ở ĐÂY ===
+            // Chuyển hướng đến trang quay video (index.html)
+            // thay vì trang phòng chờ (interviewee.html)
+            // ==========================================
+            window.location.href = 'index.html';
         });
     }
 
     // ==========================================================
-    // PHẦN 3: LOGIC HIỆN/ẨN MẬT KHẨU (ĐÃ THÊM LẠI)
+    // PHẦN 3: LOGIC HIỆN/ẨN MẬT KHẨU (Giữ nguyên)
     // ==========================================================
     
     const togglePassword = document.getElementById('togglePassword');
-    
-    // Tìm đúng ô mật khẩu "interviewer-password"
     const passwordInput = document.getElementById('interviewer-password'); 
-    
     const eyeOpen = document.getElementById('eye-open');
     const eyeClosed = document.getElementById('eye-closed');
 
@@ -110,7 +107,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
             
-            // Đổi biểu tượng con mắt
             if (type === 'password') {
                 eyeOpen.style.display = 'block';
                 eyeClosed.style.display = 'none';
