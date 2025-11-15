@@ -48,4 +48,5 @@
         window.location.href = 'login.html';
     }
 
+
 })(); // Chạy hàm này ngay lập tức
