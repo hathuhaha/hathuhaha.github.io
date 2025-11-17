@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const PARTICIPANT_LOGIN_URL = 'https://nondistinguished-contemplable-della.ngrok-free.dev/interviewee.php'; 
 
     // ===============================================
-    // PHẦN 1: LOGIC CHUYỂN TAB (Giữ nguyên)
+    // PHẦN 1: LOGIC CHUYỂN TAB (Sẽ chạy bình thường)
     // ===============================================
     const tabButtons = document.querySelectorAll('.tab-btn');
     const formContents = document.querySelectorAll('.form-content');
@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // --- 2. Xử lý Form Người tham gia (Participant) (ĐÃ CẬP NHẬT ĐƯỜNG DẪN) ---
+    // --- 2. Xử lý Form Người tham gia (Participant) (ĐÃ SỬA LỖI) ---
     if (participantForm) {
         participantForm.addEventListener('submit', async function(event) {
             event.preventDefault(); 
@@ -97,7 +97,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 const data = new URLSearchParams();
                 data.append('username', username);
-ac                data.append('join_code', join_code);
+                // (!!!) DÒNG BỊ LỖI 'ac' ĐÃ ĐƯỢC XÓA (!!!)
+                data.append('join_code', join_code);
 
                 const response = await fetch(PARTICIPANT_LOGIN_URL, { 
                     method: 'POST',
@@ -113,7 +114,7 @@ ac                data.append('join_code', join_code);
                 const textResponse = await response.text();
                 
                 if (response.ok && textResponse.trim() === 'OK') {
-                    // (!!!) THAY ĐỔI THEO YÊU CẦU CỦA BẠN (!!!)
+                    // Chuyển hướng đến trang phòng chờ (theo yêu cầu của bạn)
                     window.location.href = 'interviewee.html';
                 } else {
                     if (participantErrorMsg) {
