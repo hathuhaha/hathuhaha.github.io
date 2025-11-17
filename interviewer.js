@@ -28,7 +28,7 @@
                 setupProfileSidebar(data);
                 setupLogoutButton();
                 setupInterviewLogic();
-                setupIntervieweeModalLogic();
+                setupIntervieweeModalLogic(); // (!!!) HÀM NÀY SẼ ĐƯỢC CẬP NHẬT
             };
             
             if (document.readyState === 'loading') {
@@ -114,6 +114,7 @@
                 try {
                     logoutButton.disabled = true;
                     logoutButton.textContent = "Đang đăng xuất...";
+                    // (Sử dụng code logout.php "mạnh tay" mà chúng ta đã thảo luận)
                     await fetch(`${NGROK_BASE_URL}/logout.php`, {
                         method: 'GET', headers: { 'ngrok-skip-browser-warning': 'true' }, credentials: 'include' 
                     });
@@ -216,7 +217,7 @@
         loadInterviews();
     }
     
-    // (!!!) HÀM MỚI: QUẢN LÝ LOGIC MODAL ỨNG VIÊN (CẬP NHẬT) (!!!)
+    // (!!!) HÀM NÀY ĐÃ ĐƯỢC CẬP NHẬT TOÀN BỘ (!!!)
     function setupIntervieweeModalLogic() {
         const modal = document.getElementById('interviewee-modal');
         const closeBtn = document.getElementById('modal-close-btn');
@@ -227,6 +228,7 @@
 
         if (!modal || !closeBtn || !modalTitle || !addBtn || !statusMsg || !tableBody) return;
 
+        // Mở Modal (Không đổi)
         window.openIntervieweeModal = (interviewName) => {
             currentManagingInterview = interviewName;
             modalTitle.textContent = `Quản lý ứng viên: ${interviewName}`;
@@ -236,6 +238,7 @@
             loadInterviewees();
         };
 
+        // Đóng Modal (Không đổi)
         const closeModal = () => {
             modal.style.display = 'none';
             currentManagingInterview = '';
@@ -245,6 +248,7 @@
             if (e.target === modal) closeModal();
         });
 
+        // Tải danh sách (Không đổi)
         async function loadInterviewees() {
             if (currentManagingInterview === '') return;
             tableBody.innerHTML = '<tr><td colspan="5">Đang tải...</td></tr>';
@@ -272,25 +276,36 @@
             interviewees.forEach(user => {
                 const tr = document.createElement('tr');
                 tr.dataset.username = user.username; // Gắn username vào <tr>
+                
+                // Xác định trạng thái
+                const statusHtml = user.status 
+                    ? '<span style="color: green; font-weight: bold;">Đã nộp</span>' 
+                    : '<span style="color: gray;">Chưa nộp</span>';
+                
+                // Render HTML cho <tr>
                 tr.innerHTML = `
-                    <td>${user.username}</td>
+                    <td>
+                        <span class="display-val">${user.username}</span>
+                    </td>
                     <td>
                         <span class="display-val display-fullname">${user.fullname}</span>
-                        <input class="edit-val edit-fullname form-input" value="${user.fullname}" style="display: none;">
+                        <input class="edit-val edit-fullname form-input" value="${user.fullname}">
                     </td>
                     <td>
-                        <span class="display-val display-joincode">${user.joincode}</span>
-                        <input class="edit-val edit-joincode form-input" value="${user.joincode}" style="display: none;">
+                        <span class="display-val">${user.joincode}</span>
                     </td>
-                    <td>(Chỉ hiển thị khi mới tạo)</td>
                     <td>
-                        <button class="edit-btn edit-row-btn" data-username="${user.username}">Sửa</button>
+                        ${statusHtml}
+                    </td>
+                    <td>
+                        <button class="edit-btn edit-row-btn" data-username="${user.username}">Sửa tên</button>
                         <button class="delete-btn delete-interviewee" data-username="${user.username}">Xóa</button>
                         
                         <button class="save-btn save-row-btn" data-username="${user.username}" style="display: none;">Lưu</button>
                         <button class="cancel-btn cancel-edit-row-btn" data-username="${user.username}" style="display: none;">Hủy</button>
                     </td>
                 `;
+                // (Input cho joincode đã bị xóa)
                 tableBody.appendChild(tr);
             });
         }
@@ -309,21 +324,24 @@
                 if (!response.ok || data.success === false) throw new Error(data.message || 'Lỗi');
                 
                 statusMsg.textContent = `Đã tạo: ${data.newUser.username}`;
-                // Tải lại danh sách (để quét lại STT)
-                loadInterviewees(); 
                 
-                // Hiển thị mật khẩu 1 LẦN
+                // Hiển thị mật khẩu 1 LẦN (trên cùng)
                 const tr = document.createElement('tr');
                 tr.className = 'new-user-highlight';
                 tr.innerHTML = `
                     <td>${data.newUser.username}</td>
                     <td>${data.newUser.fullname}</td>
                     <td>${data.newUser.joincode}</td>
-                    <td style="color: red; font-weight: bold;">${data.newUser.password}</td>
-                    <td>(Vui lòng copy mật khẩu)</td>
+                    <td><span style="color: gray;">Chưa nộp</span></td>
+                    <td style="color: red; font-weight: bold;">(Copy Mật khẩu: ${data.newUser.password})</td>
                 `;
                 if (tableBody.querySelector('td[colspan="5"]')) tableBody.innerHTML = '';
                 tableBody.prepend(tr); 
+                
+                // Tải lại danh sách sau 1 giây để hàng mới tạo (ở trên) được thay thế
+                // bằng hàng chuẩn (có nút sửa/xóa)
+                setTimeout(loadInterviewees, 1500); 
+
             } catch (error) {
                 statusMsg.textContent = `Lỗi: ${error.message}`;
             } finally {
@@ -336,7 +354,7 @@
         tableBody.addEventListener('click', async (e) => {
             const target = e.target;
             const tr = target.closest('tr');
-            if (!tr) return;
+            if (!tr || !tr.dataset.username) return; // Bỏ qua nếu bấm vào hàng mới tạo (chưa có dataset)
             
             const username = tr.dataset.username;
 
@@ -348,15 +366,13 @@
             // --- HÀNH ĐỘNG: Hủy Sửa ---
             if (target.classList.contains('cancel-edit-row-btn')) {
                 tr.classList.remove('is-editing-row');
-                // Reset giá trị input (không bắt buộc, nhưng nên)
+                // Reset giá trị input
                 tr.querySelector('.edit-fullname').value = tr.querySelector('.display-fullname').textContent;
-                tr.querySelector('.edit-joincode').value = tr.querySelector('.display-joincode').textContent;
             }
 
             // --- HÀNH ĐỘNG: Lưu ---
             if (target.classList.contains('save-row-btn')) {
                 const newFullname = tr.querySelector('.edit-fullname').value;
-                const newJoinCode = tr.querySelector('.edit-joincode').value;
 
                 target.disabled = true;
                 target.textContent = '...';
@@ -370,8 +386,8 @@
                             action: 'update',
                             interview_name: currentManagingInterview,
                             username_to_update: username,
-                            fullname: newFullname,
-                            joincode: newJoinCode
+                            fullname: newFullname
+                            // (Không cần gửi joincode)
                         })
                     });
                     const data = await response.json();
@@ -379,13 +395,12 @@
 
                     // Cập nhật text hiển thị
                     tr.querySelector('.display-fullname').textContent = data.updatedUser.fullname;
-                    tr.querySelector('.display-joincode').textContent = data.updatedUser.joincode;
                     tr.classList.remove('is-editing-row'); // Tắt chế độ sửa
                     statusMsg.textContent = data.message;
                     
                 } catch (error) {
                     statusMsg.textContent = `Lỗi: ${error.message}`;
-                    target.disabled = false;
+                    target.disabled = false; // Cho phép thử lại
                     target.textContent = 'Lưu';
                 } finally {
                     setTimeout(() => { statusMsg.textContent = ''; }, 3000);
@@ -394,7 +409,7 @@
 
             // --- HÀNH ĐỘNG: Xóa ---
             if (target.classList.contains('delete-interviewee')) {
-                if (!confirm(`Bạn có chắc muốn xóa ứng viên "${username}"?`)) return;
+                if (!confirm(`Bạn có chắc muốn xóa TOÀN BỘ ứng viên "${username}"? (Bao gồm cả file kết quả nếu có)`)) return;
 
                 target.disabled = true;
                 target.textContent = '...';
@@ -428,4 +443,3 @@
     }
 
 })();
-
