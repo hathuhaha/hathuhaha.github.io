@@ -1,10 +1,15 @@
 document.addEventListener('DOMContentLoaded', function() {
     
+    const INTERVIEWER_LOGIN_URL = 'https://nondistinguished-contemplable-della.ngrok-free.dev/login.php';
+    const PARTICIPANT_LOGIN_URL = 'https://nondistinguished-contemplable-della.ngrok-free.dev/interviewee.php'; 
+
     // ===============================================
     // PHẦN 1: LOGIC CHUYỂN TAB (Giữ nguyên)
     // ===============================================
     const tabButtons = document.querySelectorAll('.tab-btn');
     const formContents = document.querySelectorAll('.form-content');
+    const interviewerErrorMsg = document.getElementById('interviewer-error-message');
+    const participantErrorMsg = document.getElementById('participant-error-message');
 
     tabButtons.forEach(button => {
         button.addEventListener('click', () => {
@@ -14,40 +19,87 @@ document.addEventListener('DOMContentLoaded', function() {
             formContents.forEach(form => form.classList.remove('active'));
             
             const activeForm = document.getElementById('form-' + formName);
-            if (activeForm) {
-                activeForm.classList.add('active');
-            }
+            if (activeForm) activeForm.classList.add('active');
+
+            if (interviewerErrorMsg) interviewerErrorMsg.textContent = '';
+            if (participantErrorMsg) participantErrorMsg.textContent = '';
         });
     });
 
     // ==========================================================
-    // PHẦN 2: LOGIC SUBMIT FORM (VỚI FETCH ĐÃ SỬA LỖI)
+    // PHẦN 2: LOGIC SUBMIT FORM
     // ==========================================================
 
     const interviewerForm = document.getElementById('form-interviewer');
     const participantForm = document.getElementById('form-participant');
-    const interviewerErrorMsg = document.getElementById('interviewer-error-message');
     
-    // --- 1. Xử lý Form Người khởi tạo (Interviewer) ---
+    // --- 1. Xử lý Form Người khởi tạo (Interviewer) (Không đổi) ---
     if (interviewerForm) {
         interviewerForm.addEventListener('submit', async function(event) {
             event.preventDefault(); 
-            interviewerErrorMsg.textContent = ''; 
+            if (interviewerErrorMsg) interviewerErrorMsg.textContent = ''; 
 
             const username = document.getElementById('interviewer-username').value;
             const password = document.getElementById('interviewer-password').value;
             const submitButton = interviewerForm.querySelector('button[type="submit"]');
-            const NGROK_URL = 'https://nondistinguished-contemplable-della.ngrok-free.dev/login.php'; 
 
             try {
-                interviewerErrorMsg.textContent = 'Đang kiểm tra...';
+                if (interviewerErrorMsg) interviewerErrorMsg.textContent = 'Đang kiểm tra...';
                 submitButton.disabled = true;
 
                 const data = new URLSearchParams();
                 data.append('username', username);
                 data.append('password', password);
 
-                const response = await fetch(NGROK_URL, {
+                const response = await fetch(INTERVIEWER_LOGIN_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'ngrok-skip-browser-warning': 'true' 
+                    },
+                    credentials: 'include',
+                    body: data
+                });
+
+                submitButton.disabled = false;
+                const textResponse = await response.text();
+                
+                if (response.ok && textResponse.trim() === 'OK') {
+                    window.location.href = 'interviewer.html';
+                } else {
+                    if (interviewerErrorMsg) {
+                        interviewerErrorMsg.textContent = textResponse.trim() || 'Lỗi không xác định.';
+                    }
+                }
+            } catch (error) {
+                submitButton.disabled = false;
+                if (interviewerErrorMsg) {
+                    interviewerErrorMsg.textContent = 'Đăng nhập không thành công. Vui lòng thử lại';
+                }
+                console.error('Lỗi khi gọi API đăng nhập interviewer:', error);
+            }
+        });
+    }
+
+    // --- 2. Xử lý Form Người tham gia (Participant) (ĐÃ CẬP NHẬT ĐƯỜNG DẪN) ---
+    if (participantForm) {
+        participantForm.addEventListener('submit', async function(event) {
+            event.preventDefault(); 
+            if (participantErrorMsg) participantErrorMsg.textContent = ''; 
+
+            const username = document.getElementById('participant-username').value;
+            const join_code = document.getElementById('participant-join-code').value;
+            const submitButton = participantForm.querySelector('button[type="submit"]');
+            
+            try {
+                if (participantErrorMsg) participantErrorMsg.textContent = 'Đang kiểm tra...';
+                submitButton.disabled = true;
+
+                const data = new URLSearchParams();
+                data.append('username', username);
+ac                data.append('join_code', join_code);
+
+                const response = await fetch(PARTICIPANT_LOGIN_URL, { 
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
@@ -61,33 +113,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 const textResponse = await response.text();
                 
                 if (response.ok && textResponse.trim() === 'OK') {
-                    // THÀNH CÔNG: Chuyển trang
-                    window.location.href = 'interviewer.html';
+                    // (!!!) THAY ĐỔI THEO YÊU CẦU CỦA BẠN (!!!)
+                    window.location.href = 'interviewee.html';
                 } else {
-                    // THẤT BẠI: Hiển thị lỗi server (kể cả 401)
-                    interviewerErrorMsg.textContent = textResponse.trim() || 'Lỗi không xác định.';
+                    if (participantErrorMsg) {
+                        participantErrorMsg.textContent = textResponse.trim() || 'Tài khoản hoặc Mã tham gia không đúng.';
+                    }
                 }
                 
             } catch (error) {
-                // Lỗi này là lỗi mạng/kết nối
                 submitButton.disabled = false;
-                interviewerErrorMsg.textContent = 'Đăng nhập không thành công. Vui lòng thử lại';
-                console.error('Lỗi khi gọi API đăng nhập:', error);
+                if (participantErrorMsg) {
+                    participantErrorMsg.textContent = 'Đăng nhập không thành công. Vui lòng thử lại';
+                }
+                console.error('Lỗi khi gọi API đăng nhập participant:', error);
             }
-        });
-    }
-
-    // --- 2. Xử lý Form Người tham gia (Participant) ---
-    if (participantForm) {
-        participantForm.addEventListener('submit', function(event) {
-            event.preventDefault(); 
-            
-            // ==========================================
-            // === SỬA LỖI LOGIC CHÍNH LÀ Ở ĐÂY ===
-            // Chuyển hướng đến trang quay video (index.html)
-            // thay vì trang phòng chờ (interviewee.html)
-            // ==========================================
-            window.location.href = 'index.html';
         });
     }
 
@@ -101,12 +141,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const eyeClosed = document.getElementById('eye-closed');
 
     if (togglePassword && passwordInput) {
-        
         togglePassword.addEventListener('click', function() {
-            
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
-            
             if (type === 'password') {
                 eyeOpen.style.display = 'block';
                 eyeClosed.style.display = 'none';
@@ -116,5 +153,4 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-
 });
