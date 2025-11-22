@@ -636,3 +636,38 @@ a:hover {
 #interviewee-table tr.is-editing-row .edit-val {
     width: 95%; /* Cho input chiếm gần đủ ô */
 }
+/* --- BỔ SUNG CSS CHO NÚT VÀ MODAL MỚI --- */
+
+/* 1. Các nút nhỏ trong bảng */
+.action-btn-group { display: flex; gap: 5px; }
+.btn-small { padding: 5px 10px; font-size: 0.8rem; border: none; border-radius: 3px; cursor: pointer; color: white; }
+.btn-blue { background-color: #007bff; } .btn-blue:hover { background-color: #0056b3; }
+.btn-green { background-color: #28a745; } .btn-green:hover { background-color: #218838; }
+.btn-red { background-color: #dc3545; } .btn-red:hover { background-color: #c82333; }
+
+/* 2. Style cho Modal Nội dung */
+.question-block {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+.question-block h4 { margin-top: 0; color: #007bff; margin-bottom: 10px; }
+.question-block label { display: block; font-weight: bold; margin-top: 10px; margin-bottom: 5px; }
+.question-block textarea {
+    width: 100%;
+    min-height: 60px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Quan trọng để không bị tràn */
+}
+
+/* 3. Input sửa tên */
+.edit-name-input {
+    width: 120px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
