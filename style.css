@@ -671,3 +671,51 @@ a:hover {
     border: 1px solid #ccc;
     border-radius: 3px;
 }
+/* CSS CHO DANH SÁCH PHỎNG VẤN MỚI */
+.interview-item {
+    border-bottom: 1px solid #eee;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.interview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.interview-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.interview-name {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.interview-id {
+    font-size: 0.85rem;
+    color: #888;
+    margin-top: 3px;
+}
+
+.interview-desc-content {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-left: 3px solid #ccc;
+    font-size: 0.95rem;
+    color: #333;
+    white-space: pre-line; /* Để hiển thị xuống dòng đúng như khi nhập */
+}
+
+.btn-gray {
+    background-color: #6c757d;
+    color: white;
+}
+.btn-gray:hover {
+    background-color: #5a6268;
+}
