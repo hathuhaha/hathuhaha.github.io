@@ -16,10 +16,28 @@
                 <h3>Thông tin cá nhân</h3>
                 <span id="edit-profile-btn" class="edit-icon">✎</span>
             </div>
-            <div class="info-group"><strong>User:</strong> <span id="info-username">...</span></div>
-            <div class="info-group"><strong>Họ tên:</strong> <span id="info-fullname" class="display-info">...</span> <input type="text" id="edit-fullname" class="edit-info form-input"></div>
-            <div class="info-group"><strong>Ngày sinh:</strong> <span id="info-dob" class="display-info">...</span> <input type="text" id="edit-dob" class="edit-info form-input"></div>
-            <div class="edit-controls"><button id="save-profile-btn" class="login-button save-btn">Lưu</button> <button id="cancel-profile-btn" class="login-button cancel-btn">Hủy</button></div>
+            
+            <div class="info-group">
+                <strong>User:</strong> 
+                <span id="info-username">...</span>
+            </div>
+            
+            <div class="info-group">
+                <strong>Họ tên:</strong> 
+                <span id="info-fullname" class="display-info">...</span> 
+                <input type="text" id="edit-fullname" class="edit-info form-input">
+            </div>
+            
+            <div class="info-group">
+                <strong>Ngày sinh:</strong> 
+                <span id="info-dob" class="display-info">...</span> 
+                <input type="text" id="edit-dob" class="edit-info form-input">
+            </div>
+            
+            <div class="edit-controls">
+                <button id="save-profile-btn" class="login-button save-btn">Lưu</button> 
+                <button id="cancel-profile-btn" class="login-button cancel-btn">Hủy</button>
+            </div>
             <p id="edit-status-msg" class="error-message"></p>
         </div>
 
@@ -67,14 +85,22 @@
         <div class="modal-content" style="max-width: 900px;">
             <div class="modal-header">
                 <h2 id="modal-title">Quản lý ứng viên</h2>
-                <button class="modal-close-btn" onclick="document.getElementById('interviewee-modal').style.display='none'">&times;</button>
+                <button class="modal-close-btn" id="modal-close-btn">&times;</button>
             </div>
             <div class="modal-body">
                 <button id="modal-add-interviewee-btn" class="login-button" style="width: auto; margin-bottom: 15px;">+ Thêm ứng viên mới</button>
                 <p id="modal-status-msg" class="error-message"></p>
                 <div class="interviewee-table-container">
                     <table id="interviewee-table">
-                        <thead><tr><th>User ID</th><th>Họ và Tên</th><th>Mã tham gia</th><th>Trạng thái</th><th>Hành động</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Họ và Tên</th>
+                                <th>Mã tham gia</th>
+                                <th>Trạng thái</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
                         <tbody id="interviewee-list-body"></tbody>
                     </table>
                 </div>
@@ -86,13 +112,16 @@
         <div class="modal-content" style="max-width: 800px;">
             <div class="modal-header">
                 <h2>Nội dung & Tiêu chí</h2>
-                <button class="modal-close-btn" onclick="document.getElementById('content-modal').style.display='none'">&times;</button>
+                <button class="modal-close-btn" id="content-close-btn">&times;</button>
             </div>
             <div class="modal-body" style="max-height: 80vh; overflow-y: auto;">
                 <div id="content-loading" style="text-align: center;">Đang tải...</div>
+                
                 <form id="content-form" style="display:none;">
                     <div id="questions-container"></div>
-                    <div style="text-align: center; margin-top: 20px;"><button type="submit" class="login-button" style="width: 50%;">Lưu thay đổi</button></div>
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button type="submit" class="login-button" style="width: 50%;">Lưu thay đổi</button>
+                    </div>
                 </form>
                 <p id="content-status-msg" class="error-message" style="text-align: center; margin-top: 10px;"></p>
             </div>
