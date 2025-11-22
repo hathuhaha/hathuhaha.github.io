@@ -1,10 +1,11 @@
 /* =================================== */
-/* 1. KIỂU DÁNG CHUNG (Tất cả các trang) */
+/* 1. KIỂU DÁNG CHUNG & LAYOUT */
 /* =================================== */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     background-color: #f0f2f5;
+    color: #333;
 }
 
 a {
@@ -13,14 +14,11 @@ a {
     font-weight: bold;
 }
 
-a:hover {
-    text-decoration: underline;
-}
+a:hover { text-decoration: underline; }
 
 /* =================================== */
-/* 2. KIỂU DÁNG TRANG LOGIN (page-login) */
+/* 2. TRANG ĐĂNG NHẬP (Login) */
 /* =================================== */
-
 .page-login {
     display: flex;
     justify-content: center;
@@ -36,756 +34,267 @@ a:hover {
     overflow: hidden;
 }
 
-.tab-nav {
-    display: flex;
-    background-color: #eee;
-}
+.tab-nav { display: flex; background-color: #eee; }
 
 .tab-btn {
-    width: 50%;
-    padding: 1rem;
-    border: none;
-    background-color: #f0f0f0;
-    cursor: pointer;
-    font-size: 1rem;
-    color: #555;
-    transition: background-color 0.3s ease;
+    width: 50%; padding: 1rem; border: none;
+    background-color: #f0f0f0; cursor: pointer;
+    font-size: 1rem; color: #555; transition: background-color 0.3s ease;
 }
-
-.tab-btn:hover {
-    background-color: #e0e0e0;
-}
-
+.tab-btn:hover { background-color: #e0e0e0; }
 .tab-btn.active {
-    background-color: #ffffff;
-    color: #007bff;
-    font-weight: bold;
-    border-bottom: 2px solid #007bff;
+    background-color: #ffffff; color: #007bff;
+    font-weight: bold; border-bottom: 2px solid #007bff;
 }
 
-.tab-content {
-    padding: 2rem;
+.tab-content { padding: 2rem; }
+.form-content { display: none; }
+.form-content.active { display: block; }
+.form-content h2 { text-align: center; color: #333; margin: 0 0 1.5rem 0; }
+
+.form-group { margin-bottom: 1rem; }
+.form-group label { display: block; margin-bottom: 0.5rem; color: #555; font-weight: bold; }
+
+/* Input chung */
+.form-input, .form-group input {
+    width: 100%; padding: 0.75rem;
+    border: 1px solid #ddd; border-radius: 4px;
+    box-sizing: border-box;
 }
 
-.form-content {
-    display: none; 
-}
-
-.form-content.active {
-    display: block;
-}
-
-.form-content h2 {
-    text-align: center;
-    color: #333;
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-}
-
-.form-group {
-    margin-bottom: 1rem;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #555;
-    font-weight: bold;
-}
-
-/* Style chung cho input */
-.form-input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box; 
-}
-/* Áp dụng cho trang login */
-.form-group input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box; 
-}
-
-
+/* Nút Login lớn */
 .login-button {
-    width: 100%;
-    padding: 0.75rem;
-    border: none;
-    border-radius: 4px;
-    background-color: #007bff;
-    color: white;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 1rem;
+    width: 100%; padding: 0.75rem; border: none; border-radius: 4px;
+    background-color: #007bff; color: white;
+    font-size: 1rem; font-weight: bold; cursor: pointer;
+    transition: background-color 0.3s ease; margin-top: 1rem;
 }
+.login-button:hover { background-color: #0056b3; }
+.login-button:disabled { background-color: #aaa; cursor: not-allowed; }
 
-.login-button:hover {
-    background-color: #0056b3;
+/* Mắt ẩn hiện pass */
+.password-wrapper { position: relative; width: 100%; }
+.password-wrapper input { padding-right: 2.5rem; }
+.toggle-password {
+    position: absolute; top: 0; right: 0;
+    height: 100%; width: 2.5rem;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: #999; user-select: none;
 }
+.toggle-password:hover { color: #333; }
 
-.login-button:disabled {
-    background-color: #aaa;
-    cursor: not-allowed;
+/* Lỗi */
+.error-message {
+    color: red; text-align: left; min-height: 1.2em;
+    font-size: 0.9rem; margin-top: 10px; margin-bottom: 0;
 }
+.login-container .error-message { text-align: center; }
 
-
-/* ================================================= */
-/* 3. KIỂU DÁNG CÁC TRANG NỘI DUNG (Interviewer) */
-/* ================================================= */
-
-.page-interviewer {
-    padding: 20px;
-}
-
-.page-interviewee {
-    padding: 40px;
-    text-align: center;
-}
-
-.page-interviewee h1 {
-    color: #28a745;
-}
-
-/* === CSS LAYOUT TRANG INTERVIEWER === */
+/* =================================== */
+/* 3. TRANG NGƯỜI KHỞI TẠO (Interviewer) */
+/* =================================== */
+.page-interviewer { padding: 20px; }
 
 .interviewer-container {
-    display: flex;
-    flex-wrap: wrap; 
-    max-width: 1200px;
-    margin: 0 auto;
-    gap: 20px; 
+    display: flex; flex-wrap: wrap;
+    max-width: 1200px; margin: 0 auto; gap: 20px;
 }
 
+/* Sidebar Profile */
 .sidebar {
-    flex: 1; 
-    min-width: 250px; 
-    background-color: #ffffff;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    height: fit-content; 
-    text-align: left;
+    flex: 1; min-width: 250px;
+    background-color: #ffffff; border-radius: 8px;
+    padding: 20px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    height: fit-content;
 }
-
-/* CSS TÍNH NĂNG SỬA PROFILE */
 .sidebar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 2px solid #f0f0f0;
-    padding-bottom: 10px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 2px solid #f0f0f0; padding-bottom: 10px;
 }
-.sidebar-header h3 {
-    margin: 0;
-    color: #007bff;
-}
-.edit-icon {
-    color: #007bff;
-    cursor: pointer;
-    opacity: 0.7;
-    transition: opacity 0.2s;
-}
-.edit-icon:hover {
-    opacity: 1;
-}
+.sidebar-header h3 { margin: 0; color: #007bff; }
+.edit-icon { color: #007bff; cursor: pointer; opacity: 0.7; }
+.edit-icon:hover { opacity: 1; }
 
-.info-group {
-    margin-bottom: 15px;
-    margin-top: 15px; 
-}
+.info-group { margin: 15px 0; }
+.info-group strong { display: block; color: #555; font-size: 0.9rem; margin-bottom: 5px; }
 
-.info-group strong {
-    display: block;
-    color: #555;
-    font-size: 0.9rem;
-    margin-bottom: 5px;
-}
+/* Logic Edit Profile */
+.edit-info, .edit-controls { display: none; }
+.sidebar.is-editing .display-info, .sidebar.is-editing .edit-icon { display: none; }
+.sidebar.is-editing .edit-info, .sidebar.is-editing .edit-controls { display: block; }
 
-.info-group span {
-    color: #111;
-    font-size: 1rem;
-}
+.edit-controls { display: flex; gap: 10px; margin-top: 20px; }
+.edit-controls .login-button { margin-top: 0; width: 50%; }
+.edit-controls .cancel-btn { background-color: #6c757d; }
+.edit-controls .cancel-btn:hover { background-color: #5a6268; }
 
-.info-group .form-input {
-    width: 100%;
-}
-
-/* Logic ẩn/hiện sửa profile */
-.edit-info,
-.edit-controls {
-    display: none; 
-}
-
-.sidebar.is-editing .display-info,
-.sidebar.is-editing .edit-icon {
-    display: none; 
-}
-
-.sidebar.is-editing .edit-info,
-.sidebar.is-editing .edit-controls {
-    display: block; 
-}
-
-/* Style cho các nút điều khiển */
-.edit-controls {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-}
-.edit-controls .login-button {
-    width: 50%; 
-    margin-top: 0;
-}
-.edit-controls .save-btn {
-    /* Đã có style .login-button (màu xanh) */
-}
-.edit-controls .cancel-btn {
-    background-color: #6c757d; /* Màu xám */
-}
-.edit-controls .cancel-btn:hover {
-    background-color: #5a6268;
-}
-
-/* KẾT THÚC CSS SỬA PROFILE */
-
-
+/* Main Content */
 .main-content {
-    flex: 3; 
-    min-width: 300px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    padding: 40px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    text-align: left;
+    flex: 3; min-width: 300px;
+    background-color: #ffffff; border-radius: 8px;
+    padding: 40px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
-
-.main-content h1 {
-    color: #007bff;
-    margin-top: 0;
-    text-align: center; 
-}
-.main-content > p {
-    text-align: center; 
-}
-.main-content .logout-button {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: fit-content;
-}
-
-/* CSS TÍNH NĂNG TẠO PHỎNG VẤN */
-.content-section {
-    margin-top: 40px;
-    border-top: 2px solid #f0f0f0;
-    padding-top: 20px;
-}
-.content-section h2 {
-    color: #333;
-    margin-top: 0;
-}
-
-/* Form tạo mới */
-.create-form {
-    display: flex;
-    gap: 15px;
-    align-items: flex-end;
-    flex-wrap: wrap;
-}
-.form-group-inline {
-    flex: 1;
-    min-width: 200px;
-}
-.form-group-inline label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #555;
-    font-weight: bold;
-}
-.form-group-inline .form-input {
-    padding: 0.75rem;
-    width: 100%;
-}
-.create-form .login-button {
-    width: auto; 
-    margin-top: 0; 
-    padding: 0.75rem 1.5rem;
-}
-
-/* Danh sách phỏng vấn */
-#interview-list-container {
-    max-height: 400px;
-    overflow-y: auto;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    background: #fdfdfd;
-}
-#interview-list-container p {
-    padding: 20px;
-    color: #777;
-    text-align: center;
-}
-#interview-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-#interview-list li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    border-bottom: 1px solid #f0f0f0;
-}
-#interview-list li:last-child {
-    border-bottom: none;
-}
-#interview-list li span {
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: #007bff;
-}
-/* Biến tên thành link (để mở modal) */
-.interview-name-link {
-    cursor: pointer;
-    text-decoration: underline;
-    text-decoration-color: #007bff55;
-    transition: text-decoration-color 0.2s;
-}
-.interview-name-link:hover {
-    text-decoration-color: #007bff;
-}
-
-.delete-btn {
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: background-color 0.2s;
-}
-.delete-btn:hover {
-    background-color: #c82333;
-}
-.delete-btn:disabled {
-    background-color: #aaa;
-    cursor: not-allowed;
-}
-
-/* ================================================= */
-/* 4. KIỂU DÁNG TRANG INDEX (VIDEO)                  */
-/* ================================================= */
-.page-video-index {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    flex-direction: column;
-    width: 100%;
-    margin: 0;
-    padding: 20px;
-    background-color: #ffffff;
-    box-sizing: border-box; 
-}
-
-.page-video-index .login-button {
-    margin-top: 10px;
-    margin-right: 10px;
-    width: auto;
-    padding: 10px 15px;
-}
-
-.page-video-index video {
-    background-color: #eee;
-    width: 100%;
-    max-width: 700px; 
-    border-radius: 8px;
-    margin-bottom: 10px;
-}
-
-.page-video-index #resultArea {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #f4f4f4;
-    border-radius: 8px;
-    width: 100%;
-    max-width: 700px;
-    box-sizing: border-box;
-    text-align: center;
-}
-
-
-/* =================================== */
-/* 5. KIỂU DÁNG LỖI                   */
-/* =================================== */
-
-.error-message {
-    color: red;
-    text-align: left; 
-    min-height: 1.2em; 
-    font-size: 0.9rem;
-    margin-top: 10px; 
-    margin-bottom: 0;
-}
-/* Lỗi ở trang login vẫn căn giữa */
-.login-container .error-message {
-    text-align: center;
-    margin-bottom: 10px;
-    margin-top: 0;
-}
-
-
-/* ======================================== */
-/* 6. CSS CHO CON MẮT (PASSWORD)         */
-/* ======================================== */
-
-.password-wrapper {
-    position: relative;
-    width: 100%;
-}
-
-.password-wrapper input {
-    padding-right: 2.5rem; 
-}
-
-.toggle-password {
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: 100%;
-    width: 2.5rem; 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: #999;
-    user-select: none;
-}
-
-.toggle-password:hover {
-    color: #333;
-}
-
-/* ======================================== */
-/* 7. CSS CHO NÚT ĐĂNG XUẤT               */
-/* ======================================== */
+.main-content h1 { color: #007bff; margin-top: 0; text-align: center; }
+.main-content > p { text-align: center; color: #666; }
 
 .logout-button {
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 4px;
-    background-color: #dc3545; /* Màu đỏ */
-    color: white;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 1rem;
-    text-align: center;
+    display: block; margin: 1rem auto; width: fit-content;
+    padding: 0.5rem 1.5rem; border: none; border-radius: 4px;
+    background-color: #dc3545; color: white;
+    font-weight: bold; cursor: pointer;
 }
-.logout-button:hover {
-    background-color: #c82333;
-    text-decoration: none; 
-}
+.logout-button:hover { background-color: #c82333; }
 
-/* ================================================= */
-/* 8. CSS CHO MODAL ỨNG VIÊN (CẬP NHẬT)            */
-/* ================================================= */
+/* Form Tạo phỏng vấn */
+.content-section { margin-top: 40px; border-top: 2px solid #f0f0f0; padding-top: 20px; }
+.content-section h2 { color: #333; margin-top: 0; }
+.create-form { display: flex; gap: 15px; flex-wrap: wrap; }
+.form-group-inline label { font-weight: bold; font-size: 0.9rem; margin-bottom: 5px; display: block; }
+.create-form .login-button { width: auto; margin-top: 0; padding: 0.75rem 1.5rem; }
 
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Lớp mờ */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
+/* =================================== */
+/* 4. DANH SÁCH PHỎNG VẤN (CARD STYLE) */
+/* =================================== */
+#interview-list-container { margin-top: 20px; }
+#interview-list { list-style: none; padding: 0; margin: 0; }
 
-.modal-content {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    width: 90%;
-    max-width: 800px; /* Rộng hơn */
-    max-height: 90vh;
-    display: flex;
-    flex-direction: column;
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    border-bottom: 1px solid #eee;
-}
-.modal-header h2 {
-    margin: 0;
-    color: #007bff;
-}
-.modal-close-btn {
-    background: none;
-    border: none;
-    font-size: 2rem;
-    color: #aaa;
-    cursor: pointer;
-    line-height: 1;
-    padding: 0;
-}
-.modal-close-btn:hover {
-    color: #333;
-}
-
-.modal-body {
-    padding: 20px;
-    overflow-y: auto;
-}
-
-/* CSS cho bảng danh sách ứng viên */
-.interviewee-table-container {
-    width: 100%;
-    overflow-x: auto; /* Cho phép cuộn ngang nếu bảng quá rộng */
-}
-#interviewee-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9rem;
-}
-#interviewee-table th, 
-#interviewee-table td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: left;
-    vertical-align: middle;
-    word-break: break-word; /* Chống vỡ layout */
-}
-#interviewee-table th {
-    background-color: #f8f8f8;
-    color: #333;
-}
-#interviewee-table .delete-btn,
-#interviewee-table .edit-btn,
-#interviewee-table .save-btn,
-#interviewee-table .cancel-btn {
-    font-size: 0.8rem;
-    padding: 4px 8px;
-    margin-right: 5px;
-    cursor: pointer;
-    border: none;
-    border-radius: 4px;
-    color: white;
-}
-/* Nút Sửa (mới) */
-#interviewee-table .edit-btn {
-    background-color: #007bff;
-}
-#interviewee-table .edit-btn:hover { background-color: #0056b3; }
-
-/* Nút Xóa (cập nhật) */
-#interviewee-table .delete-btn {
-    background-color: #dc3545;
-}
-#interviewee-table .delete-btn:hover { background-color: #c82333; }
-
-/* Nút Lưu (mới) */
-#interviewee-table .save-btn {
-    background-color: #28a745; /* Màu xanh lá */
-}
-#interviewee-table .save-btn:hover { background-color: #218838; }
-
-/* Nút Hủy (mới) */
-#interviewee-table .cancel-btn {
-    background-color: #6c757d;
-}
-#interviewee-table .cancel-btn:hover { background-color: #5a6268; }
-
-/* Dòng mới tạo */
-.new-user-highlight td {
-    background-color: #fff8e1; /* Màu vàng nhạt */
-}
-
-/* LOGIC CSS ẨN/HIỆN KHI SỬA HÀNG */
-#interviewee-table .edit-val {
-    display: none; /* Ẩn input mặc định */
-}
-
-#interviewee-table tr.is-editing-row .display-val,
-#interviewee-table tr.is-editing-row .edit-btn,
-#interviewee-table tr.is-editing-row .delete-interviewee {
-    display: none; /* Ẩn text và nút Sửa/Xóa */
-}
-
-#interviewee-table tr.is-editing-row .edit-val,
-#interviewee-table tr.is-editing-row .save-row-btn,
-#interviewee-table tr.is-editing-row .cancel-edit-row-btn {
-    display: inline-block; /* Hiện input và nút Lưu/Hủy */
-}
-#interviewee-table tr.is-editing-row .edit-val {
-    width: 95%; /* Cho input chiếm gần đủ ô */
-}
-/* --- BỔ SUNG CSS CHO NÚT VÀ MODAL MỚI --- */
-
-/* 1. Các nút nhỏ trong bảng */
-.action-btn-group { display: flex; gap: 5px; }
-.btn-small { padding: 5px 10px; font-size: 0.8rem; border: none; border-radius: 3px; cursor: pointer; color: white; }
-.btn-blue { background-color: #007bff; } .btn-blue:hover { background-color: #0056b3; }
-.btn-green { background-color: #28a745; } .btn-green:hover { background-color: #218838; }
-.btn-red { background-color: #dc3545; } .btn-red:hover { background-color: #c82333; }
-
-/* 2. Style cho Modal Nội dung */
-.question-block {
-    background: #f9f9f9;
-    border: 1px solid #ddd;
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 5px;
-}
-.question-block h4 { margin-top: 0; color: #007bff; margin-bottom: 10px; }
-.question-block label { display: block; font-weight: bold; margin-top: 10px; margin-bottom: 5px; }
-.question-block textarea {
-    width: 100%;
-    min-height: 60px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box; /* Quan trọng để không bị tràn */
-}
-
-/* 3. Input sửa tên */
-.edit-name-input {
-    width: 120px;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-}
-/* ============================================================== */
-/* 10. CSS CHO DANH SÁCH PHỎNG VẤN (CARD STYLE - ĐÃ NÂNG CẤP)     */
-/* ============================================================== */
-
-/* Xóa style cũ của ul */
-#interview-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-/* Mỗi cuộc phỏng vấn là 1 Card riêng biệt */
 .interview-item {
     background-color: #ffffff;
     border: 1px solid #e0e0e0;
-    border-radius: 8px;         /* Bo tròn góc */
-    padding: 20px;              /* Khoảng cách bên trong rộng rãi */
-    margin-bottom: 15px;        /* Khoảng cách giữa các thẻ */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Đổ bóng nhẹ tạo chiều sâu */
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Hiệu ứng khi di chuột vào card */
 .interview-item:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     border-color: #b6d4fe;
 }
 
-/* Header: Chia làm 2 bên (Trái: Info, Phải: Buttons) */
 .interview-header {
-    display: flex;
-    justify-content: space-between; /* Đẩy 2 bên ra xa nhau */
-    align-items: center;            /* Căn giữa theo chiều dọc */
-    gap: 20px;                      /* Khoảng cách tối thiểu giữa Info và Nút */
-    flex-wrap: wrap;                /* Xuống dòng nếu màn hình quá nhỏ */
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 20px; flex-wrap: wrap;
 }
 
-/* Khối thông tin (Bên trái) */
-.interview-info {
-    display: flex;
-    flex-direction: column;
-    gap: 5px; /* Khoảng cách giữa Tên và ID */
-}
-
-.interview-name {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #007bff;
-}
-
+.interview-info { display: flex; flex-direction: column; gap: 5px; }
+.interview-name { font-size: 1.2rem; font-weight: bold; color: #007bff; }
 .interview-id {
-    font-size: 0.9rem;
-    color: #6c757d; /* Màu xám nhẹ */
-    background-color: #f8f9fa;
-    padding: 2px 8px;
-    border-radius: 4px;
-    width: fit-content;
-    border: 1px solid #eee;
+    font-size: 0.9rem; color: #6c757d;
+    background-color: #f8f9fa; padding: 2px 8px;
+    border-radius: 4px; border: 1px solid #eee; width: fit-content;
 }
 
-/* Nhóm nút bấm (Bên phải) */
-.action-btn-group {
-    display: flex;
-    gap: 8px;       /* Khoảng cách giữa các nút */
-    flex-shrink: 0; /* Không cho nhóm nút bị co lại */
-}
+.action-btn-group { display: flex; gap: 8px; flex-shrink: 0; }
 
-/* Phần Mô tả (Thả xuống) */
 .interview-desc-content {
-    margin-top: 15px;       /* Cách phần Header ra */
-    padding: 15px;
-    background-color: #f8f9fa; /* Nền xám nhẹ */
-    border-left: 4px solid #007bff; /* Viền xanh bên trái tạo điểm nhấn */
-    border-radius: 4px;
-    font-size: 0.95rem;
-    color: #444;
-    line-height: 1.5;       /* Dãn dòng cho dễ đọc */
-    white-space: pre-line;  /* Giữ nguyên xuống dòng của người dùng */
-    animation: fadeIn 0.3s ease; /* Hiệu ứng hiện ra từ từ */
+    margin-top: 15px; padding: 15px;
+    background-color: #f8f9fa; border-left: 4px solid #007bff;
+    border-radius: 4px; font-size: 0.95rem; color: #444;
+    line-height: 1.5; white-space: pre-line;
+    animation: fadeIn 0.3s ease;
 }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
-/* Hiệu ứng xuất hiện */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-5px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Tinh chỉnh lại các nút bấm cho đẹp hơn */
+/* =================================== */
+/* 5. NÚT BẤM NHỎ (Dùng chung) */
+/* =================================== */
 .btn-small {
-    padding: 8px 12px;      /* Nút to hơn xíu */
-    font-size: 0.9rem;
-    border: none;
-    border-radius: 6px;     /* Bo góc nút mềm mại hơn */
-    cursor: pointer;
-    color: white;
-    font-weight: 500;
+    padding: 8px 12px; font-size: 0.9rem;
+    border: none; border-radius: 6px;
+    cursor: pointer; color: white; font-weight: 500;
+    display: inline-flex; align-items: center; justify-content: center;
     transition: background-color 0.2s, transform 0.1s;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+}
+.btn-small:active { transform: scale(0.95); }
+
+.btn-gray { background-color: #6c757d; } .btn-gray:hover { background-color: #5a6268; }
+.btn-blue { background-color: #0d6efd; } .btn-blue:hover { background-color: #0b5ed7; }
+.btn-green { background-color: #198754; } .btn-green:hover { background-color: #157347; }
+.btn-red { background-color: #dc3545; } .btn-red:hover { background-color: #bb2d3b; }
+
+/* =================================== */
+/* 6. MODAL (Chung & Ứng viên) */
+/* =================================== */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 1000;
+}
+.modal-content {
+    background-color: white; border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 90%; max-width: 800px; max-height: 90vh;
+    display: flex; flex-direction: column;
+}
+.modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 15px 20px; border-bottom: 1px solid #eee;
+}
+.modal-header h2 { margin: 0; color: #007bff; }
+.modal-close-btn { background: none; border: none; font-size: 2rem; color: #aaa; cursor: pointer; line-height: 1; }
+.modal-close-btn:hover { color: #333; }
+.modal-body { padding: 20px; overflow-y: auto; }
+
+/* Bảng Ứng viên */
+.interviewee-table-container { width: 100%; overflow-x: auto; }
+#interviewee-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+#interviewee-table th, #interviewee-table td {
+    border: 1px solid #ddd; padding: 10px;
+    text-align: left; vertical-align: middle; word-break: break-word;
+}
+#interviewee-table th { background-color: #f8f8f8; color: #333; }
+.edit-name-input { width: 120px; padding: 5px; border: 1px solid #ccc; border-radius: 3px; }
+
+/* =================================== */
+/* 7. MODAL NỘI DUNG (Câu hỏi) */
+/* =================================== */
+.question-block {
+    background: #f9f9f9; border: 1px solid #ddd;
+    padding: 15px; margin-bottom: 15px; border-radius: 5px;
+}
+.question-block h4 { margin: 0 0 10px 0; color: #007bff; }
+.question-block label { display: block; font-weight: bold; margin: 10px 0 5px; font-size: 0.9rem; color: #555; }
+.question-block textarea {
+    width: 100%; min-height: 70px; padding: 8px;
+    border: 1px solid #ccc; border-radius: 4px;
+    box-sizing: border-box; resize: vertical; font-family: Arial, sans-serif;
 }
 
-.btn-small:active {
-    transform: scale(0.95); /* Hiệu ứng nhấn xuống */
+/* =================================== */
+/* 8. TRANG GHI HÌNH (Video) */
+/* =================================== */
+.page-video-index {
+    display: flex; justify-content: center; align-items: center;
+    height: 100vh; flex-direction: column; width: 100%;
+    padding: 20px; background-color: #ffffff; box-sizing: border-box;
 }
+.page-video-index video {
+    background-color: #eee; width: 100%; max-width: 700px;
+    border-radius: 8px; margin-bottom: 10px;
+}
+.page-video-index #resultArea {
+    margin-top: 20px; padding: 10px; background-color: #f4f4f4;
+    border-radius: 8px; width: 100%; max-width: 700px; text-align: center;
+}
+.page-video-index .login-button { width: auto; display: inline-block; margin: 5px; }
 
-.btn-gray { background-color: #6c757d; }
-.btn-gray:hover { background-color: #5a6268; }
-
-.btn-blue { background-color: #0d6efd; }
-.btn-blue:hover { background-color: #0b5ed7; }
-
-.btn-green { background-color: #198754; }
-.btn-green:hover { background-color: #157347; }
-
-.btn-red { background-color: #dc3545; }
-.btn-red:hover { background-color: #bb2d3b; }
+/* =================================== */
+/* 9. TRANG PHÒNG CHỜ (Interviewee) */
+/* =================================== */
+.page-interviewee { padding: 0; background: #f0f2f5; height: 100vh; display: flex; align-items: center; justify-content: center; }
+.waiting-room {
+    text-align: center; padding: 40px; background: white;
+    width: 90%; max-width: 500px; border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.waiting-room h1 { color: #28a745; margin-bottom: 15px; }
+.start-btn {
+    display: inline-block; background-color: #28a745; color: white;
+    padding: 12px 25px; font-size: 1.1rem; border-radius: 50px;
+    margin-top: 20px; transition: transform 0.2s, background-color 0.2s;
+}
+.start-btn:hover { transform: scale(1.05); background-color: #218838; text-decoration: none; }
