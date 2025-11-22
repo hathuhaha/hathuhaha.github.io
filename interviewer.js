@@ -215,7 +215,8 @@
                 body: new URLSearchParams({ action: 'add', interview_name: currentManagingInterview })
             });
             const data = await res.json();
-            statusMsg.textContent = `Đã thêm: ${data.newUser.username} (Pass: ${data.newUser.password})`;
+            // Sửa lại để hiển thị Mã tham gia (joincode) cho đúng logic
+            msg.textContent = `Đã thêm thành công: ${data.newUser.username} (Mã tham gia: ${data.newUser.joincode})`;
             loadInterviewees();
         };
     }
@@ -292,3 +293,4 @@
     }
 
 })();
+
