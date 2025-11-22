@@ -401,28 +401,53 @@
         const cancelBtn = document.getElementById('cancel-profile-btn');
         const saveBtn = document.getElementById('save-profile-btn');
         
+        // Input sửa tên
+        const editFullnameInput = document.getElementById('edit-fullname');
+        
         if(!sidebar) return;
 
-        editBtn.onclick = () => sidebar.classList.add('is-editing');
+        // Khi bấm nút Sửa (Cây bút)
+        editBtn.onclick = () => {
+            // Điền tên hiện tại vào ô input để sửa
+            editFullnameInput.value = document.getElementById('info-fullname').textContent;
+            sidebar.classList.add('is-editing');
+        };
+
         cancelBtn.onclick = () => sidebar.classList.remove('is-editing');
         
         saveBtn.onclick = async () => {
-            const newFullname = document.getElementById('edit-fullname').value;
-            const newDob = document.getElementById('edit-dob').value;
+            const newFullname = editFullnameInput.value;
+            
+            if(!newFullname.trim()) {
+                alert("Tên không được để trống");
+                return;
+            }
+
             saveBtn.disabled = true; 
+            saveBtn.textContent = "Đang lưu...";
+
             try {
+                // Chỉ gửi fullname, backend sẽ tự giữ nguyên ngày sinh cũ
                 await fetch(`${NGROK_BASE_URL}/editInterviewerInfo.php`, {
                     method: 'POST', credentials: 'include',
                     headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'},
-                    body: new URLSearchParams({ 'fullname': newFullname, 'dob': newDob })
+                    body: new URLSearchParams({ 'fullname': newFullname })
                 });
+
+                // Cập nhật giao diện
                 document.getElementById('info-fullname').textContent = newFullname;
-                document.getElementById('info-dob').textContent = newDob;
                 document.getElementById('username-display').textContent = newFullname;
+                
                 sidebar.classList.remove('is-editing');
-            } catch(e) { alert("Lỗi lưu thông tin"); }
-            finally { saveBtn.disabled = false; }
+            } catch(e) { 
+                alert("Lỗi lưu thông tin"); 
+                console.error(e);
+            } finally { 
+                saveBtn.disabled = false; 
+                saveBtn.textContent = "Lưu tên";
+            }
         };
     }
 
 })();
+
