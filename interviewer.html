@@ -6,44 +6,57 @@
     <title>Trang Người Khởi Tạo</title>
     <link rel="icon" href="/image/favicon.jpg" type="image/jpg">
     <link rel="stylesheet" href="style.css">
-    <script src="interviewer.js"></script>
 </head>
 <body class="page-interviewer">
 
     <div class="interviewer-container">
+        
         <div class="sidebar" id="sidebar-profile">
             <div class="sidebar-header">
                 <h3>Thông tin cá nhân</h3>
-                <span id="edit-profile-btn" class="edit-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V12h2.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/></svg></span>
+                <span id="edit-profile-btn" class="edit-icon">✎</span>
             </div>
-            <div class="info-group"><strong>Tên đăng nhập:</strong> <span id="info-username">(Đang tải...)</span></div>
-            <div class="info-group"><strong>Tên đầy đủ:</strong> <span id="info-fullname" class="display-info">(Đang tải...)</span> <input type="text" id="edit-fullname" class="edit-info form-input"></div>
-            <div class="info-group"><strong>Ngày sinh:</strong> <span id="info-dob" class="display-info">(Đang tải...)</span> <input type="text" id="edit-dob" class="edit-info form-input"></div>
+            <div class="info-group"><strong>User:</strong> <span id="info-username">...</span></div>
+            <div class="info-group"><strong>Họ tên:</strong> <span id="info-fullname" class="display-info">...</span> <input type="text" id="edit-fullname" class="edit-info form-input"></div>
+            <div class="info-group"><strong>Ngày sinh:</strong> <span id="info-dob" class="display-info">...</span> <input type="text" id="edit-dob" class="edit-info form-input"></div>
             <div class="edit-controls"><button id="save-profile-btn" class="login-button save-btn">Lưu</button> <button id="cancel-profile-btn" class="login-button cancel-btn">Hủy</button></div>
             <p id="edit-status-msg" class="error-message"></p>
         </div>
 
         <div class="main-content">
-            <h1>Chào mừng, <span id="username-display">(Đang tải...)</span>!</h1>
-            <p>Trang quản lý cuộc phỏng vấn.</p>
-            <button id="logout-button" class="logout-button">Đăng xuất</button>
+            <h1>Chào mừng, <span id="username-display">...</span>!</h1>
+            
+            <button id="logout-button" class="logout-button">Đổi tài khoản</button>
 
             <div class="content-section">
                 <h2>Tạo cuộc phỏng vấn mới</h2>
-                <form id="create-interview-form" class="create-form">
-                    <div class="form-group-inline">
-                        <label for="question-count">Số lượng câu hỏi (Cố định):</label>
-                        <input type="number" id="question-count" class="form-input" min="1" max="10" value="3" required>
+                <form id="create-interview-form" class="create-form" style="align-items: flex-start; flex-direction: column;">
+                    
+                    <div style="display: flex; gap: 15px; width: 100%;">
+                        <div class="form-group-inline" style="flex: 2;">
+                            <label>Tên cuộc phỏng vấn (Ví dụ: Tuyển Marketing 2025):</label>
+                            <input type="text" id="interview-fullname" class="form-input" required>
+                        </div>
+                        <div class="form-group-inline" style="flex: 1;">
+                            <label>Số câu hỏi:</label>
+                            <input type="number" id="question-count" class="form-input" min="1" max="10" value="3" required>
+                        </div>
                     </div>
-                    <button type="submit" class="login-button">Tạo ngay</button>
+
+                    <div class="form-group-inline" style="width: 100%; margin-top: 10px;">
+                        <label>Mô tả (Tùy chọn - Sẽ hiện khi bấm xem chi tiết):</label>
+                        <textarea id="interview-desc" class="form-input" rows="2" placeholder="Nhập mô tả chi tiết về cuộc phỏng vấn..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="login-button" style="margin-top: 15px;">Khởi tạo</button>
                 </form>
                 <p id="create-status-msg" class="error-message"></p>
             </div>
 
             <div class="content-section">
-                <h2>Danh sách phỏng vấn</h2>
+                <h2>Danh sách cuộc phỏng vấn</h2>
                 <div id="interview-list-container">
-                    <p id="interview-list-loading">Đang tải danh sách...</p>
+                    <p id="interview-list-loading">Đang tải dữ liệu...</p>
                     <ul id="interview-list"></ul>
                 </div>
             </div>
@@ -51,17 +64,17 @@
     </div>
 
     <div id="interviewee-modal" class="modal-overlay" style="display: none;">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 900px;">
             <div class="modal-header">
                 <h2 id="modal-title">Quản lý ứng viên</h2>
-                <button id="modal-close-btn" class="modal-close-btn">&times;</button>
+                <button class="modal-close-btn" onclick="document.getElementById('interviewee-modal').style.display='none'">&times;</button>
             </div>
             <div class="modal-body">
-                <button id="modal-add-interviewee-btn" class="login-button" style="width: auto; margin-bottom: 20px;">+ Thêm ứng viên mới</button>
+                <button id="modal-add-interviewee-btn" class="login-button" style="width: auto; margin-bottom: 15px;">+ Thêm ứng viên mới</button>
                 <p id="modal-status-msg" class="error-message"></p>
                 <div class="interviewee-table-container">
                     <table id="interviewee-table">
-                        <thead><tr><th>Tên đăng nhập</th><th>Tên đầy đủ</th><th>Mã tham gia</th><th>Trạng thái</th><th>Hành động</th></tr></thead>
+                        <thead><tr><th>User ID</th><th>Họ và Tên</th><th>Mã tham gia</th><th>Trạng thái</th><th>Hành động</th></tr></thead>
                         <tbody id="interviewee-list-body"></tbody>
                     </table>
                 </div>
@@ -70,21 +83,22 @@
     </div>
 
     <div id="content-modal" class="modal-overlay" style="display: none;">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 800px;">
             <div class="modal-header">
-                <h2>Chỉnh sửa Câu hỏi & Tiêu chí</h2>
-                <button class="modal-close-btn" id="content-close-btn">&times;</button>
+                <h2>Nội dung & Tiêu chí</h2>
+                <button class="modal-close-btn" onclick="document.getElementById('content-modal').style.display='none'">&times;</button>
             </div>
-            <div class="modal-body">
-                <div id="content-loading">Đang tải...</div>
+            <div class="modal-body" style="max-height: 80vh; overflow-y: auto;">
+                <div id="content-loading" style="text-align: center;">Đang tải...</div>
                 <form id="content-form" style="display:none;">
                     <div id="questions-container"></div>
-                    <button type="submit" class="login-button" style="margin-top:15px;">Lưu thay đổi</button>
+                    <div style="text-align: center; margin-top: 20px;"><button type="submit" class="login-button" style="width: 50%;">Lưu thay đổi</button></div>
                 </form>
-                <p id="content-status-msg" class="error-message"></p>
+                <p id="content-status-msg" class="error-message" style="text-align: center; margin-top: 10px;"></p>
             </div>
         </div>
     </div>
-    
+
+    <script src="interviewer.js"></script>
 </body>
 </html>
