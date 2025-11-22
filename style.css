@@ -671,51 +671,121 @@ a:hover {
     border: 1px solid #ccc;
     border-radius: 3px;
 }
-/* CSS CHO DANH SÁCH PHỎNG VẤN MỚI */
-.interview-item {
-    border-bottom: 1px solid #eee;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
+/* ============================================================== */
+/* 10. CSS CHO DANH SÁCH PHỎNG VẤN (CARD STYLE - ĐÃ NÂNG CẤP)     */
+/* ============================================================== */
+
+/* Xóa style cũ của ul */
+#interview-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
+/* Mỗi cuộc phỏng vấn là 1 Card riêng biệt */
+.interview-item {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;         /* Bo tròn góc */
+    padding: 20px;              /* Khoảng cách bên trong rộng rãi */
+    margin-bottom: 15px;        /* Khoảng cách giữa các thẻ */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Đổ bóng nhẹ tạo chiều sâu */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hiệu ứng khi di chuột vào card */
+.interview-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-color: #b6d4fe;
+}
+
+/* Header: Chia làm 2 bên (Trái: Info, Phải: Buttons) */
 .interview-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: space-between; /* Đẩy 2 bên ra xa nhau */
+    align-items: center;            /* Căn giữa theo chiều dọc */
+    gap: 20px;                      /* Khoảng cách tối thiểu giữa Info và Nút */
+    flex-wrap: wrap;                /* Xuống dòng nếu màn hình quá nhỏ */
 }
 
+/* Khối thông tin (Bên trái) */
 .interview-info {
     display: flex;
     flex-direction: column;
+    gap: 5px; /* Khoảng cách giữa Tên và ID */
 }
 
 .interview-name {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     font-weight: bold;
     color: #007bff;
 }
 
 .interview-id {
-    font-size: 0.85rem;
-    color: #888;
-    margin-top: 3px;
+    font-size: 0.9rem;
+    color: #6c757d; /* Màu xám nhẹ */
+    background-color: #f8f9fa;
+    padding: 2px 8px;
+    border-radius: 4px;
+    width: fit-content;
+    border: 1px solid #eee;
 }
 
+/* Nhóm nút bấm (Bên phải) */
+.action-btn-group {
+    display: flex;
+    gap: 8px;       /* Khoảng cách giữa các nút */
+    flex-shrink: 0; /* Không cho nhóm nút bị co lại */
+}
+
+/* Phần Mô tả (Thả xuống) */
 .interview-desc-content {
-    margin-top: 10px;
-    padding: 10px;
-    background-color: #f9f9f9;
-    border-left: 3px solid #ccc;
+    margin-top: 15px;       /* Cách phần Header ra */
+    padding: 15px;
+    background-color: #f8f9fa; /* Nền xám nhẹ */
+    border-left: 4px solid #007bff; /* Viền xanh bên trái tạo điểm nhấn */
+    border-radius: 4px;
     font-size: 0.95rem;
-    color: #333;
-    white-space: pre-line; /* Để hiển thị xuống dòng đúng như khi nhập */
+    color: #444;
+    line-height: 1.5;       /* Dãn dòng cho dễ đọc */
+    white-space: pre-line;  /* Giữ nguyên xuống dòng của người dùng */
+    animation: fadeIn 0.3s ease; /* Hiệu ứng hiện ra từ từ */
 }
 
-.btn-gray {
-    background-color: #6c757d;
+/* Hiệu ứng xuất hiện */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Tinh chỉnh lại các nút bấm cho đẹp hơn */
+.btn-small {
+    padding: 8px 12px;      /* Nút to hơn xíu */
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 6px;     /* Bo góc nút mềm mại hơn */
+    cursor: pointer;
     color: white;
+    font-weight: 500;
+    transition: background-color 0.2s, transform 0.1s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
-.btn-gray:hover {
-    background-color: #5a6268;
+
+.btn-small:active {
+    transform: scale(0.95); /* Hiệu ứng nhấn xuống */
 }
+
+.btn-gray { background-color: #6c757d; }
+.btn-gray:hover { background-color: #5a6268; }
+
+.btn-blue { background-color: #0d6efd; }
+.btn-blue:hover { background-color: #0b5ed7; }
+
+.btn-green { background-color: #198754; }
+.btn-green:hover { background-color: #157347; }
+
+.btn-red { background-color: #dc3545; }
+.btn-red:hover { background-color: #bb2d3b; }
