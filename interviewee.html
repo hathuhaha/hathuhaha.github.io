@@ -1,20 +1,77 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-M">
-    <title>Trang Người Tham Gia</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phòng Chờ Phỏng Vấn</title>
     <link rel="icon" href="/image/favicon.jpg" type="image/jpg">
-    <style>
-        body { font-family: Arial, sans-serif; padding: 40px; text-align: center; }
-        h1 { color: #28a745; }
-        a { color: #007bff; text-decoration: none; font-weight: bold; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <h1>Chào mừng, Người Tham Gia!</h1>
-    <p>Bạn đang ở trong phòng chờ. Vui lòng đợi người phỏng vấn bắt đầu.</p>
-    <br>
-    <a href="login.html">Quay lại trang Đăng nhập</a>
-</body>
+<body class="page-interviewee">
 
+    <div class="info-card">
+        <div id="loading-msg" style="text-align:center;">Đang tải thông tin cuộc phỏng vấn...</div>
+        
+        <div id="content-area" style="display:none;">
+            <div class="welcome-badge">👋 Xin chào, <span id="user-id-display">User</span></div>
+            
+            <div class="info-header">
+                <h1 id="interview-name">Tên Phỏng Vấn</h1>
+                <span id="interview-meta">Số lượng câu hỏi: <strong id="q-count">0</strong></span>
+            </div>
+
+            <div class="info-row">
+                <strong>Mô tả & Hướng dẫn:</strong>
+                <div class="info-desc" id="interview-desc">
+                    Đang tải mô tả...
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="interviewing.html" class="login-button" style="text-decoration: none; display: inline-block; width: auto; padding: 12px 30px;">
+                    Bắt đầu Phỏng vấn &rarr;
+                </a>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="login.html" style="color: #dc3545; font-size: 0.9rem;">Đăng xuất</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // (!!!) THAY ĐỔI URL NGROK TẠI ĐÂY (!!!)
+            const NGROK_BASE_URL = '[https://nondistinguished-contemplable-della.ngrok-free.dev](https://nondistinguished-contemplable-della.ngrok-free.dev)';
+            
+            try {
+                const response = await fetch(`${NGROK_BASE_URL}/interviewee.php`, {
+                    method: 'GET',
+                    headers: { 'ngrok-skip-browser-warning': 'true' },
+                    credentials: 'include'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('loading-msg').style.display = 'none';
+                    document.getElementById('content-area').style.display = 'block';
+
+                    document.getElementById('user-id-display').textContent = data.data.candidate_id;
+                    document.getElementById('interview-name').textContent = data.data.interview_name;
+                    document.getElementById('q-count').textContent = data.data.question_count;
+                    document.getElementById('interview-desc').textContent = data.data.description || "(Không có mô tả)";
+                } else {
+                    alert('Phiên đăng nhập hết hạn hoặc lỗi hệ thống.');
+                    window.location.href = 'login.html';
+                }
+
+            } catch (error) {
+                console.error('Lỗi:', error);
+                document.getElementById('loading-msg').textContent = "Lỗi kết nối đến máy chủ.";
+                document.getElementById('loading-msg').style.color = "red";
+            }
+        });
+    </script>
+</body>
 </html>
