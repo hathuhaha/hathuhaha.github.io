@@ -39,39 +39,6 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            // (!!!) THAY ĐỔI URL NGROK TẠI ĐÂY (!!!)
-            const NGROK_BASE_URL = '[https://nondistinguished-contemplable-della.ngrok-free.dev](https://nondistinguished-contemplable-della.ngrok-free.dev)';
-            
-            try {
-                const response = await fetch(`${NGROK_BASE_URL}/interviewee.php`, {
-                    method: 'GET',
-                    headers: { 'ngrok-skip-browser-warning': 'true' },
-                    credentials: 'include'
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    document.getElementById('loading-msg').style.display = 'none';
-                    document.getElementById('content-area').style.display = 'block';
-
-                    document.getElementById('user-id-display').textContent = data.data.candidate_id;
-                    document.getElementById('interview-name').textContent = data.data.interview_name;
-                    document.getElementById('q-count').textContent = data.data.question_count;
-                    document.getElementById('interview-desc').textContent = data.data.description || "(Không có mô tả)";
-                } else {
-                    alert('Phiên đăng nhập hết hạn hoặc lỗi hệ thống.');
-                    window.location.href = 'login.html';
-                }
-
-            } catch (error) {
-                console.error('Lỗi:', error);
-                document.getElementById('loading-msg').textContent = "Lỗi kết nối đến máy chủ.";
-                document.getElementById('loading-msg').style.color = "red";
-            }
-        });
-    </script>
+    <script src="interviewee.js"></script>
 </body>
 </html>
