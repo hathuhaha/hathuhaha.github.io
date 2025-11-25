@@ -455,3 +455,114 @@ a:hover { text-decoration: underline; }
     white-space: pre-line; /* Giữ định dạng xuống dòng */
     border: 1px solid #e9ecef;
 }
+/* ============================================================== */
+/* 10. TRANG PHỎNG VẤN (INTERVIEWING - MỚI)                       */
+/* ============================================================== */
+
+/* Để ẩn thanh cuộn của body khi đang phỏng vấn */
+.page-interviewing {
+    overflow: hidden; 
+    background: #f0f2f5;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* --- MÀN HÌNH 1: TEST CAMERA --- */
+#test-screen {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100vh;
+    background: white; z-index: 100;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+
+.test-box {
+    width: 600px; max-width: 90%; aspect-ratio: 16/9;
+    background: #000; border-radius: 8px; overflow: hidden; margin: 20px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.test-box video {
+    width: 100%; height: 100%; object-fit: cover; 
+    transform: scaleX(-1); /* Lật ngược camera như gương */
+}
+
+/* --- MÀN HÌNH 2: PHỎNG VẤN CHÍNH --- */
+.interview-layout {
+    display: none; /* Ẩn mặc định */
+    height: 100vh; width: 100%;
+}
+
+/* Sidebar bên trái */
+.question-sidebar {
+    width: 280px; background: #fff; border-right: 1px solid #ddd;
+    padding: 20px; display: flex; flex-direction: column;
+}
+
+.q-item {
+    padding: 12px; margin-bottom: 10px; border-radius: 6px;
+    background: #f8f9fa; color: #666; border: 1px solid #eee;
+    font-size: 0.95rem; pointer-events: none; /* Không cho click */
+}
+
+.q-item.active {
+    background: #e7f1ff; color: #007bff; 
+    border-left: 4px solid #007bff; font-weight: bold;
+}
+
+.q-item.done {
+    background: #d4edda; color: #155724; border-color: #c3e6cb;
+}
+
+/* Khu vực chính bên phải */
+.main-stage {
+    flex: 1; padding: 30px;
+    display: flex; flex-direction: column; align-items: center; 
+    position: relative; overflow-y: auto;
+}
+
+.question-box {
+    width: 100%; max-width: 850px; text-align: center; margin-bottom: 20px;
+}
+
+.question-content {
+    background: white; padding: 20px; border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    font-size: 1.3rem; color: #333; line-height: 1.5;
+}
+
+.camera-wrapper {
+    width: 100%; max-width: 850px; aspect-ratio: 16/9;
+    background: black; border-radius: 10px; overflow: hidden;
+    position: relative; box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+.camera-wrapper video {
+    width: 100%; height: 100%; object-fit: cover; 
+    transform: scaleX(-1); /* Lật ngược */
+}
+
+/* Đồng hồ đếm ngược */
+.timer-badge {
+    position: absolute; top: 15px; right: 15px;
+    background: rgba(220, 53, 69, 0.9); color: white;
+    padding: 8px 16px; border-radius: 30px;
+    font-size: 1.2rem; font-weight: bold; z-index: 10;
+}
+
+/* Màn che khi đang upload */
+.upload-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(255,255,255,0.95); z-index: 20;
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+}
+
+/* Animation xoay tròn (Loader) */
+.loader {
+    border: 5px solid #f3f3f3; border-top: 5px solid #3498db;
+    border-radius: 50%; width: 50px; height: 50px;
+    animation: spin 1s linear infinite; margin-bottom: 15px;
+}
+
+@keyframes spin { 
+    0% { transform: rotate(0deg); } 
+    100% { transform: rotate(360deg); } 
+}
