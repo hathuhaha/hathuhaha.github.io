@@ -384,3 +384,74 @@ a:hover { text-decoration: underline; }
 #detail-history {
     font-family: monospace; line-height: 1.5; color: #333;
 }
+/* ============================================================== */
+/* 9. TRANG PHÒNG CHỜ (INTERVIEWEE INFO CARD) - MỚI CẬP NHẬT      */
+/* ============================================================== */
+.page-interviewee {
+    padding: 0;
+    background: #f0f2f5;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-card {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    width: 90%;
+    max-width: 600px;
+    text-align: left;
+    margin: 20px;
+}
+
+.info-header {
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 20px;
+    margin-bottom: 25px;
+}
+
+.info-header h1 {
+    margin: 0 0 10px 0;
+    color: #007bff;
+    font-size: 1.8rem;
+}
+
+.info-header span {
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.welcome-badge {
+    background-color: #e7f1ff;
+    color: #007bff;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 15px;
+}
+
+.info-row {
+    margin-bottom: 20px;
+}
+
+.info-row strong {
+    display: block;
+    color: #333;
+    margin-bottom: 8px;
+    font-size: 1rem;
+}
+
+.info-desc {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    color: #555;
+    line-height: 1.6;
+    white-space: pre-line; /* Giữ định dạng xuống dòng */
+    border: 1px solid #e9ecef;
+}
