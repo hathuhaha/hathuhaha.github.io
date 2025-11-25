@@ -2,13 +2,13 @@
     
     // (!!!) CẤU HÌNH ĐƯỜNG DẪN NGROK (!!!)
     const NGROK_BASE_URL = 'https://nondistinguished-contemplable-della.ngrok-free.dev'; 
-    const UPLOAD_ENDPOINT = `${NGROK_BASE_URL}/upload.php`; // File này phải có trên server
+    const UPLOAD_ENDPOINT = `${NGROK_BASE_URL}/upload.php`;
 
     // Biến toàn cục
     let mediaStream = null;
     let mediaRecorder = null;
     let recordedChunks = [];
-    let questionsData = []; // Chứa {id, content, timeLimit}
+    let questionsData = []; 
     let currentQIndex = 0;
     let countdownInterval = null;
 
@@ -30,11 +30,10 @@
     const uploadOverlay = document.getElementById('upload-overlay');
 
     // =========================================================
-    // 1. KHỞI TẠO: LẤY DỮ LIỆU & TEST CAMERA
+    // 1. KHỞI TẠO
     // =========================================================
     
     async function init() {
-        // 1.1 Gọi Backend lấy danh sách câu hỏi và Time Limit
         try {
             const res = await fetch(`${NGROK_BASE_URL}/interviewee.php?action=get_questions`, {
                 headers: {'ngrok-skip-browser-warning':'true'}, 
@@ -51,7 +50,7 @@
             questionsData = data.questions;
             document.getElementById('user-display').textContent = data.candidate_id;
             
-            // Vẽ danh sách câu hỏi bên trái
+            // Vẽ danh sách câu hỏi
             renderSidebar();
 
         } catch (e) {
@@ -59,11 +58,10 @@
             return;
         }
 
-        // 1.2 Xin quyền Camera
         try {
             mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
             testVideo.srcObject = mediaStream;
-            mainVideo.srcObject = mediaStream; // Gắn sẵn cho màn hình chính
+            mainVideo.srcObject = mediaStream; 
             
             testStatus.textContent = "✅ Camera sẵn sàng. Bạn có thể bắt đầu.";
             testStatus.style.color = "green";
@@ -75,7 +73,7 @@
         }
     }
 
-    // Sự kiện nút BẮT ĐẦU
+    // Nút BẮT ĐẦU
     btnStart.addEventListener('click', () => {
         if(questionsData.length === 0) {
             alert("Không có câu hỏi nào!"); return;
@@ -83,12 +81,26 @@
         testScreen.style.display = 'none';
         interviewLayout.style.display = 'flex';
         
-        // Vào câu hỏi đầu tiên
-        startQuestion(0);
+        // [MỚI] Tự động tìm câu hỏi đầu tiên CHƯA LÀM
+        let firstUnfinished = questionsData.findIndex(q => !q.is_submitted);
+        
+        if (firstUnfinished === -1) {
+            // Đã làm hết
+            // Đánh dấu xanh tất cả
+            questionsData.forEach(q => markSidebarDone(q.id));
+            finishInterview();
+        } else {
+            // Đánh dấu xanh các câu trước đó
+            for(let i=0; i < firstUnfinished; i++) {
+                markSidebarDone(questionsData[i].id);
+            }
+            // Bắt đầu từ câu chưa làm
+            startQuestion(firstUnfinished);
+        }
     });
 
     // =========================================================
-    // 2. LOGIC PHỎNG VẤN (TUẦN TỰ)
+    // 2. LOGIC PHỎNG VẤN
     // =========================================================
 
     function startQuestion(index) {
@@ -97,8 +109,17 @@
             return;
         }
 
-        currentQIndex = index;
         const qData = questionsData[index];
+
+        // [MỚI] KIỂM TRA NẾU ĐÃ LÀM RỒI THÌ BỎ QUA
+        if (qData.is_submitted) {
+            markSidebarDone(qData.id);
+            // Gọi đệ quy để sang câu tiếp theo
+            startQuestion(index + 1);
+            return;
+        }
+
+        currentQIndex = index;
 
         // Reset UI
         btnFinishQ.style.display = 'inline-block';
@@ -106,20 +127,16 @@
         btnNextQ.style.display = 'none';
         uploadOverlay.style.display = 'none';
         
-        // Hiển thị nội dung
         qTitle.textContent = `Câu hỏi số ${qData.id}`;
         qContent.textContent = qData.content;
         updateSidebarActive(qData.id);
 
-        // Bắt đầu ghi hình với Thời gian lấy từ file time_limit.txt
-        // (Backend đã trả về con số này trong qData.timeLimit)
         startRecording(qData.timeLimit);
     }
 
     function startRecording(seconds) {
         recordedChunks = [];
         try {
-            // Khởi tạo Recorder
             mediaRecorder = new MediaRecorder(mediaStream);
         } catch (e) { alert("Trình duyệt lỗi MediaRecorder"); return; }
 
@@ -127,29 +144,23 @@
             if (e.data.size > 0) recordedChunks.push(e.data);
         };
 
-        // Khi dừng ghi -> Tự động Upload
         mediaRecorder.onstop = async () => {
             await uploadVideo();
         };
 
         mediaRecorder.start();
-        
-        // Bắt đầu đếm ngược
         startTimer(seconds);
     }
 
-    // Xử lý nút "Nộp bài ngay"
     btnFinishQ.addEventListener('click', () => {
         forceStop();
     });
 
-    // Hàm dừng cưỡng bức (do hết giờ hoặc bấm nút)
     function forceStop() {
         if(countdownInterval) clearInterval(countdownInterval);
-        btnFinishQ.disabled = true; // Chống spam click
-        
+        btnFinishQ.disabled = true; 
         if(mediaRecorder && mediaRecorder.state === 'recording') {
-            mediaRecorder.stop(); // Sẽ kích hoạt onstop -> uploadVideo
+            mediaRecorder.stop(); 
         }
     }
 
@@ -158,16 +169,15 @@
     // =========================================================
 
     async function uploadVideo() {
-        uploadOverlay.style.display = 'flex'; // Hiện màn che
+        uploadOverlay.style.display = 'flex'; 
         
         const qData = questionsData[currentQIndex];
         const blob = new Blob(recordedChunks, { type: 'video/webm' });
         const formData = new FormData();
         
-        // Tạo ID submission
         const submissionId = `sub_${Date.now()}`;
         formData.append("submission_id", submissionId);
-        formData.append("question_id", qData.id); // Gửi ID câu hỏi để lưu đúng chỗ
+        formData.append("question_id", qData.id); 
         formData.append("file_from_client", blob, "video.webm");
 
         try {
@@ -181,11 +191,11 @@
 
             if(!text.startsWith("Success") && !res.ok) throw new Error(text);
 
-            // Nộp thành công
             markSidebarDone(qData.id);
             
-            // Ẩn nút nộp, hiện nút Next (hoặc tự chuyển nếu muốn)
-            // Ở đây tôi để nút Next cho người dùng thở 1 chút
+            // Cập nhật trạng thái trong mảng để không quay lại được
+            questionsData[currentQIndex].is_submitted = true;
+
             uploadOverlay.innerHTML = `<h3 style="color:#007bff">✅ Đã nộp câu ${qData.id}</h3>`;
             
             setTimeout(() => {
@@ -201,13 +211,18 @@
 
         } catch (err) {
             console.error(err);
-            uploadOverlay.innerHTML = `<h3 style="color:red">Lỗi nộp bài!</h3><p>${err.message}</p><button onclick="location.reload()">Thử lại</button>`;
+            // Nếu lỗi do đã nộp rồi (Error: Bạn đã nộp...)
+            if (err.message.includes("đã nộp")) {
+                 alert("Hệ thống ghi nhận bạn đã nộp câu này rồi. Đang chuyển câu tiếp theo.");
+                 questionsData[currentQIndex].is_submitted = true;
+                 startQuestion(currentQIndex + 1);
+            } else {
+                uploadOverlay.innerHTML = `<h3 style="color:red">Lỗi nộp bài!</h3><p>${err.message}</p><button onclick="location.reload()">Thử lại</button>`;
+            }
         }
     }
 
-    // Nút Next
     btnNextQ.addEventListener('click', () => {
-        // Khôi phục lại nội dung loading cho lần sau
         uploadOverlay.innerHTML = '<div class="loader"></div><h3>Đang nộp bài...</h3>';
         startQuestion(currentQIndex + 1);
     });
@@ -221,12 +236,11 @@
                 <button onclick="window.close()" class="login-button" style="width:auto; margin-top:20px;">Đóng cửa sổ</button>
             </div>
         `;
-        // Tắt camera
         if(mediaStream) mediaStream.getTracks().forEach(t => t.stop());
     }
 
     // =========================================================
-    // 4. TIỆN ÍCH (TIMER, SIDEBAR)
+    // 4. TIỆN ÍCH
     // =========================================================
 
     function startTimer(seconds) {
@@ -238,10 +252,9 @@
         countdownInterval = setInterval(() => {
             remaining--;
             updateTimerDisplay(remaining);
-            
             if(remaining <= 0) {
                 clearInterval(countdownInterval);
-                forceStop(); // Hết giờ -> Tự nộp
+                forceStop();
             }
         }, 1000);
     }
@@ -250,7 +263,6 @@
         const m = Math.floor(s / 60);
         const sec = s % 60;
         timerDisplay.textContent = `${m<10?'0'+m:m}:${sec<10?'0'+sec:sec}`;
-        // Đổi màu đỏ khi còn dưới 10s
         timerDisplay.style.background = s < 10 ? 'rgba(255,0,0,0.9)' : 'rgba(0,0,0,0.6)';
     }
 
@@ -261,6 +273,11 @@
             li.className = 'q-item';
             li.id = `sidebar-q-${q.id}`;
             li.textContent = `Câu ${q.id}`;
+            // Nếu đã làm rồi thì tô xanh luôn lúc render
+            if(q.is_submitted) {
+                li.classList.add('done');
+                li.textContent += ' (Xong)';
+            }
             qListUI.appendChild(li);
         });
     }
@@ -276,11 +293,10 @@
         if(item) {
             item.classList.remove('active');
             item.classList.add('done');
-            item.textContent = `Câu ${id} (Xong)`;
+            if(!item.textContent.includes('(Xong)')) item.textContent += ' (Xong)';
         }
     }
 
-    // Chạy
     init();
 
 })();
