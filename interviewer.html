@@ -14,19 +14,33 @@
         <div class="sidebar" id="sidebar-profile">
             <div class="sidebar-header">
                 <h3><i class="fa-solid fa-id-card"></i> Hồ sơ</h3>
-                <span id="edit-profile-btn" style="cursor:pointer; color:#cca35e;"><i class="fa-solid fa-pen-to-square"></i></span>
+                <span id="edit-profile-btn" style="cursor:pointer; color:#cca35e; font-size: 1.2rem;" title="Chỉnh sửa tên">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </span>
             </div>
             
             <div style="text-align: center; margin-bottom: 20px;">
                 <img src="https://ui-avatars.com/api/?name=Admin&background=cca35e&color=fff&size=80" style="border-radius: 50%; border: 3px solid rgba(255,255,255,0.2);" alt="Avatar">
             </div>
 
-            <div class="info-group"><strong>Username:</strong> <span id="info-username">...</span></div>
-            <div class="info-group"><strong>Họ tên:</strong> <span id="info-fullname">...</span> <input type="text" id="edit-fullname" class="form-input" style="display:none;"></div>
+            <div class="info-group">
+                <strong>Username:</strong> 
+                <span id="info-username">...</span>
+            </div>
             
-            <div class="edit-controls" style="display:none; margin-top: 15px;">
-                <button id="save-profile-btn" class="btn-small btn-blue" style="width:100%; margin-bottom:5px;">Lưu</button> 
-                <button id="cancel-profile-btn" class="btn-small btn-gray" style="width:100%;">Hủy</button>
+            <div class="info-group">
+                <strong>Họ tên hiển thị:</strong> 
+                <span id="info-fullname">Đang tải...</span> 
+                <input type="text" id="edit-fullname" class="form-input" style="display:none; margin-top: 5px; color: #333;">
+            </div>
+            
+            <div id="edit-controls" style="display:none; margin-top: 15px;">
+                <button id="save-profile-btn" class="btn-small btn-blue" style="width:100%; margin-bottom:5px;">
+                    <i class="fa-solid fa-save"></i> Lưu lại
+                </button> 
+                <button id="cancel-profile-btn" class="btn-small btn-gray" style="width:100%;">
+                    <i class="fa-solid fa-times"></i> Hủy bỏ
+                </button>
             </div>
         </div>
 
@@ -34,9 +48,11 @@
             <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                 <div>
                     <h1>Xin chào, <span id="username-display" style="color:var(--primary);">...</span> 👋</h1>
-                    <p style="color:var(--text-light);">Quản lý các đợt phỏng vấn và ứng viên.</p>
+                    <p style="color:var(--text-light);">Quản lý các đợt phỏng vấn và ứng viên của bạn.</p>
                 </div>
-                <button id="logout-button" class="btn-small btn-red"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</button>
+                <button id="logout-button" class="btn-small btn-red">
+                    <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                </button>
             </div>
 
             <div style="margin-top: 40px;">
@@ -45,7 +61,7 @@
                     <div style="display: flex; gap: 20px; flex-wrap: wrap;">
                         <div style="flex: 2;">
                             <label>Tên đợt phỏng vấn</label>
-                            <input type="text" id="interview-fullname" class="form-input" required>
+                            <input type="text" id="interview-fullname" class="form-input" placeholder="Ví dụ: Phỏng vấn Java Senior..." required>
                         </div>
                         <div style="flex: 1;">
                             <label>Số lượng câu hỏi</label>
@@ -54,7 +70,7 @@
                     </div>
                     <div style="margin-top: 15px;">
                         <label>Mô tả / Ghi chú</label>
-                        <textarea id="interview-desc" class="form-input" rows="2"></textarea>
+                        <textarea id="interview-desc" class="form-input" rows="2" placeholder="Nhập mô tả ngắn gọn..."></textarea>
                     </div>
                     <button type="submit" class="login-button" style="width: auto; margin-top: 20px;">
                         <i class="fa-solid fa-paper-plane"></i> Khởi tạo
@@ -64,7 +80,9 @@
 
             <div style="margin-top: 40px;">
                 <h2><i class="fa-solid fa-list-check"></i> Danh sách hiện có</h2>
-                <ul id="interview-list" style="padding: 0; list-style: none;"></ul>
+                <div id="interview-list-container">
+                    <ul id="interview-list" style="padding: 0; list-style: none;"></ul>
+                </div>
             </div>
         </div>
     </div>
@@ -115,11 +133,14 @@
                 </div>
                 <button class="modal-close-btn" id="grading-close-btn">&times;</button>
             </div>
-            <div class="modal-body">
-                <div id="grading-list"></div>
+            <div class="modal-body" style="padding: 0; display: flex;">
+                
+                <div id="grading-list">
+                    </div>
                 
                 <div id="grading-detail">
                     <div id="video-container">Loading Video...</div>
+                    
                     <div class="grading-controls">
                         <div style="margin-bottom:15px; font-size: 1.1rem; color: var(--primary);">
                             <i class="fa-solid fa-circle-question"></i> <span id="detail-q-text">...</span>
@@ -138,6 +159,7 @@
                             </button>
                         </div>
                     </div>
+
                     <div style="margin-top:20px;">
                         <h4 style="font-size:0.9rem; color: #666;">Lịch sử chấm</h4>
                         <pre id="detail-history" style="background:#f1f5f9; padding:15px; border-radius:6px; font-family:monospace; color:#333; white-space: pre-wrap;"></pre>
