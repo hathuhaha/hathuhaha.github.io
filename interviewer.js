@@ -42,7 +42,7 @@
     }
 
     // ===============================================================
-    // LOGIC CÁC PHẦN KHÁC (GIỮ NGUYÊN, CHỈ SỬA PHẦN RENDER TABLE)
+    // LOGIC CÁC PHẦN KHÁC (GIỮ NGUYÊN)
     // ===============================================================
 
     function initLogout() {
@@ -55,7 +55,7 @@
         }
     }
 
-    function initProfileLogic(data) { /* Giữ nguyên logic profile cũ */ 
+    function initProfileLogic(data) {
         const sidebar = document.getElementById('sidebar-profile');
         const editBtn = document.getElementById('edit-profile-btn');
         const cancelBtn = document.getElementById('cancel-profile-btn');
@@ -85,7 +85,6 @@
                     data.interviews.forEach(item => {
                         const li = document.createElement('li');
                         li.className = 'interview-item';
-                        // Xoá style animation cũ
                         const hasDesc = item.description && item.description.trim() !== "";
                         const toggleBtnHtml = hasDesc ? `<button class="btn-small btn-gray toggle-desc-btn">▼ Mô tả</button>` : '';
 
@@ -182,7 +181,7 @@
         });
     }
 
-    function initContentModalLogic() { /* Logic giữ nguyên */ 
+    function initContentModalLogic() {
         const modal = document.getElementById('content-modal');
         const form = document.getElementById('content-form');
         const container = document.getElementById('questions-container');
@@ -205,7 +204,7 @@
     }
 
     // ===============================================================
-    // 7. LOGIC MODAL CHẤM ĐIỂM (CẬP NHẬT CSS CLASS)
+    // 7. LOGIC MODAL CHẤM ĐIỂM (ĐÃ SỬA CLASS NÚT BẤM)
     // ===============================================================
     function initGradingModalLogic() {
         const modal = document.getElementById('grading-modal');
@@ -223,7 +222,6 @@
             modal.style.display = 'flex';
             document.getElementById('grading-title').textContent = `Chấm điểm: ${u}`;
             
-            // Load dữ liệu
             const res = await fetch(`${NGROK_BASE_URL}/manageGrading.php`, { method:'POST', credentials:'include', headers:{'Content-Type':'application/x-www-form-urlencoded','ngrok-skip-browser-warning':'true'}, body:new URLSearchParams({'action':'load','interview_name':intId,'candidate_user':u}) });
             const json = await res.json();
             
@@ -232,9 +230,9 @@
             
             if(json.data) {
                 json.data.forEach(q => {
-                    // TẠO CÁC MỤC DANH SÁCH VỚI CLASS MỚI ĐỂ CSS ĂN
-                    const d = document.createElement('div'); 
-                    d.className = 'grading-question-item'; // Class này đã được style trong CSS mới
+                    const d = document.createElement('div');
+                    // GÁN CLASS ĐÚNG CHO NÚT BẤM
+                    d.className = 'grading-question-item'; 
                     d.dataset.id = q.id;
                     d.innerHTML = `<h4>Câu ${q.id}</h4><span>Điểm: <strong>${q.score}</strong></span>`;
                     d.onclick = () => showDetail(q);
@@ -255,7 +253,6 @@
             
             vid.innerHTML = q.youtube_id ? `<iframe src="https://www.youtube.com/embed/${q.youtube_id}" style="width:100%; height:100%; border:none;" allowfullscreen></iframe>` : '<span style="color:#ccc;">Chưa có video.</span>';
             
-            // Highlight active
             document.querySelectorAll('.grading-question-item').forEach(el => el.classList.remove('active'));
             document.querySelector(`.grading-question-item[data-id="${q.id}"]`)?.classList.add('active');
         }
@@ -263,7 +260,7 @@
         saveBtn.onclick = async () => {
             if (!reasonIn.value.trim()) { alert("Nhập lý do!"); return; }
             await fetch(`${NGROK_BASE_URL}/manageGrading.php`, { method:'POST', credentials:'include', headers:{'Content-Type':'application/x-www-form-urlencoded','ngrok-skip-browser-warning':'true'}, body:new URLSearchParams({'action':'update_score', 'interview_name':currentManagingInterview, 'candidate_user':curCand, 'question_id':activeQ, 'score':scoreIn.value, 'reason':reasonIn.value}) });
-            window.openGradingModal(currentManagingInterview, curCand); // Reload lại để cập nhật điểm TB
+            window.openGradingModal(currentManagingInterview, curCand);
         };
     }
 })();
