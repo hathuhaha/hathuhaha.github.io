@@ -8,7 +8,7 @@
     /* Bảng màu chủ đạo */
     --primary: #0a2540;       /* Xanh Navy Đậm */
     --primary-light: #163a5f; /* Xanh sáng hơn khi hover */
-    --accent: #cca35e;        /* Vàng Đồng (Điểm nhấn lung linh) */
+    --accent: #cca35e;        /* Vàng Đồng */
     
     /* Màu nền và chữ */
     --bg-body: #f0f4f8;       
@@ -21,7 +21,7 @@
     --danger: #e53e3e;
     --success: #2f855a;
 
-    /* Hiệu ứng bóng đổ (Shadow) 3D - Giữ lại vẻ đẹp cũ */
+    /* Hiệu ứng bóng đổ */
     --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
     --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
     --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
@@ -46,26 +46,20 @@ a { text-decoration: none; color: var(--primary); font-weight: 600; transition: 
 a:hover { color: var(--accent); }
 
 /* ============================================================== */
-/* 2. HIỆU ỨNG ANIMATION (GIỮ CÁI ĐẸP - BỎ CÁI RỐI MẮT)           */
+/* 2. HIỆU ỨNG ANIMATION                                          */
 /* ============================================================== */
-
-/* Hiệu ứng ánh sáng chạy qua nút bấm (Giữ lại) */
 @keyframes shimmer {
     0% { background-position: -200% 0; }
     100% { background-position: 200% 0; }
 }
-
-/* Hiệu ứng trồi lên (Đã tắt cho bảng để đỡ đau mắt) */
 @keyframes slideUpFade {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
 /* ============================================================== */
-/* 3. NÚT BẤM & FORM (BUTTONS & INPUTS)                           */
+/* 3. NÚT BẤM & FORM                                              */
 /* ============================================================== */
-
-/* Nút chính có hiệu ứng ánh kim */
 .login-button, button.login-button {
     background: linear-gradient(120deg, var(--primary) 0%, var(--primary-light) 50%, var(--primary) 100%);
     background-size: 200% 100%;
@@ -79,20 +73,13 @@ a:hover { color: var(--accent); }
     display: inline-flex; justify-content: center; align-items: center; gap: 8px;
     box-shadow: var(--shadow-sm);
 }
-
 .login-button:hover:not(:disabled) {
-    animation: shimmer 1.5s infinite linear; /* Nút lấp lánh khi hover */
+    animation: shimmer 1.5s infinite linear;
     box-shadow: var(--shadow-lg), var(--shadow-glow);
     transform: translateY(-2px);
 }
+.login-button:disabled { background: #cbd5e0; cursor: not-allowed; box-shadow: none; }
 
-.login-button:disabled {
-    background: #cbd5e0;
-    cursor: not-allowed;
-    box-shadow: none;
-}
-
-/* Các nút nhỏ (Badge) */
 .btn-small {
     padding: 5px 12px;
     font-size: 0.8rem;
@@ -107,7 +94,6 @@ a:hover { color: var(--accent); }
 .btn-red { background: var(--danger); }
 .btn-small:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
-/* Ô nhập liệu */
 input, textarea, .form-input {
     width: 100%;
     padding: 10px 15px;
@@ -118,59 +104,70 @@ input, textarea, .form-input {
     background: #fff;
 }
 input:focus, textarea:focus {
-    border-color: var(--accent); /* Viền màu vàng khi nhập */
+    border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(204, 163, 94, 0.2);
     outline: none;
 }
 
 /* ============================================================== */
-/* 4. LAYOUT CHÍNH: INTERVIEWER                                   */
+/* 4. LAYOUT CHÍNH: INTERVIEWER (ĐÃ FIX MÀU CHỮ SIDEBAR)          */
 /* ============================================================== */
 
 .interviewer-container {
-    max-width: 1400px;
-    margin: 40px auto;
-    padding: 0 20px;
-    display: flex;
-    flex-direction: row; 
-    align-items: flex-start;
-    gap: 30px;
+    max-width: 1400px; margin: 40px auto; padding: 0 20px;
+    display: flex; flex-direction: row; align-items: flex-start; gap: 30px;
 }
 
+/* Sidebar */
 .sidebar {
-    width: 280px;
-    flex-shrink: 0;
-    background: var(--primary);
-    color: white;
+    width: 280px; flex-shrink: 0;
+    background: var(--primary); /* Nền xanh đậm */
+    color: white; /* Chữ mặc định trắng */
     padding: 30px;
     border-radius: 12px;
     box-shadow: var(--shadow-lg);
-    position: relative;
-    overflow: hidden;
+    position: relative; overflow: hidden;
 }
 .sidebar::before {
-    content: ''; position: absolute; top: -50%; left: -50%;
-    width: 200%; height: 200%;
+    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
     background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%);
     pointer-events: none;
 }
-.sidebar-header { border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-.info-group strong { display: block; color: var(--accent); font-size: 0.8rem; margin-top: 10px; }
 
+.sidebar-header {
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 15px; margin-bottom: 20px;
+    display: flex; justify-content: space-between; align-items: center;
+}
+
+/* --- FIX LỖI Ở ĐÂY: Ép tiêu đề H3 trong sidebar thành màu trắng --- */
+.sidebar h3 {
+    color: var(--white) !important; /* Quan trọng */
+    font-size: 1.2rem; margin: 0;
+}
+
+/* Các nhãn (Username, Họ tên) màu vàng đồng cho dễ đọc */
+.info-group strong {
+    display: block;
+    color: var(--accent); 
+    font-size: 0.85rem; margin-top: 15px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+}
+/* Giá trị text bên dưới màu trắng */
+.info-group span {
+    color: var(--white);
+    font-weight: 500; font-size: 1rem;
+}
+
+/* Main Content */
 .main-content {
-    flex-grow: 1;
-    width: calc(100% - 310px);
-    min-width: 0;
-    background: white;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: var(--shadow-md);
-    border: 1px solid var(--white);
+    flex-grow: 1; width: calc(100% - 310px); min-width: 0;
+    background: white; padding: 40px; border-radius: 12px;
+    box-shadow: var(--shadow-md); border: 1px solid var(--white);
 }
 
 .logout-button {
-    float: right;
-    background: transparent; border: 1px solid var(--danger);
+    float: right; background: transparent; border: 1px solid var(--danger);
     color: var(--danger); padding: 5px 15px; border-radius: 4px;
     cursor: pointer; font-size: 0.85rem;
 }
@@ -178,140 +175,83 @@ input:focus, textarea:focus {
 
 /* Danh sách phỏng vấn */
 .interview-item {
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 15px;
-    transition: 0.3s;
-    /* Đã xoá animation trôi lên */
+    background: #fff; border: 1px solid var(--border); border-radius: 8px;
+    padding: 20px; margin-bottom: 15px; transition: 0.3s;
+    /* Tắt animation trồi lên cho đỡ rối */
 }
-.interview-item:hover {
-    border-color: var(--accent);
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-3px);
-}
+.interview-item:hover { border-color: var(--accent); box-shadow: var(--shadow-lg); transform: translateY(-3px); }
 .interview-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
 .interview-name { font-weight: 700; color: var(--primary); font-size: 1.1rem; }
 .interview-id { background: #edf2f7; font-size: 0.8rem; padding: 2px 8px; border-radius: 4px; color: var(--text-light); }
 .interview-desc-content { font-size: 0.9rem; color: var(--text-light); margin-top: 10px; padding: 10px; background: #f7fafc; border-left: 3px solid var(--primary); }
 
 /* ============================================================== */
-/* 5. FIX LỖI MODAL (TO HƠN & KHÔNG TRÔI)                         */
+/* 5. MODAL (TO, NỔI, KHÔNG TRÔI)                                 */
 /* ============================================================== */
-
 .modal-overlay {
-    position: fixed !important;
-    top: 0; left: 0; right: 0; bottom: 0;
-    width: 100vw; height: 100vh;
-    z-index: 99999 !important;
-    background-color: rgba(10, 37, 64, 0.75);
-    backdrop-filter: blur(5px);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
+    position: fixed !important; top: 0; left: 0; right: 0; bottom: 0;
+    width: 100vw; height: 100vh; z-index: 99999 !important;
+    background-color: rgba(10, 37, 64, 0.75); backdrop-filter: blur(5px);
+    display: none; justify-content: center; align-items: center; padding: 20px;
 }
 
 .modal-content {
-    background: white;
-    width: 100%; 
-    /* ĐÃ TĂNG SIZE LÊN 1200PX ĐỂ KHÔNG CẮT TÊN */
-    max-width: 1200px; 
-    max-height: 95vh;
-    
-    border-radius: 12px;
+    background: white; width: 100%; max-width: 1200px; /* Size to 1200px */
+    max-height: 90vh; border-radius: 12px;
     box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-    display: flex; flex-direction: column;
-    /* Đã xoá animation pop-up */
-    position: relative;
+    display: flex; flex-direction: column; position: relative;
 }
 
 .modal-header {
-    padding: 20px 25px;
-    border-bottom: 1px solid var(--border);
-    background: #f8fafc;
-    border-radius: 12px 12px 0 0;
+    padding: 20px 25px; border-bottom: 1px solid var(--border);
+    background: #f8fafc; border-radius: 12px 12px 0 0;
     display: flex; justify-content: space-between; align-items: center;
 }
 .modal-close-btn { background: none; border: none; font-size: 2rem; color: #999; cursor: pointer; line-height: 1; }
 .modal-close-btn:hover { color: var(--danger); }
 
-.modal-body {
-    padding: 25px;
-    overflow-y: auto;
-    flex: 1;
-}
+.modal-body { padding: 25px; overflow-y: auto; flex: 1; }
 
-/* Bảng dữ liệu */
-.interviewee-table-container {
-    overflow-x: auto;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    box-shadow: var(--shadow-sm);
-}
-#interviewee-table {
-    width: 100%; border-collapse: collapse; white-space: nowrap;
-}
+.interviewee-table-container { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; box-shadow: var(--shadow-sm); }
+#interviewee-table { width: 100%; border-collapse: collapse; white-space: nowrap; }
 #interviewee-table th {
-    background: var(--primary);
-    color: white;
-    padding: 12px;
-    text-align: left;
-    font-size: 0.85rem;
-    text-transform: uppercase;
+    background: var(--primary); color: white; padding: 12px;
+    text-align: left; font-size: 0.85rem; text-transform: uppercase;
     position: sticky; top: 0;
 }
 #interviewee-table td { padding: 12px; border-bottom: 1px solid var(--border); }
 #interviewee-table tr:hover { background: #f0f4f8; }
-#interviewee-table tr { opacity: 1; /* Tắt animation */ }
 
-/* ============================================================== */
-/* 6. STYLE NÚT CHẤM ĐIỂM (FIX LỖI NÚT KHÔNG HIỆN)                */
-/* ============================================================== */
-
+/* Grading Modal Layout */
 #grading-modal .modal-body { display: flex; padding: 0; }
 #grading-list { flex: 0 0 260px; border-right: 1px solid var(--border); background: #f8fafc; padding: 20px; overflow-y: auto; }
 #grading-detail { flex: 1; padding: 20px; overflow-y: auto; background: white; }
 
-/* FIX: Biến danh sách câu hỏi thành NÚT BẤM dạng thẻ */
+/* Nút chấm điểm dạng thẻ */
 .grading-question-item {
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 12px 15px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: var(--shadow-sm);
-    display: block; /* Đảm bảo nó hiển thị dạng khối */
+    background: #fff; border: 1px solid var(--border); border-radius: 6px;
+    padding: 12px 15px; margin-bottom: 10px; cursor: pointer;
+    transition: all 0.2s; box-shadow: var(--shadow-sm);
+    display: block;
 }
-.grading-question-item:hover {
-    border-color: var(--primary);
-    transform: translateX(3px);
-}
+.grading-question-item:hover { border-color: var(--primary); transform: translateX(3px); }
 .grading-question-item.active {
-    background: var(--primary);
-    color: white;
-    border-color: var(--primary);
+    background: var(--primary); color: white; border-color: var(--primary);
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 .grading-question-item h4 { margin: 0 0 5px 0; font-size: 0.95rem; color: inherit; }
 .grading-question-item span { font-size: 0.85rem; opacity: 0.9; }
 
 /* ============================================================== */
-/* 7. CÁC TRANG KHÁC (LOGIN, WAITING, INTERVIEWING)               */
+/* 6. CÁC TRANG KHÁC                                              */
 /* ============================================================== */
-
 .page-login {
     background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%);
-    min-height: 100vh;
-    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; display: flex; justify-content: center; align-items: center;
 }
 .login-container {
     background: white; border-radius: 12px; overflow: hidden;
-    box-shadow: var(--shadow-lg); width: 100%; max-width: 450px;
-    border-top: 5px solid var(--primary);
+    box-shadow: var(--shadow-lg); width: 100%; max-width: 450px; border-top: 5px solid var(--primary);
 }
 .tab-nav { display: flex; background: #f1f5f9; }
 .tab-btn { flex: 1; padding: 15px; border: none; background: transparent; cursor: pointer; border-bottom: 3px solid transparent; color: var(--text-light); font-weight: 600; }
@@ -321,7 +261,6 @@ input:focus, textarea:focus {
 .form-content.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-/* Phòng chờ */
 .page-interviewee {
     background: url('https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=1920&q=80') center/cover;
     min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative;
@@ -329,17 +268,29 @@ input:focus, textarea:focus {
 .page-interviewee::before { content:''; position:absolute; inset:0; background: rgba(10,37,64,0.85); z-index:0; }
 .info-card { position: relative; z-index: 1; background: white; padding: 40px; border-radius: 12px; width: 100%; max-width: 600px; box-shadow: var(--shadow-lg); }
 
-/* Phòng thi */
 .page-interviewing { background: #1a202c; height: 100vh; display: flex; overflow: hidden; }
 .interview-layout { display: flex; width: 100%; height: 100%; }
 .question-sidebar { width: 300px; background: white; display: flex; flex-direction: column; border-right: 1px solid #333; }
+.question-sidebar h3 { background: var(--primary); color: white; padding: 15px; margin: 0; font-size: 1rem; text-transform: uppercase; }
 .q-item { padding: 10px; margin: 10px; background: #f7fafc; border-radius: 4px; font-size: 0.9rem; }
 .q-item.active { background: white; border: 2px solid var(--primary); color: var(--primary); font-weight: bold; transform: scale(1.02); box-shadow: var(--shadow-md); }
 .main-stage { flex: 1; background: #2d3748; padding: 20px; display: flex; flex-direction: column; align-items: center; }
 .question-box { background: white; padding: 20px; width: 100%; max-width: 900px; border-radius: 8px; margin-bottom: 20px; border-top: 4px solid var(--accent); box-shadow: var(--shadow-md); }
 .camera-wrapper { background: black; width: 100%; max-width: 900px; aspect-ratio: 16/9; border-radius: 8px; overflow: hidden; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.timer-badge {
+    position: absolute; top: 15px; right: 15px;
+    background: rgba(229, 62, 62, 0.9); color: white; padding: 5px 12px;
+    border-radius: 4px; font-weight: bold; z-index: 10;
+    box-shadow: 0 0 10px rgba(229, 62, 62, 0.5);
+    animation: pulseRed 1.5s infinite;
+}
+@keyframes pulseRed { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
 
-/* Upload Overlay */
 .upload-overlay { position: absolute; inset: 0; background: rgba(255,255,255,0.9); z-index: 50; display: none; flex-direction: column; align-items: center; justify-content: center; }
 .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--accent); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+@media (max-width: 992px) {
+    .interviewer-container { flex-direction: column; }
+    .sidebar, .main-content { width: 100%; }
+}
