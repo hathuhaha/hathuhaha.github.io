@@ -5,13 +5,13 @@
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
 
 :root {
-    /* Bảng màu chủ đạo: Xanh Navy & Vàng Đồng */
+    /* Bảng màu chủ đạo */
     --primary: #0a2540;       /* Xanh Navy Đậm */
     --primary-light: #163a5f; /* Xanh sáng hơn khi hover */
     --accent: #cca35e;        /* Vàng Đồng (Điểm nhấn lung linh) */
     
     /* Màu nền và chữ */
-    --bg-body: #f0f4f8;       /* Nền xám xanh nhạt dịu mắt */
+    --bg-body: #f0f4f8;       
     --white: #ffffff;
     --text-main: #1a202c;
     --text-light: #4a5568;
@@ -20,13 +20,12 @@
     /* Màu trạng thái */
     --danger: #e53e3e;
     --success: #2f855a;
-    --warning: #dd6b20;
 
-    /* Hiệu ứng bóng đổ (Shadow) 3D */
+    /* Hiệu ứng bóng đổ (Shadow) 3D - Giữ lại vẻ đẹp cũ */
     --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
     --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
     --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
-    --shadow-glow: 0 0 15px rgba(204, 163, 94, 0.3); /* Bóng phát sáng nhẹ */
+    --shadow-glow: 0 0 15px rgba(204, 163, 94, 0.3); 
 }
 
 /* Reset CSS cơ bản */
@@ -39,7 +38,7 @@ body {
     line-height: 1.6;
 }
 h1, h2, h3, h4 {
-    font-family: 'Merriweather', serif; /* Font tiêu đề sang trọng */
+    font-family: 'Merriweather', serif;
     color: var(--primary);
     margin-top: 0;
 }
@@ -47,25 +46,19 @@ a { text-decoration: none; color: var(--primary); font-weight: 600; transition: 
 a:hover { color: var(--accent); }
 
 /* ============================================================== */
-/* 2. HIỆU ỨNG LUNG LINH (SHIMMER & ANIMATION)                    */
+/* 2. HIỆU ỨNG ANIMATION (GIỮ CÁI ĐẸP - BỎ CÁI RỐI MẮT)           */
 /* ============================================================== */
 
-/* Hiệu ứng ánh sáng chạy qua nút bấm */
+/* Hiệu ứng ánh sáng chạy qua nút bấm (Giữ lại) */
 @keyframes shimmer {
     0% { background-position: -200% 0; }
     100% { background-position: 200% 0; }
 }
 
-/* Hiệu ứng trồi lên mượt mà */
+/* Hiệu ứng trồi lên (Đã tắt cho bảng để đỡ đau mắt) */
 @keyframes slideUpFade {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
-}
-
-/* Hiệu ứng Modal nảy lên */
-@keyframes popIn {
-    0% { opacity: 0; transform: scale(0.9); }
-    100% { opacity: 1; transform: scale(1); }
 }
 
 /* ============================================================== */
@@ -77,7 +70,7 @@ a:hover { color: var(--accent); }
     background: linear-gradient(120deg, var(--primary) 0%, var(--primary-light) 50%, var(--primary) 100%);
     background-size: 200% 100%;
     color: white;
-    padding: 12px 24px;
+    padding: 10px 20px;
     border: none;
     border-radius: 6px;
     font-weight: 600;
@@ -131,25 +124,22 @@ input:focus, textarea:focus {
 }
 
 /* ============================================================== */
-/* 4. LAYOUT CHÍNH: INTERVIEWER (FIX LỖI TRÔI CỘT)                */
+/* 4. LAYOUT CHÍNH: INTERVIEWER                                   */
 /* ============================================================== */
 
 .interviewer-container {
     max-width: 1400px;
     margin: 40px auto;
     padding: 0 20px;
-    
-    /* FIX LỖI: Dùng Flexbox để chia cột ngang */
     display: flex;
     flex-direction: row; 
     align-items: flex-start;
     gap: 30px;
 }
 
-/* Cột trái (Sidebar) */
 .sidebar {
     width: 280px;
-    flex-shrink: 0; /* Cố định chiều rộng, không co lại */
+    flex-shrink: 0;
     background: var(--primary);
     color: white;
     padding: 30px;
@@ -158,27 +148,19 @@ input:focus, textarea:focus {
     position: relative;
     overflow: hidden;
 }
-/* Hiệu ứng vệt sáng trang trí trên sidebar */
 .sidebar::before {
     content: ''; position: absolute; top: -50%; left: -50%;
     width: 200%; height: 200%;
     background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%);
     pointer-events: none;
 }
-
-.sidebar-header {
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    padding-bottom: 15px; margin-bottom: 20px;
-    display: flex; justify-content: space-between; align-items: center;
-}
+.sidebar-header { border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
 .info-group strong { display: block; color: var(--accent); font-size: 0.8rem; margin-top: 10px; }
 
-/* Cột phải (Nội dung chính) */
 .main-content {
-    flex-grow: 1; /* Chiếm hết phần còn lại */
-    width: calc(100% - 310px); /* Trừ đi sidebar + gap */
-    min-width: 0; /* FIX LỖI: Ngăn table làm vỡ layout */
-    
+    flex-grow: 1;
+    width: calc(100% - 310px);
+    min-width: 0;
     background: white;
     padding: 40px;
     border-radius: 12px;
@@ -194,7 +176,7 @@ input:focus, textarea:focus {
 }
 .logout-button:hover { background: var(--danger); color: white; }
 
-/* Danh sách phỏng vấn (Interview List) */
+/* Danh sách phỏng vấn */
 .interview-item {
     background: #fff;
     border: 1px solid var(--border);
@@ -202,7 +184,7 @@ input:focus, textarea:focus {
     padding: 20px;
     margin-bottom: 15px;
     transition: 0.3s;
-    animation: slideUpFade 0.5s ease forwards; /* Hiệu ứng trồi lên */
+    /* Đã xoá animation trôi lên */
 }
 .interview-item:hover {
     border-color: var(--accent);
@@ -212,22 +194,20 @@ input:focus, textarea:focus {
 .interview-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
 .interview-name { font-weight: 700; color: var(--primary); font-size: 1.1rem; }
 .interview-id { background: #edf2f7; font-size: 0.8rem; padding: 2px 8px; border-radius: 4px; color: var(--text-light); }
+.interview-desc-content { font-size: 0.9rem; color: var(--text-light); margin-top: 10px; padding: 10px; background: #f7fafc; border-left: 3px solid var(--primary); }
 
 /* ============================================================== */
-/* 5. FIX LỖI MODAL (CỬA SỔ BẬT LÊN NỔI TRÊN CÙNG)                */
+/* 5. FIX LỖI MODAL (TO HƠN & KHÔNG TRÔI)                         */
 /* ============================================================== */
 
 .modal-overlay {
-    /* FIX LỖI: Ghim chặt vào màn hình, đè lên tất cả */
     position: fixed !important;
     top: 0; left: 0; right: 0; bottom: 0;
     width: 100vw; height: 100vh;
     z-index: 99999 !important;
-    
-    background-color: rgba(10, 37, 64, 0.75); /* Nền tối mờ */
-    backdrop-filter: blur(5px); /* Hiệu ứng kính mờ thời thượng */
-    
-    display: none; /* JS sẽ đổi thành flex */
+    background-color: rgba(10, 37, 64, 0.75);
+    backdrop-filter: blur(5px);
+    display: none;
     justify-content: center;
     align-items: center;
     padding: 20px;
@@ -235,14 +215,15 @@ input:focus, textarea:focus {
 
 .modal-content {
     background: white;
-    width: 100%; max-width: 950px;
-    max-height: 90vh; /* Không cao quá màn hình */
+    width: 100%; 
+    /* ĐÃ TĂNG SIZE LÊN 1200PX ĐỂ KHÔNG CẮT TÊN */
+    max-width: 1200px; 
+    max-height: 95vh;
     
     border-radius: 12px;
     box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
     display: flex; flex-direction: column;
-    
-    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Hiệu ứng nảy */
+    /* Đã xoá animation pop-up */
     position: relative;
 }
 
@@ -258,11 +239,11 @@ input:focus, textarea:focus {
 
 .modal-body {
     padding: 25px;
-    overflow-y: auto; /* Cho phép cuộn nội dung */
+    overflow-y: auto;
     flex: 1;
 }
 
-/* Bảng dữ liệu trong Modal */
+/* Bảng dữ liệu */
 .interviewee-table-container {
     overflow-x: auto;
     border: 1px solid var(--border);
@@ -283,17 +264,45 @@ input:focus, textarea:focus {
 }
 #interviewee-table td { padding: 12px; border-bottom: 1px solid var(--border); }
 #interviewee-table tr:hover { background: #f0f4f8; }
+#interviewee-table tr { opacity: 1; /* Tắt animation */ }
 
-/* Grid layout cho Modal Chấm điểm */
+/* ============================================================== */
+/* 6. STYLE NÚT CHẤM ĐIỂM (FIX LỖI NÚT KHÔNG HIỆN)                */
+/* ============================================================== */
+
 #grading-modal .modal-body { display: flex; padding: 0; }
-#grading-list { flex: 1; border-right: 1px solid var(--border); background: #f8fafc; padding: 20px; overflow-y: auto; }
-#grading-detail { flex: 3; padding: 20px; overflow-y: auto; background: white; }
+#grading-list { flex: 0 0 260px; border-right: 1px solid var(--border); background: #f8fafc; padding: 20px; overflow-y: auto; }
+#grading-detail { flex: 1; padding: 20px; overflow-y: auto; background: white; }
+
+/* FIX: Biến danh sách câu hỏi thành NÚT BẤM dạng thẻ */
+.grading-question-item {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: var(--shadow-sm);
+    display: block; /* Đảm bảo nó hiển thị dạng khối */
+}
+.grading-question-item:hover {
+    border-color: var(--primary);
+    transform: translateX(3px);
+}
+.grading-question-item.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.grading-question-item h4 { margin: 0 0 5px 0; font-size: 0.95rem; color: inherit; }
+.grading-question-item span { font-size: 0.85rem; opacity: 0.9; }
 
 /* ============================================================== */
-/* 6. CÁC TRANG KHÁC (LOGIN, WAITING, INTERVIEWING)               */
+/* 7. CÁC TRANG KHÁC (LOGIN, WAITING, INTERVIEWING)               */
 /* ============================================================== */
 
-/* Trang Login */
 .page-login {
     background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%);
     min-height: 100vh;
@@ -308,53 +317,29 @@ input:focus, textarea:focus {
 .tab-btn { flex: 1; padding: 15px; border: none; background: transparent; cursor: pointer; border-bottom: 3px solid transparent; color: var(--text-light); font-weight: 600; }
 .tab-btn.active { background: white; color: var(--primary); border-bottom-color: var(--accent); }
 .tab-content { padding: 30px; }
+.form-content { display: none; animation: fadeIn 0.4s ease; }
+.form-content.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-/* Phòng chờ (Interviewee) */
+/* Phòng chờ */
 .page-interviewee {
     background: url('https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=1920&q=80') center/cover;
-    min-height: 100vh; display: flex; align-items: center; justify-content: center;
-    position: relative;
+    min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative;
 }
 .page-interviewee::before { content:''; position:absolute; inset:0; background: rgba(10,37,64,0.85); z-index:0; }
 .info-card { position: relative; z-index: 1; background: white; padding: 40px; border-radius: 12px; width: 100%; max-width: 600px; box-shadow: var(--shadow-lg); }
 
-/* Phòng thi (Interviewing) */
-.page-interviewing {
-    background: #1a202c; height: 100vh; display: flex; overflow: hidden;
-}
+/* Phòng thi */
+.page-interviewing { background: #1a202c; height: 100vh; display: flex; overflow: hidden; }
 .interview-layout { display: flex; width: 100%; height: 100%; }
 .question-sidebar { width: 300px; background: white; display: flex; flex-direction: column; border-right: 1px solid #333; }
-.question-sidebar h3 { background: var(--primary); color: white; padding: 15px; margin: 0; font-size: 1rem; text-transform: uppercase; }
 .q-item { padding: 10px; margin: 10px; background: #f7fafc; border-radius: 4px; font-size: 0.9rem; }
 .q-item.active { background: white; border: 2px solid var(--primary); color: var(--primary); font-weight: bold; transform: scale(1.02); box-shadow: var(--shadow-md); }
-
-.main-stage {
-    flex: 1; background: #2d3748; padding: 20px;
-    display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
-}
+.main-stage { flex: 1; background: #2d3748; padding: 20px; display: flex; flex-direction: column; align-items: center; }
 .question-box { background: white; padding: 20px; width: 100%; max-width: 900px; border-radius: 8px; margin-bottom: 20px; border-top: 4px solid var(--accent); box-shadow: var(--shadow-md); }
-.question-content { font-size: 1.2rem; font-weight: 500; color: var(--primary); }
-
-.camera-wrapper {
-    background: black; width: 100%; max-width: 900px; aspect-ratio: 16/9;
-    border-radius: 8px; overflow: hidden; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-}
-.timer-badge {
-    position: absolute; top: 15px; right: 15px;
-    background: rgba(229, 62, 62, 0.9); color: white; padding: 5px 12px;
-    border-radius: 4px; font-weight: bold; z-index: 10;
-    box-shadow: 0 0 10px rgba(229, 62, 62, 0.5); /* Timer phát sáng đỏ */
-    animation: pulseRed 1.5s infinite;
-}
-@keyframes pulseRed { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+.camera-wrapper { background: black; width: 100%; max-width: 900px; aspect-ratio: 16/9; border-radius: 8px; overflow: hidden; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
 /* Upload Overlay */
 .upload-overlay { position: absolute; inset: 0; background: rgba(255,255,255,0.9); z-index: 50; display: none; flex-direction: column; align-items: center; justify-content: center; }
 .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--accent); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-/* Responsive Mobile */
-@media (max-width: 992px) {
-    .interviewer-container { flex-direction: column; }
-    .sidebar, .main-content { width: 100%; }
-}
