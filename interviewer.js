@@ -1,10 +1,9 @@
 (async function() {
     
     // (!!!) CẤU HÌNH ĐƯỜNG DẪN SERVER (!!!)
-    // Hãy thay đổi đường dẫn này nếu ngrok của bạn thay đổi
     const NGROK_BASE_URL = 'https://nondistinguished-contemplable-della.ngrok-free.dev';
     
-    let currentManagingInterview = ''; // ID cuộc phỏng vấn đang chọn
+    let currentManagingInterview = ''; 
 
     // ===============================================================
     // 1. KHỞI TẠO & KIỂM TRA ĐĂNG NHẬP
@@ -18,7 +17,7 @@
 
         if (data.success === true) {
             updateProfileUI(data);
-            initLogout();                  // <--- Đã cập nhật logic mới ở đây
+            initLogout();
             initProfileLogic(data);        
             initInterviewListLogic();      
             initCandidateModalLogic();     
@@ -29,7 +28,6 @@
         }
     } catch (error) {
         console.error("Lỗi kết nối:", error);
-        // Nếu lỗi mạng, vẫn cho về login để tránh treo
         window.location.href = 'login.html'; 
     }
 
@@ -45,37 +43,30 @@
     }
 
     // ===============================================================
-    // 2. LOGIC ĐĂNG XUẤT (ĐÃ FIX LỖI BỊ LIỆT)
+    // 2. LOGIC ĐĂNG XUẤT (FIX LỖI LIỆT NÚT)
     // ===============================================================
     function initLogout() {
         const btn = document.getElementById('logout-button');
         if (btn) {
             btn.addEventListener('click', async (e) => {
-                e.preventDefault(); // Chặn hành vi mặc định
-                
-                // Hiệu ứng loading ngay lập tức để người dùng biết đã bấm được
+                e.preventDefault();
                 btn.disabled = true;
-                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang thoát...';
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Thoát...';
                 btn.style.opacity = '0.7';
                 btn.style.cursor = 'wait';
 
                 try {
-                    // Tạo timeout 2 giây: Nếu server lag quá 2s thì tự cắt kết nối
                     const controller = new AbortController();
                     const timeoutId = setTimeout(() => controller.abort(), 2000);
 
                     await fetch(`${NGROK_BASE_URL}/logout.php`, { 
-                        method: 'GET', 
-                        credentials: 'include', 
+                        method: 'GET', credentials: 'include', 
                         headers: {'ngrok-skip-browser-warning':'true'},
                         signal: controller.signal
                     });
                     clearTimeout(timeoutId);
-
-                } catch (err) {
-                    console.warn("Lỗi API logout hoặc timeout (không sao, vẫn sẽ chuyển trang):", err);
-                } finally {
-                    // QUAN TRỌNG: Luôn chuyển về login dù thành công hay thất bại
+                } catch (err) { console.warn("Logout error:", err); } 
+                finally {
                     window.location.href = 'login.html';
                 }
             });
@@ -83,44 +74,54 @@
     }
 
     // ===============================================================
-    // 3. LOGIC HỒ SƠ (PROFILE)
+    // 3. LOGIC CHỈNH SỬA PROFILE (ĐÃ FIX)
     // ===============================================================
     function initProfileLogic(data) {
-        const sidebar = document.getElementById('sidebar-profile');
         const editBtn = document.getElementById('edit-profile-btn');
         const cancelBtn = document.getElementById('cancel-profile-btn');
         const saveBtn = document.getElementById('save-profile-btn');
-        const editFullnameInput = document.getElementById('edit-fullname');
+        const displaySpan = document.getElementById('info-fullname');
+        const inputField = document.getElementById('edit-fullname');
+        const controlsDiv = document.getElementById('edit-controls'); 
         
-        if(!sidebar) return;
+        if(!editBtn || !inputField) return;
 
-        editBtn.onclick = () => { 
-            editFullnameInput.value = document.getElementById('info-fullname').textContent; 
-            editFullnameInput.style.display = 'block';
-            document.querySelector('.edit-controls').style.display = 'block';
-            document.getElementById('info-fullname').style.display = 'none';
+        editBtn.onclick = () => {
+            inputField.value = displaySpan.textContent.trim();
+            displaySpan.style.display = 'none';
+            inputField.style.display = 'block';
+            controlsDiv.style.display = 'flex'; 
+            controlsDiv.style.gap = '10px';
+            inputField.focus();
         };
 
         cancelBtn.onclick = () => {
-            editFullnameInput.style.display = 'none';
-            document.querySelector('.edit-controls').style.display = 'none';
-            document.getElementById('info-fullname').style.display = 'block';
+            displaySpan.style.display = 'block';
+            inputField.style.display = 'none';
+            controlsDiv.style.display = 'none';
         };
         
         saveBtn.onclick = async () => {
-            saveBtn.textContent = 'Lưu...'; saveBtn.disabled = true;
+            const newName = inputField.value.trim();
+            if(!newName) { alert("Vui lòng nhập tên!"); return; }
+            saveBtn.disabled = true; saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Lưu...';
+
             try {
-                await fetch(`${NGROK_BASE_URL}/editInterviewerInfo.php`, { method: 'POST', credentials: 'include', headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, body: new URLSearchParams({ 'fullname': editFullnameInput.value }) });
-                document.getElementById('info-fullname').textContent = editFullnameInput.value;
-                document.getElementById('username-display').textContent = editFullnameInput.value;
-                cancelBtn.click(); // Đóng form
-            } catch(e) { alert('Lỗi lưu tên'); }
-            finally { saveBtn.textContent = 'Lưu'; saveBtn.disabled = false; }
+                await fetch(`${NGROK_BASE_URL}/editInterviewerInfo.php`, { 
+                    method: 'POST', credentials: 'include', 
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, 
+                    body: new URLSearchParams({ 'fullname': newName }) 
+                });
+                displaySpan.textContent = newName;
+                document.getElementById('username-display').textContent = newName;
+                cancelBtn.click(); 
+            } catch(e) { alert('Lỗi lưu tên.'); } 
+            finally { saveBtn.disabled = false; saveBtn.innerHTML = 'Lưu lại'; }
         };
     }
 
     // ===============================================================
-    // 4. LOGIC DANH SÁCH & TẠO PHỎNG VẤN
+    // 4. LOGIC DANH SÁCH PHỎNG VẤN
     // ===============================================================
     function initInterviewListLogic() {
         const listEl = document.getElementById('interview-list');
@@ -155,7 +156,7 @@
                         `;
                         listEl.appendChild(li);
                     });
-                } else { listEl.innerHTML = '<p style="text-align:center">Chưa có dữ liệu.</p>'; }
+                } else { listEl.innerHTML = '<p style="text-align:center; color:#666;">Chưa có đợt phỏng vấn nào.</p>'; }
             } catch (e) { listEl.innerHTML = '<p style="color:red; text-align:center">Lỗi tải dữ liệu.</p>'; }
         }
 
@@ -177,7 +178,7 @@
         createForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = createForm.querySelector('button[type="submit"]');
-            btn.disabled = true; btn.textContent = 'Đang tạo...';
+            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang tạo...';
             try {
                 await fetch(`${NGROK_BASE_URL}/createInterview.php`, { method: 'POST', credentials: 'include', headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, body: new URLSearchParams({ 'full_name': document.getElementById('interview-fullname').value, 'question_count': document.getElementById('question-count').value, 'description': document.getElementById('interview-desc').value }) });
                 document.getElementById('interview-fullname').value = '';
@@ -190,7 +191,7 @@
     }
 
     // ===============================================================
-    // 5. LOGIC MODAL ỨNG VIÊN
+    // 5. LOGIC MODAL ỨNG VIÊN (ĐÃ FIX: THÊM INPUT SỬA TÊN)
     // ===============================================================
     function initCandidateModalLogic() {
         const modal = document.getElementById('interviewee-modal');
@@ -210,7 +211,7 @@
                 const res = await fetch(`${NGROK_BASE_URL}/manageInterviewer.php`, { method: 'POST', credentials: 'include', headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, body: new URLSearchParams({ action: 'list', interview_name: currentManagingInterview }) });
                 const data = await res.json();
                 renderTable(data.interviewees || []);
-            } catch (e) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:red">Lỗi kết nối server</td></tr>'; }
+            } catch (e) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:red">Lỗi kết nối</td></tr>'; }
         }
 
         function renderTable(list) {
@@ -221,7 +222,20 @@
                 let statusHtml = user.status ? '<span style="color:var(--success);font-weight:bold">Đã nộp</span>' : '<span style="color:gray">Chưa thi</span>';
                 let actionHtml = user.status ? `<button class="btn-small btn-green view-res-btn" data-user="${user.username}" style="margin-right:5px;">📝 Chấm điểm</button>` : `<button class="btn-small btn-gray" disabled style="margin-right:5px; opacity:0.5;">Chờ nộp</button>`;
                 
-                tr.innerHTML = `<td>${user.username}</td><td>${user.fullname}</td><td>${user.joincode}</td><td style="font-weight:bold; color:#d63384;">${user.final_score||0}</td><td>${statusHtml}</td><td>${actionHtml}<button class="btn-small btn-red delete-user-btn" data-user="${user.username}">Xóa</button></td>`;
+                // FIX: Thêm input sửa tên và nút lưu vào cột thứ 2
+                tr.innerHTML = `
+                    <td>${user.username}</td>
+                    <td>
+                        <div style="display:flex; gap:5px; align-items:center;">
+                            <input type="text" class="form-input edit-name-input" value="${user.fullname}" id="input-${user.username}" style="padding:5px; width:150px;">
+                            <button class="btn-small btn-blue save-name-btn" data-user="${user.username}" title="Lưu tên"><i class="fa-solid fa-save"></i></button>
+                        </div>
+                    </td>
+                    <td>${user.joincode}</td>
+                    <td style="font-weight:bold; color:#d63384;">${user.final_score||0}</td>
+                    <td>${statusHtml}</td>
+                    <td>${actionHtml}<button class="btn-small btn-red delete-user-btn" data-user="${user.username}">Xóa</button></td>
+                `;
                 tbody.appendChild(tr);
             });
         }
@@ -237,7 +251,20 @@
         tbody.addEventListener('click', async (e) => {
             const btn = e.target.closest('button'); if(!btn) return;
             const user = btn.dataset.user;
-            if (btn.classList.contains('delete-user-btn')) {
+            
+            // Logic Lưu tên ứng viên
+            if (btn.classList.contains('save-name-btn')) {
+                const newName = document.getElementById(`input-${user}`).value;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+                await fetch(`${NGROK_BASE_URL}/manageInterviewer.php`, {
+                    method: 'POST', credentials: 'include',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'},
+                    body: new URLSearchParams({ action: 'update', interview_name: currentManagingInterview, username_to_update: user, fullname: newName })
+                });
+                btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+                setTimeout(() => { btn.innerHTML = '<i class="fa-solid fa-save"></i>'; }, 1000);
+            }
+            else if (btn.classList.contains('delete-user-btn')) {
                 if(confirm(`Xóa ứng viên ${user}?`)) { await fetch(`${NGROK_BASE_URL}/manageInterviewer.php`, { method: 'POST', credentials: 'include', headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, body: new URLSearchParams({ action: 'delete', interview_name: currentManagingInterview, username_to_delete: user }) }); loadCandidates(); }
             } else if (btn.classList.contains('view-res-btn')) {
                 window.openGradingModal(currentManagingInterview, user);
@@ -246,26 +273,56 @@
     }
 
     // ===============================================================
-    // 6. LOGIC MODAL NỘI DUNG
+    // 6. LOGIC MODAL NỘI DUNG (ĐÃ FIX: THÊM INPUT THỜI GIAN)
     // ===============================================================
     function initContentModalLogic() {
         const modal = document.getElementById('content-modal');
         const form = document.getElementById('content-form');
         const container = document.getElementById('questions-container');
+        
         window.openContentModal = async (id) => {
             currentManagingInterview = id; modal.style.display = 'flex';
             const res = await fetch(`${NGROK_BASE_URL}/manageContent.php`, { method: 'POST', credentials: 'include', headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, body: new URLSearchParams({ action: 'load', interview_name: id }) });
             const json = await res.json();
             form.style.display = 'block'; container.innerHTML = '';
+            
             if(json.success) json.data.forEach(item => {
-                container.innerHTML += `<div class="question-block" style="margin-bottom:15px; padding:15px; background:#f9f9f9; border:1px solid #ddd; border-radius:5px;"><h4>Câu ${item.id}</h4><label>Nội dung:</label><textarea class="q-text form-input" data-id="${item.id}">${item.question}</textarea><label>Tiêu chí:</label><textarea class="c-text form-input" data-id="${item.id}">${item.criteria}</textarea></div>`;
+                // FIX: Thêm input chỉnh thời gian vào header của mỗi câu hỏi
+                container.innerHTML += `
+                    <div class="question-block" style="margin-bottom:15px; padding:15px; background:#f9f9f9; border:1px solid #ddd; border-radius:5px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                            <h4 style="margin:0; color:var(--primary);">Câu ${item.id}</h4>
+                            <div style="display:flex; align-items:center; gap:5px; font-size:0.9rem;">
+                                <label style="margin:0; font-weight:bold;">Giới hạn (giây):</label>
+                                <input type="number" class="form-input time-limit-input" data-id="${item.id}" value="${item.timeLimit || 60}" style="width:70px; padding:5px; margin:0;">
+                            </div>
+                        </div>
+                        <label style="font-weight:bold;">Nội dung câu hỏi:</label>
+                        <textarea class="q-text form-input" data-id="${item.id}">${item.question}</textarea>
+                        <label style="font-weight:bold;">Tiêu chí chấm:</label>
+                        <textarea class="c-text form-input" data-id="${item.id}">${item.criteria}</textarea>
+                    </div>`;
             });
         };
+        
         document.getElementById('content-close-btn').onclick = () => modal.style.display = 'none';
+        
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = form.querySelector('button[type="submit"]'); btn.textContent = 'Đang lưu...'; btn.disabled = true;
-            const qList = []; document.querySelectorAll('.q-text').forEach(el => qList.push({ id: el.dataset.id, question: el.value, criteria: document.querySelector(`.c-text[data-id="${el.dataset.id}"]`).value, timeLimit: 60 }));
+            const qList = []; 
+            document.querySelectorAll('.q-text').forEach(el => {
+                const id = el.dataset.id;
+                // Lấy thời gian từ input vừa thêm
+                const time = document.querySelector(`.time-limit-input[data-id="${id}"]`).value;
+                qList.push({ 
+                    id: id, 
+                    question: el.value, 
+                    criteria: document.querySelector(`.c-text[data-id="${id}"]`).value, 
+                    timeLimit: time // Lưu thời gian
+                });
+            });
+            
             await fetch(`${NGROK_BASE_URL}/manageContent.php`, { method: 'POST', credentials: 'include', headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, body: new URLSearchParams({ action: 'save', interview_name: currentManagingInterview, questions: JSON.stringify(qList) }) });
             btn.textContent = 'Lưu thay đổi'; btn.disabled = false;
             modal.style.display = 'none';
@@ -273,7 +330,7 @@
     }
 
     // ===============================================================
-    // 7. LOGIC MODAL CHẤM ĐIỂM (GRADING)
+    // 7. LOGIC MODAL CHẤM ĐIỂM (GIỮ NGUYÊN CLASS MỚI)
     // ===============================================================
     function initGradingModalLogic() {
         const modal = document.getElementById('grading-modal');
@@ -291,7 +348,6 @@
             modal.style.display = 'flex';
             document.getElementById('grading-title').textContent = `Chấm điểm: ${u}`;
             
-            // Load dữ liệu
             const res = await fetch(`${NGROK_BASE_URL}/manageGrading.php`, { method:'POST', credentials:'include', headers:{'Content-Type':'application/x-www-form-urlencoded','ngrok-skip-browser-warning':'true'}, body:new URLSearchParams({'action':'load','interview_name':intId,'candidate_user':u}) });
             const json = await res.json();
             
@@ -301,7 +357,6 @@
             if(json.data) {
                 json.data.forEach(q => {
                     const d = document.createElement('div');
-                    // CLASS QUAN TRỌNG ĐỂ CSS STYLE THÀNH THẺ BẤM ĐẸP
                     d.className = 'grading-question-item'; 
                     d.dataset.id = q.id;
                     d.innerHTML = `<h4>Câu ${q.id}</h4><span>Điểm: <strong>${q.score}</strong></span>`;
@@ -323,7 +378,6 @@
             
             vid.innerHTML = q.youtube_id ? `<iframe src="https://www.youtube.com/embed/${q.youtube_id}" style="width:100%; height:100%; border:none;" allowfullscreen></iframe>` : '<span style="color:#ccc;">Chưa có video.</span>';
             
-            // Highlight active
             document.querySelectorAll('.grading-question-item').forEach(el => el.classList.remove('active'));
             document.querySelector(`.grading-question-item[data-id="${q.id}"]`)?.classList.add('active');
         }
@@ -333,7 +387,7 @@
             saveBtn.textContent = 'Đang lưu...'; saveBtn.disabled = true;
             await fetch(`${NGROK_BASE_URL}/manageGrading.php`, { method:'POST', credentials:'include', headers:{'Content-Type':'application/x-www-form-urlencoded','ngrok-skip-browser-warning':'true'}, body:new URLSearchParams({'action':'update_score', 'interview_name':currentManagingInterview, 'candidate_user':curCand, 'question_id':activeQ, 'score':scoreIn.value, 'reason':reasonIn.value}) });
             saveBtn.textContent = 'Lưu điểm'; saveBtn.disabled = false;
-            window.openGradingModal(currentManagingInterview, curCand); // Reload để update điểm TB
+            window.openGradingModal(currentManagingInterview, curCand);
         };
     }
 })();
