@@ -3,67 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phòng Phỏng Vấn</title>
+    <title>Phòng Phỏng Vấn Trực Tuyến</title>
     <link rel="icon" href="/image/favicon.jpg" type="image/jpg">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="page-interviewing">
 
-    <div id="test-screen">
-        <h1 style="color:#007bff;">Phòng Chờ & Kiểm Tra Thiết Bị</h1>
-        <p>Hãy đảm bảo bạn xuất hiện rõ ràng trước camera.</p>
+    <div id="test-screen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100vh; background: #fff; z-index: 200; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <h1 style="color:var(--primary); font-size: 2.5rem;">Kiểm tra thiết bị</h1>
+        <p style="color: #666; margin-bottom: 20px;">Vui lòng đảm bảo camera và micro hoạt động tốt trước khi bắt đầu.</p>
         
-        <div class="test-box">
-            <video id="test-video" autoplay muted></video>
+        <div class="test-box" style="width: 700px; max-width: 90%; aspect-ratio: 16/9; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            <video id="test-video" autoplay muted style="width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1);"></video>
         </div>
         
-        <p id="test-status" style="font-weight:bold; color:#dc3545;">Đang kết nối thiết bị...</p>
+        <p id="test-status" style="font-weight:bold; color:#e53e3e; margin-top: 20px;">
+            <i class="fa-solid fa-spinner fa-spin"></i> Đang kết nối thiết bị...
+        </p>
         
-        <button id="btn-start-interview" class="login-button" style="width: auto; padding: 12px 50px; font-size: 1.1rem;" disabled>
-            BẮT ĐẦU PHỎNG VẤN
+        <button id="btn-start-interview" class="login-button" style="width: auto; padding: 15px 60px; font-size: 1.1rem; margin-top: 20px;" disabled>
+            SẴN SÀNG, BẮT ĐẦU NGAY
         </button>
     </div>
 
     <div class="interview-layout" id="interview-layout">
         
         <div class="question-sidebar">
-            <h3 style="color:#007bff; margin-top:0;">Tiến độ</h3>
-            <ul id="q-list-ui" style="list-style:none; padding:0;">
+            <h3><i class="fa-solid fa-list-ol"></i> Tiến độ bài thi</h3>
+            <ul id="q-list-ui" style="list-style:none; padding: 20px; margin: 0;">
                 </ul>
-            <div style="margin-top: auto; font-size: 0.9rem; color: #888;">
-                User: <strong id="user-display">...</strong>
+            <div style="margin-top: auto; padding: 20px; border-top: 1px solid #ddd; background: #f8fafc; font-size: 0.9rem; color: #666;">
+                <i class="fa-solid fa-user"></i> Ứng viên: <strong id="user-display" style="color: var(--primary);">...</strong>
             </div>
         </div>
 
         <div class="main-stage">
+            
             <div class="question-box">
-                <h2 id="q-title" style="margin-bottom:10px; color:#555;">Câu hỏi...</h2>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                    <h2 id="q-title" style="margin: 0; font-size: 1.1rem; color: #666; font-family: 'Inter', sans-serif; text-transform: uppercase;">Đang tải...</h2>
+                    <span style="font-size: 0.9rem; color: var(--accent); font-weight: bold;">
+                        <i class="fa-solid fa-circle-question"></i>
+                    </span>
+                </div>
                 <div class="question-content" id="q-content">
-                    Đang tải nội dung...
+                    Vui lòng chờ giây lát...
                 </div>
             </div>
 
             <div class="camera-wrapper">
-                <div class="timer-badge" id="timer">00:00</div>
-                <video id="main-video" autoplay muted></video>
+                <div class="timer-badge" id="timer" style="position: absolute; top: 15px; right: 15px; background: rgba(220, 53, 69, 0.9); color: white; padding: 6px 18px; border-radius: 4px; font-weight: 700; z-index: 10;">
+                    00:00
+                </div>
                 
-                <div class="upload-overlay" id="upload-overlay">
-                    <div class="loader"></div>
-                    <h3 style="color:#007bff;">Đang nộp bài...</h3>
-                    <p>Vui lòng không tắt trình duyệt.</p>
+                <video id="main-video" autoplay muted style="width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1);"></video>
+                
+                <div class="upload-overlay" id="upload-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 50; display: none; flex-direction: column; align-items: center; justify-content: center;">
+                    <div class="loader" style="width: 60px; height: 60px; border-radius: 50%; border: 5px solid #eee; border-top-color: var(--accent); animation: spin 1s linear infinite;"></div>
+                    <h3 style="color:var(--primary); margin-top: 20px;">Đang nộp bài...</h3>
+                    <p style="color:#666;">Vui lòng giữ nguyên trình duyệt</p>
                 </div>
             </div>
 
-            <div style="margin-top: 25px; display: flex; gap: 15px;">
-                <button id="btn-finish-q" class="login-button" style="width:auto; padding: 12px 30px; background-color: #dc3545;">
-                    ⏹ Nộp bài ngay
+            <div style="margin-top: 30px; display: flex; gap: 20px;">
+                <button id="btn-finish-q" class="login-button" style="width:auto; padding: 12px 40px; background-color: var(--danger);">
+                    <i class="fa-solid fa-stop"></i> Kết thúc câu này
                 </button>
-                <button id="btn-next-q" class="login-button" style="width:auto; padding: 12px 30px; background-color: #28a745; display:none;">
-                    ➡ Câu hỏi tiếp theo
+                <button id="btn-next-q" class="login-button" style="width:auto; padding: 12px 40px; background-color: var(--success); display:none;">
+                    Câu tiếp theo <i class="fa-solid fa-arrow-right"></i>
                 </button>
             </div>
         </div>
     </div>
+    
+    <style>
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
 
     <script src="interviewing.js"></script>
 </body>

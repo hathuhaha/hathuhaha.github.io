@@ -3,38 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phòng Chờ Phỏng Vấn</title>
+    <title>Phòng Chờ Ứng Viên</title>
     <link rel="icon" href="/image/favicon.jpg" type="image/jpg">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="page-interviewee">
 
     <div class="info-card">
-        <div id="loading-msg" style="text-align:center;">Đang tải thông tin cuộc phỏng vấn...</div>
+        <div id="loading-msg" style="text-align:center; padding: 40px; color: #666;">
+            <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem; color: #cca35e;"></i>
+            <p style="margin-top: 15px;">Đang kết nối đến máy chủ...</p>
+        </div>
         
-        <div id="content-area" style="display:none;">
-            <div class="welcome-badge">👋 Xin chào, <span id="user-id-display">User</span></div>
-            
-            <div class="info-header">
-                <h1 id="interview-name">Tên Phỏng Vấn</h1>
-                <span id="interview-meta">Số lượng câu hỏi: <strong id="q-count">0</strong></span>
+        <div id="content-area" style="display:none; animation: fadeIn 0.5s ease;">
+            <div class="welcome-badge">
+                <i class="fa-solid fa-user-check"></i> Chào mừng, <span id="user-id-display">User</span>
             </div>
-
-            <div class="info-row">
-                <strong>Mô tả & Hướng dẫn:</strong>
-                <div class="info-desc" id="interview-desc">
-                    Đang tải mô tả...
+            
+            <div class="info-header" style="margin-bottom: 25px;">
+                <h1 id="interview-name">...</h1>
+                <div style="color: #6c757d; font-size: 1rem;">
+                    <i class="fa-solid fa-layer-group"></i> Tổng số câu hỏi: <strong id="q-count" style="color: #0a2540;">0</strong>
                 </div>
             </div>
 
-            <div style="text-align: center; margin-top: 30px;">
-                <a href="interviewing.html" class="login-button" style="text-decoration: none; display: inline-block; width: auto; padding: 12px 30px;">
-                    Bắt đầu Phỏng vấn &rarr;
+            <div class="info-row">
+                <strong style="display:block; margin-bottom:8px; color:#0a2540;">
+                    <i class="fa-solid fa-circle-info"></i> Hướng dẫn thi:
+                </strong>
+                <div class="info-desc" id="interview-desc">
+                    ...
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 35px;">
+                <a href="interviewing.html" class="start-btn" style="text-decoration: none; display: inline-block; cursor: pointer;">
+                    Bắt đầu làm bài <i class="fa-solid fa-arrow-right-long"></i>
                 </a>
             </div>
             
-            <div style="text-align: center; margin-top: 20px;">
-                <a href="login.html" style="color: #dc3545; font-size: 0.9rem;">Đăng xuất</a>
+            <div style="text-align: center; margin-top: 25px;">
+                <a href="login.html" style="color: #e53e3e; font-size: 0.9rem; font-weight: 500;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                </a>
             </div>
         </div>
     </div>

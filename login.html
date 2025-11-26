@@ -3,71 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng nhập Phỏng vấn</title>
+    <title>HirePro Corporate Login</title>
     <link rel="icon" href="/image/favicon.jpg" type="image/jpg">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="page-login">
 
     <div class="login-container">
+        <div style="text-align: center; padding: 30px 20px 10px; background: #fff;">
+            <h2 style="font-size: 1.8rem; margin: 0; color: #0a2540;">
+                <i class="fa-solid fa-building-columns" style="color: #cca35e;"></i> HirePro.
+            </h2>
+            <p style="color: #6c757d; font-size: 0.9rem; margin-top: 5px;">Cổng thông tin tuyển dụng trực tuyến</p>
+        </div>
         
         <div class="tab-nav">
             <button class="tab-btn active" data-form="interviewer">
-                Người khởi tạo
+                <i class="fa-solid fa-user-tie"></i> Nhà tuyển dụng
             </button>
             <button class="tab-btn" data-form="participant">
-                Người tham gia
+                <i class="fa-solid fa-user"></i> Ứng viên
             </button>
         </div>
 
         <div class="tab-content">
-
             <form id="form-interviewer" class="form-content active" method="POST">
-                <h2>Tạo cuộc phỏng vấn</h2>
                 
                 <div class="form-group">
-                    <label for="interviewer-username">Tên tài khoản:</label>
-                    <input type="text" id="interviewer-username" name="username" required>
+                    <label for="interviewer-username">Tài khoản quản trị</label>
+                    <input type="text" id="interviewer-username" name="username" placeholder="Nhập username..." required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="interviewer-password">Mật khẩu:</label>
-                    
-                    <div class="password-wrapper">
-                        <input type="password" id="interviewer-password" name="password" required>
-                        <span id="togglePassword" class="toggle-password">
-                           <svg id="eye-open" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
-                                <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
-                            </svg>
-                            <svg id="eye-closed" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" style="display: none;" viewBox="0 0 16 16">
-                                <path d="m10.79 12.912-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7.029 7.029 0 0 0 2.79-.588zM5.21 3.088A7.028 7.028 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474L5.21 3.089z"/>
-                                <path d="M5.525 7.646a2.5 2.5 0 0 0 2.829 2.829l-2.83-2.829zm4.95.708-2.829-2.83a2.5 2.5 0 0 1 2.829 2.829zm3.171 6-12-12 .708-.708 12 12-.708.708z"/>
-                            </svg>
+                    <label for="interviewer-password">Mật khẩu</label>
+                    <div class="password-wrapper" style="position:relative;">
+                        <input type="password" id="interviewer-password" name="password" placeholder="Nhập mật khẩu..." required>
+                        <span id="togglePassword" class="toggle-password" style="position:absolute; right:10px; top:10px; cursor:pointer;">
+                           <i class="fa-solid fa-eye" id="eye-open" style="color:#aaa;"></i>
+                           <i class="fa-solid fa-eye-slash" id="eye-closed" style="display:none; color:#aaa;"></i>
                         </span>
                     </div>
                 </div>
                 
                 <p id="interviewer-error-message" class="error-message"></p>
-                <button type="submit" class="login-button">Bắt đầu</button>
+                <button type="submit" class="login-button">Đăng nhập Dashboard <i class="fa-solid fa-arrow-right"></i></button>
             </form>
 
             <form id="form-participant" class="form-content" method="POST">
-                <h2>Tham gia phỏng vấn</h2>
                 
                 <div class="form-group">
-                    <label for="participant-username">Tên tài khoản:</label>
-                    <input type="text" id="participant-username" name="username" required>
+                    <label for="participant-username">Tên định danh (Username)</label>
+                    <input type="text" id="participant-username" name="username" placeholder="Ví dụ: nguyenvan_a" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="participant-join-code">Mã tham gia:</label>
-                    <input type="text" id="participant-join-code" name="join_code" required>
+                    <label for="participant-join-code">Mã tham gia (Join Code)</label>
+                    <input type="text" id="participant-join-code" name="join_code" placeholder="Ví dụ: X7Y-992" required>
                 </div>
                 
                 <p id="participant-error-message" class="error-message"></p>
                 
-                <button type="submit" class="login-button">Tham gia</button>
+                <button type="submit" class="login-button">Vào phòng chờ <i class="fa-solid fa-door-open"></i></button>
             </form>
 
         </div>
