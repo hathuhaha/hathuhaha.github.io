@@ -1,6 +1,9 @@
 (async function() {
     
-    // (!!!) CẤU HÌNH ĐƯỜNG DẪN SERVER (!!!)
+    // ===============================================================
+    // (!!!) CẤU HÌNH ĐƯỜNG DẪN NGROK (!!!)
+    // Bạn nhớ cập nhật link này mỗi khi khởi động lại Ngrok nhé
+    // ===============================================================
     const NGROK_BASE_URL = 'https://nondistinguished-contemplable-della.ngrok-free.dev';
     
     let currentManagingInterview = ''; 
@@ -28,7 +31,7 @@
         }
     } catch (error) {
         console.error("Lỗi kết nối:", error);
-        window.location.href = 'login.html'; 
+        // window.location.href = 'login.html'; // Bỏ comment dòng này nếu muốn bắt buộc login
     }
 
     function updateProfileUI(data) {
@@ -43,7 +46,7 @@
     }
 
     // ===============================================================
-    // 2. LOGIC ĐĂNG XUẤT (FIX LỖI LIỆT NÚT)
+    // 2. LOGIC ĐĂNG XUẤT
     // ===============================================================
     function initLogout() {
         const btn = document.getElementById('logout-button');
@@ -52,20 +55,13 @@
                 e.preventDefault();
                 btn.disabled = true;
                 btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Thoát...';
-                btn.style.opacity = '0.7';
-                btn.style.cursor = 'wait';
-
+                
                 try {
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 2000);
-
                     await fetch(`${NGROK_BASE_URL}/logout.php`, { 
                         method: 'GET', credentials: 'include', 
-                        headers: {'ngrok-skip-browser-warning':'true'},
-                        signal: controller.signal
+                        headers: {'ngrok-skip-browser-warning':'true'}
                     });
-                    clearTimeout(timeoutId);
-                } catch (err) { console.warn("Logout error:", err); } 
+                } catch (err) { console.warn("Lỗi logout:", err); } 
                 finally {
                     window.location.href = 'login.html';
                 }
@@ -74,7 +70,7 @@
     }
 
     // ===============================================================
-    // 3. LOGIC CHỈNH SỬA PROFILE (ĐÃ FIX)
+    // 3. LOGIC CHỈNH SỬA PROFILE
     // ===============================================================
     function initProfileLogic(data) {
         const editBtn = document.getElementById('edit-profile-btn');
@@ -121,7 +117,7 @@
     }
 
     // ===============================================================
-    // 4. LOGIC DANH SÁCH PHỎNG VẤN
+    // 4. LOGIC DANH SÁCH PHỎNG VẤN (CÓ NÚT EXCEL MỚI)
     // ===============================================================
     function initInterviewListLogic() {
         const listEl = document.getElementById('interview-list');
@@ -139,6 +135,7 @@
                         const hasDesc = item.description && item.description.trim() !== "";
                         const toggleBtnHtml = hasDesc ? `<button class="btn-small btn-gray toggle-desc-btn">▼ Mô tả</button>` : '';
 
+                        // --- CẬP NHẬT HTML: THÊM NÚT XUẤT EXCEL ---
                         li.innerHTML = `
                             <div class="interview-header">
                                 <div class="interview-info">
@@ -149,6 +146,11 @@
                                     ${toggleBtnHtml}
                                     <button class="btn-small btn-blue open-interviewee-btn" data-id="${item.id}">Ứng viên</button>
                                     <button class="btn-small btn-green open-content-btn" data-id="${item.id}">Nội dung</button>
+                                    
+                                    <button class="btn-small export-excel-btn" data-id="${item.id}" style="background-color:#217346; color:white; margin-left:5px;">
+                                        <i class="fa-solid fa-file-excel"></i> Xuất Excel
+                                    </button>
+
                                     <button class="btn-small btn-red delete-interview-btn" data-id="${item.id}">Xóa</button>
                                 </div>
                             </div>
@@ -162,16 +164,20 @@
 
         listEl.addEventListener('click', (e) => {
             const btn = e.target.closest('button'); if (!btn) return;
+            const id = btn.dataset.id;
+
             if (btn.classList.contains('toggle-desc-btn')) {
                 const div = btn.closest('.interview-item').querySelector('.interview-desc-content');
                 div.style.display = div.style.display === 'none' ? 'block' : 'none';
-                return;
             }
-            const id = btn.dataset.id;
-            if (btn.classList.contains('open-interviewee-btn')) window.openCandidateModal(id);
+            else if (btn.classList.contains('open-interviewee-btn')) window.openCandidateModal(id);
             else if (btn.classList.contains('open-content-btn')) window.openContentModal(id);
             else if (btn.classList.contains('delete-interview-btn')) {
                 if(confirm('Bạn có chắc muốn xóa?')) fetch(`${NGROK_BASE_URL}/deleteInterview.php`, { method: 'POST', credentials: 'include', headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, body: new URLSearchParams({ 'interview_name': id }) }).then(() => loadInterviews());
+            }
+            // --- SỰ KIỆN BẤM NÚT EXCEL ---
+            else if (btn.classList.contains('export-excel-btn')) {
+                handleExportExcel(id, btn);
             }
         });
 
@@ -191,7 +197,130 @@
     }
 
     // ===============================================================
-    // 5. LOGIC MODAL ỨNG VIÊN (ĐÃ FIX: THÊM INPUT SỬA TÊN)
+    // 5. HÀM XUẤT EXCEL (CHUẨN FORM, ĐÚNG TÊN FILE)
+    // ===============================================================
+    async function handleExportExcel(interviewId, btn) {
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang tải...';
+        btn.disabled = true;
+
+        try {
+            // Gọi API PHP lấy dữ liệu JSON
+            const response = await fetch(`${NGROK_BASE_URL}/api_export_excel.php?id=${interviewId}`, {
+                credentials: 'include',
+                headers: {'ngrok-skip-browser-warning':'true'}
+            });
+            const json = await response.json();
+
+            if (!json.success) {
+                alert("Lỗi: " + json.message);
+                return;
+            }
+
+            // Dùng ExcelJS vẽ file
+            const workbook = new ExcelJS.Workbook();
+            const sheet = workbook.addWorksheet('KetQua');
+
+            // Cấu hình Font Times New Roman
+            const fontBold = { name: 'Times New Roman', size: 12, bold: true };
+            const fontNormal = { name: 'Times New Roman', size: 12 };
+            const borderStyle = { top: {style:'thin'}, left: {style:'thin'}, bottom: {style:'thin'}, right: {style:'thin'} };
+            const centerStyle = { vertical: 'middle', horizontal: 'center', wrapText: true };
+
+            // Thông tin chung (Dòng 6, 7)
+            sheet.getCell('B6').value = "Người tạo phỏng vấn: " + json.info.manager;
+            sheet.getCell('B6').font = fontBold;
+            
+            sheet.getCell('B7').value = "Tên đợt phỏng vấn: " + json.info.interview_name;
+            sheet.getCell('B7').font = fontBold;
+
+            // Header bảng (Dòng 9, 10)
+            const rowH1 = 9; 
+            const rowH2 = 10;
+            
+            // Cột cố định
+            sheet.getCell('B9').value = "STT"; sheet.mergeCells('B9:B10');
+            sheet.getCell('C9').value = "Tài khoản ứng viên"; sheet.mergeCells('C9:C10');
+            sheet.getCell('D9').value = "Tên đầy đủ ứng viên"; sheet.mergeCells('D9:D10');
+
+            // Cột điểm thành phần (Động)
+            const qCount = json.info.question_count;
+            const colStart = 5; // Cột E
+            
+            if (qCount > 0) {
+                sheet.getCell(rowH1, colStart).value = "Kết quả thành phần";
+                sheet.mergeCells(rowH1, colStart, rowH1, colStart + qCount - 1);
+                
+                for(let i=0; i<qCount; i++) {
+                    const cell = sheet.getCell(rowH2, colStart + i);
+                    cell.value = `Câu ${i+1}`;
+                    sheet.getColumn(colStart+i).width = 10;
+                }
+            }
+
+            // Cột kết quả cuối cùng
+            const colFinal = colStart + qCount;
+            sheet.getCell(rowH1, colFinal).value = "Kết quả cuối cùng";
+            sheet.mergeCells(rowH1, colFinal, rowH2, colFinal);
+
+            // Kẻ bảng và căn giữa Header
+            for(let r=rowH1; r<=rowH2; r++) {
+                for(let c=2; c<=colFinal; c++) {
+                    const cell = sheet.getCell(r, c);
+                    cell.font = fontBold;
+                    cell.border = borderStyle;
+                    cell.alignment = centerStyle;
+                }
+            }
+
+            // Điền dữ liệu
+            json.data.forEach(uv => {
+                const rowVals = [];
+                // ExcelJS index bắt đầu từ 1. Cột B là index 2.
+                rowVals[2] = uv.stt;
+                rowVals[3] = uv.account;
+                rowVals[4] = uv.name;
+                
+                uv.scores.forEach((s, idx) => {
+                    rowVals[colStart + idx] = s;
+                });
+                rowVals[colFinal] = uv.final;
+
+                const row = sheet.addRow(rowVals);
+                
+                row.eachCell({includeEmpty:true}, (cell, colNum) => {
+                    if(colNum >= 2 && colNum <= colFinal) {
+                        cell.font = fontNormal;
+                        cell.border = borderStyle;
+                        cell.alignment = centerStyle;
+                        if(colNum === 4) cell.alignment = { vertical: 'middle', horizontal: 'left' };
+                    }
+                });
+            });
+
+            // Chỉnh độ rộng cột
+            sheet.getColumn(2).width = 5;
+            sheet.getColumn(3).width = 20;
+            sheet.getColumn(4).width = 25;
+            sheet.getColumn(colFinal).width = 20;
+
+            // Lưu file với tên: [Tên_Phỏng_Vấn]_result.xlsx
+            const fileName = `${json.info.interview_name}_result.xlsx`;
+            const buffer = await workbook.xlsx.writeBuffer();
+            const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+            saveAs(blob, fileName);
+
+        } catch (e) {
+            alert("Lỗi xuất file: " + e.message);
+            console.error(e);
+        } finally {
+            btn.innerHTML = originalHtml;
+            btn.disabled = false;
+        }
+    }
+
+    // ===============================================================
+    // 6. LOGIC MODAL ỨNG VIÊN
     // ===============================================================
     function initCandidateModalLogic() {
         const modal = document.getElementById('interviewee-modal');
@@ -222,7 +351,6 @@
                 let statusHtml = user.status ? '<span style="color:var(--success);font-weight:bold">Đã nộp</span>' : '<span style="color:gray">Chưa thi</span>';
                 let actionHtml = user.status ? `<button class="btn-small btn-green view-res-btn" data-user="${user.username}" style="margin-right:5px;">📝 Chấm điểm</button>` : `<button class="btn-small btn-gray" disabled style="margin-right:5px; opacity:0.5;">Chờ nộp</button>`;
                 
-                // FIX: Thêm input sửa tên và nút lưu vào cột thứ 2
                 tr.innerHTML = `
                     <td>${user.username}</td>
                     <td>
@@ -252,7 +380,6 @@
             const btn = e.target.closest('button'); if(!btn) return;
             const user = btn.dataset.user;
             
-            // Logic Lưu tên ứng viên
             if (btn.classList.contains('save-name-btn')) {
                 const newName = document.getElementById(`input-${user}`).value;
                 btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
@@ -273,7 +400,7 @@
     }
 
     // ===============================================================
-    // 6. LOGIC MODAL NỘI DUNG (ĐÃ FIX: THÊM INPUT THỜI GIAN)
+    // 7. LOGIC MODAL NỘI DUNG
     // ===============================================================
     function initContentModalLogic() {
         const modal = document.getElementById('content-modal');
@@ -287,7 +414,6 @@
             form.style.display = 'block'; container.innerHTML = '';
             
             if(json.success) json.data.forEach(item => {
-                // FIX: Thêm input chỉnh thời gian vào header của mỗi câu hỏi
                 container.innerHTML += `
                     <div class="question-block" style="margin-bottom:15px; padding:15px; background:#f9f9f9; border:1px solid #ddd; border-radius:5px;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -313,13 +439,12 @@
             const qList = []; 
             document.querySelectorAll('.q-text').forEach(el => {
                 const id = el.dataset.id;
-                // Lấy thời gian từ input vừa thêm
                 const time = document.querySelector(`.time-limit-input[data-id="${id}"]`).value;
                 qList.push({ 
                     id: id, 
                     question: el.value, 
                     criteria: document.querySelector(`.c-text[data-id="${id}"]`).value, 
-                    timeLimit: time // Lưu thời gian
+                    timeLimit: time
                 });
             });
             
@@ -330,7 +455,7 @@
     }
 
     // ===============================================================
-    // 7. LOGIC MODAL CHẤM ĐIỂM (GIỮ NGUYÊN CLASS MỚI)
+    // 8. LOGIC MODAL CHẤM ĐIỂM
     // ===============================================================
     function initGradingModalLogic() {
         const modal = document.getElementById('grading-modal');
