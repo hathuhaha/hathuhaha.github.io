@@ -1,7 +1,8 @@
 (async function() {
     
     // ===============================================================
-    // (!!!) CẬP NHẬT ĐƯỜNG DẪN NGROK CỦA BẠN TẠI ĐÂY (!!!)
+    // (!!!) CẤU HÌNH ĐƯỜNG DẪN NGROK (!!!)
+    // Bạn nhớ cập nhật link này mỗi khi khởi động lại Ngrok nhé
     // ===============================================================
     const NGROK_BASE_URL = 'https://nondistinguished-contemplable-della.ngrok-free.dev';
     
@@ -44,7 +45,7 @@
     }
 
     // ===============================================================
-    // 2. LOGIC ĐĂNG XUẤT (Giữ nguyên)
+    // 2. LOGIC ĐĂNG XUẤT
     // ===============================================================
     function initLogout() {
         const btn = document.getElementById('logout-button');
@@ -53,16 +54,22 @@
                 e.preventDefault();
                 btn.disabled = true;
                 btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Thoát...';
+                
                 try {
-                    await fetch(`${NGROK_BASE_URL}/logout.php`, { method: 'GET', credentials: 'include', headers: {'ngrok-skip-browser-warning':'true'} });
+                    await fetch(`${NGROK_BASE_URL}/logout.php`, { 
+                        method: 'GET', credentials: 'include', 
+                        headers: {'ngrok-skip-browser-warning':'true'}
+                    });
                 } catch (err) { console.warn("Lỗi logout:", err); } 
-                finally { window.location.href = 'login.html'; }
+                finally {
+                    window.location.href = 'login.html';
+                }
             });
         }
     }
 
     // ===============================================================
-    // 3. LOGIC CHỈNH SỬA PROFILE (Giữ nguyên)
+    // 3. LOGIC CHỈNH SỬA PROFILE
     // ===============================================================
     function initProfileLogic(data) {
         const editBtn = document.getElementById('edit-profile-btn');
@@ -109,7 +116,7 @@
     }
 
     // ===============================================================
-    // 4. LOGIC DANH SÁCH PHỎNG VẤN (Giữ nguyên)
+    // 4. LOGIC DANH SÁCH PHỎNG VẤN (CÓ NÚT EXCEL)
     // ===============================================================
     function initInterviewListLogic() {
         const listEl = document.getElementById('interview-list');
@@ -137,9 +144,11 @@
                                     ${toggleBtnHtml}
                                     <button class="btn-small btn-blue open-interviewee-btn" data-id="${item.id}">Ứng viên</button>
                                     <button class="btn-small btn-green open-content-btn" data-id="${item.id}">Nội dung</button>
+                                    
                                     <button class="btn-small export-excel-btn" data-id="${item.id}" style="background-color:#217346; color:white; margin-left:5px;">
                                         <i class="fa-solid fa-file-excel"></i> Xuất Excel
                                     </button>
+
                                     <button class="btn-small btn-red delete-interview-btn" data-id="${item.id}">Xóa</button>
                                 </div>
                             </div>
@@ -164,6 +173,7 @@
             else if (btn.classList.contains('delete-interview-btn')) {
                 if(confirm('Bạn có chắc muốn xóa?')) fetch(`${NGROK_BASE_URL}/deleteInterview.php`, { method: 'POST', credentials: 'include', headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, body: new URLSearchParams({ 'interview_name': id }) }).then(() => loadInterviews());
             }
+            // SỰ KIỆN XUẤT EXCEL
             else if (btn.classList.contains('export-excel-btn')) {
                 handleExportExcel(id, btn);
             }
@@ -185,7 +195,7 @@
     }
 
     // ===============================================================
-    // 5. HÀM XUẤT EXCEL (Giữ nguyên gốc của bạn)
+    // 5. HÀM XUẤT EXCEL
     // ===============================================================
     async function handleExportExcel(interviewId, btn) {
         const originalHtml = btn.innerHTML;
@@ -293,7 +303,7 @@
     }
 
     // ===============================================================
-    // 6. LOGIC MODAL ỨNG VIÊN (CÓ SỬA FIX LỖI)
+    // 6. LOGIC MODAL ỨNG VIÊN
     // ===============================================================
     function initCandidateModalLogic() {
         const modal = document.getElementById('interviewee-modal');
@@ -319,22 +329,10 @@
         function renderTable(list) {
             tbody.innerHTML = '';
             if(list.length === 0) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Chưa có ứng viên nào.</td></tr>'; return; }
-            
             list.forEach(user => {
                 const tr = document.createElement('tr');
-                // [FIX] SỬA HIỂN THỊ TRẠNG THÁI STATUS
-                let statusHtml = '';
-                let actionHtml = '';
-
-                if(user.status) {
-                    // Đã nộp (Xanh)
-                    statusHtml = '<span style="color:var(--success);font-weight:bold"><i class="fa-solid fa-check"></i> Đã nộp</span>';
-                    actionHtml = `<button class="btn-small btn-green view-res-btn" data-user="${user.username}" style="margin-right:5px;">📝 Chấm điểm</button>`;
-                } else {
-                    // Chưa nộp (Xám)
-                    statusHtml = '<span style="color:gray"><i class="fa-regular fa-clock"></i> Chưa nộp</span>';
-                    actionHtml = `<button class="btn-small btn-gray" disabled style="margin-right:5px; opacity:0.5; cursor:not-allowed">Chờ nộp</button>`;
-                }
+                let statusHtml = user.status ? '<span style="color:var(--success);font-weight:bold">Đã nộp</span>' : '<span style="color:gray">Chưa thi</span>';
+                let actionHtml = user.status ? `<button class="btn-small btn-green view-res-btn" data-user="${user.username}" style="margin-right:5px;">📝 Chấm điểm</button>` : `<button class="btn-small btn-gray" disabled style="margin-right:5px; opacity:0.5;">Chờ nộp</button>`;
                 
                 tr.innerHTML = `
                     <td>${user.username}</td>
@@ -356,19 +354,9 @@
         document.getElementById('modal-add-interviewee-btn').onclick = async () => {
              const btn = document.getElementById('modal-add-interviewee-btn');
              btn.disabled = true; btn.textContent = 'Đang thêm...';
-             // [FIX] CẬP NHẬT LẠI BẢNG SAU KHI THÊM
-             try {
-                const res = await fetch(`${NGROK_BASE_URL}/manageInterviewer.php`, { method: 'POST', credentials: 'include', headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, body: new URLSearchParams({ action: 'add', interview_name: currentManagingInterview }) });
-                const json = await res.json();
-                if(json.success) {
-                    loadCandidates(); // Reload
-                } else {
-                    alert('Lỗi: ' + json.message);
-                }
-             } catch(e) { alert('Lỗi kết nối khi thêm'); }
-             finally {
-                 btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Thêm ứng viên mới';
-             }
+             await fetch(`${NGROK_BASE_URL}/manageInterviewer.php`, { method: 'POST', credentials: 'include', headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, body: new URLSearchParams({ action: 'add', interview_name: currentManagingInterview }) });
+             btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Thêm ứng viên mới';
+             loadCandidates();
         };
 
         tbody.addEventListener('click', async (e) => {
@@ -398,7 +386,7 @@
     }
 
     // ===============================================================
-    // 7. LOGIC MODAL NỘI DUNG (Giữ nguyên)
+    // 7. LOGIC MODAL NỘI DUNG
     // ===============================================================
     function initContentModalLogic() {
         const modal = document.getElementById('content-modal');
@@ -453,7 +441,7 @@
     }
 
     // ===============================================================
-    // 8. LOGIC MODAL CHẤM ĐIỂM (Giữ nguyên)
+    // 8. LOGIC MODAL CHẤM ĐIỂM (CẬP NHẬT HIỂN THỊ DRIVE)
     // ===============================================================
     function initGradingModalLogic() {
         const modal = document.getElementById('grading-modal');
@@ -500,6 +488,7 @@
             
             const vid = document.getElementById('video-container');
 
+            // --- CẬP NHẬT: HIỂN THỊ DRIVE VIDEO (Ưu tiên) ---
             if (q.drive_id) {
                 vid.innerHTML = `
                     <iframe 
@@ -510,7 +499,7 @@
                         allow="autoplay"
                         allowfullscreen>
                     </iframe>`;
-            } else if (q.youtube_id) { 
+            } else if (q.youtube_id) { // Fallback (nếu có)
                 vid.innerHTML = `<iframe src="https://www.youtube.com/embed/${q.youtube_id}" style="width:100%;height:450px;"></iframe>`;
             } else {
                 vid.innerHTML = '<div style="padding:20px;text-align:center;color:#888">Chưa có video.</div>';
