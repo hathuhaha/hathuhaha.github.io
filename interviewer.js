@@ -7,6 +7,7 @@
     const NGROK_BASE_URL = 'https://nondistinguished-contemplable-della.ngrok-free.dev';
     
     let currentManagingInterview = ''; 
+    let currentCandidateUser = ''; // Thêm biến lưu ứng viên đang chấm điểm
 
     // ===============================================================
     // 1. KHỞI TẠO & KIỂM TRA ĐĂNG NHẬP
@@ -56,12 +57,14 @@
                 btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Thoát...';
                 
                 try {
+                    // Gọi API logout để xóa session
                     await fetch(`${NGROK_BASE_URL}/logout.php`, { 
                         method: 'GET', credentials: 'include', 
                         headers: {'ngrok-skip-browser-warning':'true'}
                     });
                 } catch (err) { console.warn("Lỗi logout:", err); } 
                 finally {
+                    // Chuyển hướng dù API logout có lỗi hay không (vì PHP có thể đã xóa session)
                     window.location.href = 'login.html';
                 }
             });
@@ -98,20 +101,35 @@
         
         saveBtn.onclick = async () => {
             const newName = inputField.value.trim();
-            if(!newName) { alert("Vui lòng nhập tên!"); return; }
+            if(!newName) { 
+                // Sử dụng console.error hoặc modal thay vì alert()
+                console.error("Vui lòng nhập tên!"); 
+                return; 
+            }
             saveBtn.disabled = true; saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Lưu...';
 
             try {
-                await fetch(`${NGROK_BASE_URL}/editInterviewerInfo.php`, { 
+                const response = await fetch(`${NGROK_BASE_URL}/editInterviewerInfo.php`, { 
                     method: 'POST', credentials: 'include', 
                     headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, 
                     body: new URLSearchParams({ 'fullname': newName }) 
                 });
-                displaySpan.textContent = newName;
-                document.getElementById('username-display').textContent = newName;
-                cancelBtn.click(); 
-            } catch(e) { alert('Lỗi lưu tên.'); } 
-            finally { saveBtn.disabled = false; saveBtn.innerHTML = 'Lưu lại'; }
+
+                if (response.ok) {
+                    displaySpan.textContent = newName;
+                    document.getElementById('username-display').textContent = newName;
+                    cancelBtn.click(); 
+                } else {
+                    const errorText = await response.json();
+                    console.error('Lỗi lưu tên:', errorText.message || 'Lỗi không xác định');
+                }
+            } catch(e) { 
+                console.error('Lỗi lưu tên:', e);
+            } 
+            finally { 
+                saveBtn.disabled = false; 
+                saveBtn.innerHTML = '<i class="fa-solid fa-save"></i> Lưu lại'; 
+            }
         };
     }
 
@@ -127,6 +145,7 @@
                 const res = await fetch(`${NGROK_BASE_URL}/listInterview.php`, { credentials: 'include', headers: {'ngrok-skip-browser-warning':'true'} });
                 const data = await res.json();
                 listEl.innerHTML = '';
+                
                 if (data.interviews && data.interviews.length > 0) {
                     data.interviews.forEach(item => {
                         const li = document.createElement('li');
@@ -156,24 +175,38 @@
                         `;
                         listEl.appendChild(li);
                     });
-                } else { listEl.innerHTML = '<p style="text-align:center; color:#666;">Chưa có đợt phỏng vấn nào.</p>'; }
-            } catch (e) { listEl.innerHTML = '<p style="color:red; text-align:center">Lỗi tải dữ liệu.</p>'; }
+                } else { 
+                    listEl.innerHTML = '<p style="text-align:center; color:#666;">Chưa có đợt phỏng vấn nào.</p>'; 
+                }
+            } catch (e) { 
+                listEl.innerHTML = '<p style="color:red; text-align:center">Lỗi tải dữ liệu. Vui lòng kiểm tra Ngrok.</p>'; 
+            }
         }
 
         listEl.addEventListener('click', (e) => {
-            const btn = e.target.closest('button'); if (!btn) return;
+            const btn = e.target.closest('button'); 
+            if (!btn) return;
             const id = btn.dataset.id;
 
             if (btn.classList.contains('toggle-desc-btn')) {
                 const div = btn.closest('.interview-item').querySelector('.interview-desc-content');
                 div.style.display = div.style.display === 'none' ? 'block' : 'none';
             }
-            else if (btn.classList.contains('open-interviewee-btn')) window.openCandidateModal(id);
-            else if (btn.classList.contains('open-content-btn')) window.openContentModal(id);
-            else if (btn.classList.contains('delete-interview-btn')) {
-                if(confirm('Bạn có chắc muốn xóa?')) fetch(`${NGROK_BASE_URL}/deleteInterview.php`, { method: 'POST', credentials: 'include', headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, body: new URLSearchParams({ 'interview_name': id }) }).then(() => loadInterviews());
+            else if (btn.classList.contains('open-interviewee-btn')) {
+                window.openCandidateModal(id);
             }
-            // SỰ KIỆN XUẤT EXCEL
+            else if (btn.classList.contains('open-content-btn')) {
+                window.openContentModal(id);
+            }
+            else if (btn.classList.contains('delete-interview-btn')) {
+                if(confirm('Bạn có chắc muốn xóa? Toàn bộ dữ liệu và video Drive sẽ bị xóa.')) { 
+                    fetch(`${NGROK_BASE_URL}/deleteInterview.php`, { 
+                        method: 'POST', credentials: 'include', 
+                        headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, 
+                        body: new URLSearchParams({ 'interview_name': id }) 
+                    }).then(() => loadInterviews());
+                }
+            }
             else if (btn.classList.contains('export-excel-btn')) {
                 handleExportExcel(id, btn);
             }
@@ -182,20 +215,34 @@
         createForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = createForm.querySelector('button[type="submit"]');
-            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang tạo...';
+            btn.disabled = true; 
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang tạo...';
             try {
-                await fetch(`${NGROK_BASE_URL}/createInterview.php`, { method: 'POST', credentials: 'include', headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, body: new URLSearchParams({ 'full_name': document.getElementById('interview-fullname').value, 'question_count': document.getElementById('question-count').value, 'description': document.getElementById('interview-desc').value }) });
+                await fetch(`${NGROK_BASE_URL}/createInterview.php`, { 
+                    method: 'POST', credentials: 'include', 
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, 
+                    body: new URLSearchParams({ 
+                        'full_name': document.getElementById('interview-fullname').value, 
+                        'question_count': document.getElementById('question-count').value, 
+                        'description': document.getElementById('interview-desc').value 
+                    }) 
+                });
                 document.getElementById('interview-fullname').value = '';
                 document.getElementById('interview-desc').value = '';
                 loadInterviews();
-            } catch(e) { alert('Lỗi tạo mới'); }
-            finally { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Khởi tạo'; }
+            } catch(e) { 
+                console.error('Lỗi tạo mới:', e);
+            }
+            finally { 
+                btn.disabled = false; 
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Khởi tạo'; 
+            }
         });
         loadInterviews();
     }
 
     // ===============================================================
-    // 5. HÀM XUẤT EXCEL
+    // 5. HÀM XUẤT EXCEL (Giữ nguyên)
     // ===============================================================
     async function handleExportExcel(interviewId, btn) {
         const originalHtml = btn.innerHTML;
@@ -210,7 +257,7 @@
             const json = await response.json();
 
             if (!json.success) {
-                alert("Lỗi: " + json.message);
+                console.error("Lỗi xuất Excel: " + json.message);
                 return;
             }
 
@@ -294,8 +341,7 @@
             saveAs(blob, fileName);
 
         } catch (e) {
-            alert("Lỗi xuất file: " + e.message);
-            console.error(e);
+            console.error("Lỗi xuất file: ", e);
         } finally {
             btn.innerHTML = originalHtml;
             btn.disabled = false;
@@ -320,15 +366,26 @@
         async function loadCandidates() {
             tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Loading...</td></tr>';
             try {
-                const res = await fetch(`${NGROK_BASE_URL}/manageInterviewer.php`, { method: 'POST', credentials: 'include', headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, body: new URLSearchParams({ action: 'list', interview_name: currentManagingInterview }) });
+                const res = await fetch(`${NGROK_BASE_URL}/manageInterviewer.php`, { 
+                    method: 'POST', 
+                    credentials: 'include', 
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, 
+                    body: new URLSearchParams({ action: 'list', interview_name: currentManagingInterview }) 
+                });
                 const data = await res.json();
                 renderTable(data.interviewees || []);
-            } catch (e) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:red">Lỗi kết nối</td></tr>'; }
+            } catch (e) { 
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:red">Lỗi kết nối</td></tr>'; 
+                console.error("Lỗi tải ứng viên:", e);
+            }
         }
 
         function renderTable(list) {
             tbody.innerHTML = '';
-            if(list.length === 0) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Chưa có ứng viên nào.</td></tr>'; return; }
+            if(list.length === 0) { 
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Chưa có ứng viên nào.</td></tr>'; 
+                return; 
+            }
             list.forEach(user => {
                 const tr = document.createElement('tr');
                 let statusHtml = user.status ? '<span style="color:var(--success);font-weight:bold">Đã nộp</span>' : '<span style="color:gray">Chưa thi</span>';
@@ -354,13 +411,18 @@
         document.getElementById('modal-add-interviewee-btn').onclick = async () => {
              const btn = document.getElementById('modal-add-interviewee-btn');
              btn.disabled = true; btn.textContent = 'Đang thêm...';
-             await fetch(`${NGROK_BASE_URL}/manageInterviewer.php`, { method: 'POST', credentials: 'include', headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, body: new URLSearchParams({ action: 'add', interview_name: currentManagingInterview }) });
+             await fetch(`${NGROK_BASE_URL}/manageInterviewer.php`, { 
+                 method: 'POST', credentials: 'include', 
+                 headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, 
+                 body: new URLSearchParams({ action: 'add', interview_name: currentManagingInterview }) 
+             });
              btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Thêm ứng viên mới';
              loadCandidates();
         };
 
         tbody.addEventListener('click', async (e) => {
-            const btn = e.target.closest('button'); if(!btn) return;
+            const btn = e.target.closest('button'); 
+            if(!btn) return;
             const user = btn.dataset.user;
             
             if (btn.classList.contains('save-name-btn')) {
@@ -369,17 +431,32 @@
                 await fetch(`${NGROK_BASE_URL}/manageInterviewer.php`, {
                     method: 'POST', credentials: 'include',
                     headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'},
-                    body: new URLSearchParams({ action: 'update', interview_name: currentManagingInterview, username_to_update: user, fullname: newName })
+                    body: new URLSearchParams({ 
+                        action: 'update', 
+                        interview_name: currentManagingInterview, 
+                        username_to_update: user, 
+                        fullname: newName 
+                    })
                 });
                 btn.innerHTML = '<i class="fa-solid fa-check"></i>';
                 setTimeout(() => { btn.innerHTML = '<i class="fa-solid fa-save"></i>'; }, 1000);
             }
             else if (btn.classList.contains('delete-user-btn')) {
                 if(confirm(`Xóa ứng viên ${user}? Video trên Drive cũng sẽ bị xóa.`)) { 
-                    await fetch(`${NGROK_BASE_URL}/manageInterviewer.php`, { method: 'POST', credentials: 'include', headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, body: new URLSearchParams({ action: 'delete', interview_name: currentManagingInterview, username_to_delete: user }) }); 
+                    await fetch(`${NGROK_BASE_URL}/manageInterviewer.php`, { 
+                        method: 'POST', credentials: 'include', 
+                        headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, 
+                        body: new URLSearchParams({ 
+                            action: 'delete', 
+                            interview_name: currentManagingInterview, 
+                            username_to_delete: user 
+                        }) 
+                    }); 
                     loadCandidates(); 
                 }
             } else if (btn.classList.contains('view-res-btn')) {
+                // Lưu ứng viên đang xem để dùng khi lưu điểm
+                currentCandidateUser = user; 
                 window.openGradingModal(currentManagingInterview, user);
             }
         });
@@ -395,9 +472,18 @@
         
         window.openContentModal = async (id) => {
             currentManagingInterview = id; modal.style.display = 'flex';
-            const res = await fetch(`${NGROK_BASE_URL}/manageContent.php`, { method: 'POST', credentials: 'include', headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, body: new URLSearchParams({ action: 'load', interview_name: id }) });
+            
+            // Xóa nội dung cũ
+            container.innerHTML = 'Đang tải...';
+            
+            const res = await fetch(`${NGROK_BASE_URL}/manageContent.php`, { 
+                method: 'POST', credentials: 'include', 
+                headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, 
+                body: new URLSearchParams({ action: 'load', interview_name: id }) 
+            });
             const json = await res.json();
-            form.style.display = 'block'; container.innerHTML = '';
+            form.style.display = 'block'; 
+            container.innerHTML = '';
             
             if(json.success) json.data.forEach(item => {
                 container.innerHTML += `
@@ -421,7 +507,10 @@
         
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = form.querySelector('button[type="submit"]'); btn.textContent = 'Đang lưu...'; btn.disabled = true;
+            const btn = form.querySelector('button[type="submit"]'); 
+            btn.textContent = 'Đang lưu...'; 
+            btn.disabled = true;
+            
             const qList = []; 
             document.querySelectorAll('.q-text').forEach(el => {
                 const id = el.dataset.id;
@@ -434,14 +523,25 @@
                 });
             });
             
-            await fetch(`${NGROK_BASE_URL}/manageContent.php`, { method: 'POST', credentials: 'include', headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, body: new URLSearchParams({ action: 'save', interview_name: currentManagingInterview, questions: JSON.stringify(qList) }) });
-            btn.textContent = 'Lưu thay đổi'; btn.disabled = false;
+            await fetch(`${NGROK_BASE_URL}/manageContent.php`, { 
+                method: 'POST', 
+                credentials: 'include', 
+                headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, 
+                body: new URLSearchParams({ 
+                    action: 'save', 
+                    interview_name: currentManagingInterview, 
+                    questions: JSON.stringify(qList) 
+                }) 
+            });
+            
+            btn.textContent = 'Lưu thay đổi'; 
+            btn.disabled = false;
             modal.style.display = 'none';
         });
     }
 
     // ===============================================================
-    // 8. LOGIC MODAL CHẤM ĐIỂM (CẬP NHẬT HIỂN THỊ DRIVE)
+    // 8. LOGIC MODAL CHẤM ĐIỂM (CẬP NHẬT HIỂN THỊ DRIVE & FIX TỶ LỆ)
     // ===============================================================
     function initGradingModalLogic() {
         const modal = document.getElementById('grading-modal');
@@ -451,17 +551,24 @@
         const saveBtn = document.getElementById('save-score-btn');
         const finalScoreEl = document.getElementById('grading-final-score');
         
-        let curCand = '', activeQ = null;
+        let activeQ = null;
 
         window.openGradingModal = async (intId, u) => {
-            currentManagingInterview = intId; curCand = u;
+            currentManagingInterview = intId; 
+            currentCandidateUser = u; // Cập nhật biến ứng viên
             modal.style.display = 'flex';
             document.getElementById('grading-title').textContent = `Chấm điểm: ${u}`;
             
-            const res = await fetch(`${NGROK_BASE_URL}/manageGrading.php`, { method:'POST', credentials:'include', headers:{'Content-Type':'application/x-www-form-urlencoded','ngrok-skip-browser-warning':'true'}, body:new URLSearchParams({'action':'load','interview_name':intId,'candidate_user':u}) });
+            // Tải dữ liệu
+            const res = await fetch(`${NGROK_BASE_URL}/manageGrading.php`, { 
+                method:'POST', 
+                credentials:'include', 
+                headers:{'Content-Type':'application/x-www-form-urlencoded','ngrok-skip-browser-warning':'true'}, 
+                body:new URLSearchParams({'action':'load','interview_name':intId,'candidate_user':u}) 
+            });
             const json = await res.json();
             
-            if(finalScoreEl) finalScoreEl.textContent = `TB: ${json.final_score || 0}`;
+            if(finalScoreEl) finalScoreEl.textContent = `TB: ${json.final_score || 0.0}`;
             listEl.innerHTML = '';
             
             if(json.data) {
@@ -477,7 +584,12 @@
             }
         };
         
-        document.getElementById('grading-close-btn').onclick = () => { modal.style.display='none'; window.openCandidateModal(currentManagingInterview); };
+        // Sửa lại để mở Modal ứng viên sau khi đóng Modal chấm điểm
+        document.getElementById('grading-close-btn').onclick = () => { 
+            modal.style.display='none'; 
+            // Gọi lại hàm load danh sách ứng viên (để refresh điểm nếu cần)
+            window.openCandidateModal(currentManagingInterview); 
+        };
 
         function showDetail(q) {
             activeQ = q.id;
@@ -488,33 +600,59 @@
             
             const vid = document.getElementById('video-container');
 
-            // --- CẬP NHẬT: HIỂN THỊ DRIVE VIDEO (Ưu tiên) ---
+            // --- CẬP NHẬT: HIỂN THỊ DRIVE VIDEO (FIX TỶ LỆ 16:9) ---
             if (q.drive_id) {
+                // Sử dụng lớp CSS mới: .video-display-wrapper
                 vid.innerHTML = `
-                    <iframe 
-                        src="https://drive.google.com/file/d/${q.drive_id}/preview" 
-                        width="100%" 
-                        height="450px" 
-                        style="border:none; border-radius:8px;" 
-                        allow="autoplay"
-                        allowfullscreen>
-                    </iframe>`;
-            } else if (q.youtube_id) { // Fallback (nếu có)
-                vid.innerHTML = `<iframe src="https://www.youtube.com/embed/${q.youtube_id}" style="width:100%;height:450px;"></iframe>`;
+                    <div class="video-display-wrapper">
+                        <iframe 
+                            src="https://drive.google.com/file/d/${q.drive_id}/preview" 
+                            allow="autoplay"
+                            allowfullscreen>
+                        </iframe>
+                    </div>`;
             } else {
-                vid.innerHTML = '<div style="padding:20px;text-align:center;color:#888">Chưa có video.</div>';
+                vid.innerHTML = '<div style="padding:20px;text-align:center;color:#888">Chưa có video hoặc đang xử lý.</div>';
             }
             
+            // Cập nhật trạng thái active sidebar
             document.querySelectorAll('.grading-question-item').forEach(el => el.classList.remove('active'));
             document.querySelector(`.grading-question-item[data-id="${q.id}"]`)?.classList.add('active');
         }
 
         saveBtn.onclick = async () => {
-            if (!reasonIn.value.trim()) { alert("Vui lòng nhập nhận xét/lý do!"); return; }
-            saveBtn.textContent = 'Đang lưu...'; saveBtn.disabled = true;
-            await fetch(`${NGROK_BASE_URL}/manageGrading.php`, { method:'POST', credentials:'include', headers:{'Content-Type':'application/x-www-form-urlencoded','ngrok-skip-browser-warning':'true'}, body:new URLSearchParams({'action':'update_score', 'interview_name':currentManagingInterview, 'candidate_user':curCand, 'question_id':activeQ, 'score':scoreIn.value, 'reason':reasonIn.value}) });
-            saveBtn.textContent = 'Lưu điểm'; saveBtn.disabled = false;
-            window.openGradingModal(currentManagingInterview, curCand);
+            if (!reasonIn.value.trim()) { 
+                console.error("Vui lòng nhập nhận xét/lý do!"); 
+                return; 
+            }
+            saveBtn.textContent = 'Đang lưu...'; 
+            saveBtn.disabled = true;
+            
+            const response = await fetch(`${NGROK_BASE_URL}/manageGrading.php`, { 
+                method:'POST', 
+                credentials:'include', 
+                headers:{'Content-Type':'application/x-www-form-urlencoded','ngrok-skip-browser-warning':'true'}, 
+                body:new URLSearchParams({
+                    'action':'update_score', 
+                    'interview_name':currentManagingInterview, 
+                    'candidate_user':currentCandidateUser, // Dùng biến đã lưu
+                    'question_id':activeQ, 
+                    'score':scoreIn.value, 
+                    'reason':reasonIn.value
+                }) 
+            });
+            
+            const result = await response.json();
+            
+            saveBtn.textContent = 'Lưu điểm'; 
+            saveBtn.disabled = false;
+            
+            if(result.success) {
+                // Tải lại dữ liệu modal để refresh điểm và lịch sử
+                window.openGradingModal(currentManagingInterview, currentCandidateUser);
+            } else {
+                console.error("Lỗi lưu điểm:", result.message || "Lỗi không xác định");
+            }
         };
     }
 })();
