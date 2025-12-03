@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phòng Chờ Ứng Viên</title>
+    <title>Candidate Waiting Room</title>
     <link rel="icon" href="/image/favicon.jpg" type="image/jpg">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,24 +13,24 @@
     <div class="info-card">
         <div id="loading-msg" style="text-align:center; padding: 40px; color: #666;">
             <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem; color: #cca35e;"></i>
-            <p style="margin-top: 15px;">Đang kết nối đến máy chủ...</p>
+            <p style="margin-top: 15px;">Connecting to server...</p>
         </div>
         
         <div id="content-area" style="display:none; animation: fadeIn 0.5s ease;">
             <div class="welcome-badge">
-                <i class="fa-solid fa-user-check"></i> Chào mừng, <span id="user-id-display">User</span>
+                <i class="fa-solid fa-user-check"></i> Welcome, <span id="user-id-display">User</span>
             </div>
             
             <div class="info-header" style="margin-bottom: 25px;">
                 <h1 id="interview-name">...</h1>
                 <div style="color: #6c757d; font-size: 1rem;">
-                    <i class="fa-solid fa-layer-group"></i> Tổng số câu hỏi: <strong id="q-count" style="color: #0a2540;">0</strong>
+                    <i class="fa-solid fa-layer-group"></i> Total questions: <strong id="q-count" style="color: #0a2540;">0</strong>
                 </div>
             </div>
 
             <div class="info-row">
                 <strong style="display:block; margin-bottom:8px; color:#0a2540;">
-                    <i class="fa-solid fa-circle-info"></i> Hướng dẫn thi:
+                    <i class="fa-solid fa-circle-info"></i> Instructions:
                 </strong>
                 <div class="info-desc" id="interview-desc">
                     ...
@@ -39,13 +39,13 @@
 
             <div style="text-align: center; margin-top: 35px;">
                 <a href="interviewing.html" class="start-btn" style="text-decoration: none; display: inline-block; cursor: pointer;">
-                    Bắt đầu làm bài <i class="fa-solid fa-arrow-right-long"></i>
+                    Start Assessment <i class="fa-solid fa-arrow-right-long"></i>
                 </a>
             </div>
             
             <div style="text-align: center; margin-top: 25px;">
                 <a href="login.html" style="color: #e53e3e; font-size: 0.9rem; font-weight: 500;">
-                    <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
                 </a>
             </div>
         </div>
