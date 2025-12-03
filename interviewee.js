@@ -1,11 +1,11 @@
 document.addEventListener('DOMContentLoaded', async () => {
     
     // ==========================================================
-    // (!!!) CẬP NHẬT URL NGROK MỚI CỦA BẠN TẠI ĐÂY (!!!)
+    // (!!!) UPDATE YOUR NEW NGROK URL HERE (!!!)
     // ==========================================================
     const NGROK_BASE_URL = 'https://nondistinguished-contemplable-della.ngrok-free.dev'; 
     
-    // Các Element giao diện
+    // UI Elements
     const loadingMsg = document.getElementById('loading-msg');
     const contentArea = document.getElementById('content-area');
     const userIdDisplay = document.getElementById('user-id-display');
@@ -14,45 +14,45 @@ document.addEventListener('DOMContentLoaded', async () => {
     const interviewDesc = document.getElementById('interview-desc');
 
     try {
-        // Gọi API lấy thông tin người dùng và cuộc phỏng vấn
+        // Call API to get user and interview info
         const response = await fetch(`${NGROK_BASE_URL}/interviewee.php`, {
             method: 'GET',
             headers: { 'ngrok-skip-browser-warning': 'true' },
-            credentials: 'include' // Quan trọng: Gửi kèm cookie session
+            credentials: 'include' // Important: Send session cookies
         });
 
         const data = await response.json();
 
         if (data.success) {
-            // Ẩn thông báo tải, hiện nội dung chính
+            // Hide loading message, show main content
             loadingMsg.style.display = 'none';
             contentArea.style.display = 'block';
 
-            // Điền dữ liệu vào HTML
+            // Populate HTML with data
             userIdDisplay.textContent = data.data.candidate_id;
             interviewName.textContent = data.data.interview_name;
             qCount.textContent = data.data.question_count;
             
-            // Xử lý mô tả (nếu rỗng thì hiện text mặc định)
+            // Handle description (show default text if empty)
             if (data.data.description && data.data.description.trim() !== "") {
                 interviewDesc.textContent = data.data.description;
             } else {
-                interviewDesc.textContent = "(Không có mô tả hướng dẫn thêm)";
+                interviewDesc.textContent = "(No additional instructions provided)";
                 interviewDesc.style.fontStyle = "italic";
                 interviewDesc.style.color = "#999";
             }
 
         } else {
-            // Nếu session hết hạn hoặc chưa đăng nhập
-            alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+            // If session expired or not logged in
+            alert('Session expired. Please login again.');
             window.location.href = 'login.html';
         }
 
     } catch (error) {
-        console.error('Lỗi kết nối:', error);
-        loadingMsg.innerHTML = `Lỗi kết nối đến máy chủ.<br><br>
-        <small style="color:red">Chi tiết: ${error.message}</small><br>
-        <small>Hãy kiểm tra lại đường dẫn Ngrok trong file interviewee.js</small>`;
+        console.error('Connection error:', error);
+        loadingMsg.innerHTML = `Connection error to server.<br><br>
+        <small style="color:red">Detail: ${error.message}</small><br>
+        <small>Please check the Ngrok URL in interviewee.js</small>`;
         loadingMsg.style.color = "red";
     }
 });
