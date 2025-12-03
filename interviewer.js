@@ -1,16 +1,16 @@
 (async function() {
     
     // ===============================================================
-    // (!!!) CẤU HÌNH ĐƯỜNG DẪN NGROK (!!!)
-    // Bạn nhớ cập nhật link này mỗi khi khởi động lại Ngrok nhé
+    // (!!!) NGROK URL CONFIGURATION (!!!)
+    // Remember to update this link every time you restart Ngrok
     // ===============================================================
     const NGROK_BASE_URL = 'https://nondistinguished-contemplable-della.ngrok-free.dev';
     
     let currentManagingInterview = ''; 
-    let currentCandidateUser = ''; // Thêm biến lưu ứng viên đang chấm điểm
+    let currentCandidateUser = ''; // Tracks the candidate currently being graded
 
     // ===============================================================
-    // 1. KHỞI TẠO & KIỂM TRA ĐĂNG NHẬP
+    // 1. INITIALIZATION & LOGIN CHECK
     // ===============================================================
     try {
         const response = await fetch(`${NGROK_BASE_URL}/interviewer.php`, { 
@@ -31,7 +31,7 @@
             window.location.href = 'login.html';
         }
     } catch (error) {
-        console.error("Lỗi kết nối:", error);
+        console.error("Connection error:", error);
     }
 
     function updateProfileUI(data) {
@@ -46,7 +46,7 @@
     }
 
     // ===============================================================
-    // 2. LOGIC ĐĂNG XUẤT
+    // 2. LOGOUT LOGIC
     // ===============================================================
     function initLogout() {
         const btn = document.getElementById('logout-button');
@@ -54,17 +54,17 @@
             btn.addEventListener('click', async (e) => {
                 e.preventDefault();
                 btn.disabled = true;
-                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Thoát...';
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Logging out...';
                 
                 try {
-                    // Gọi API logout để xóa session
+                    // Call API logout to clear session
                     await fetch(`${NGROK_BASE_URL}/logout.php`, { 
                         method: 'GET', credentials: 'include', 
                         headers: {'ngrok-skip-browser-warning':'true'}
                     });
-                } catch (err) { console.warn("Lỗi logout:", err); } 
+                } catch (err) { console.warn("Logout error:", err); } 
                 finally {
-                    // Chuyển hướng dù API logout có lỗi hay không (vì PHP có thể đã xóa session)
+                    // Redirect regardless of API result
                     window.location.href = 'login.html';
                 }
             });
@@ -72,7 +72,7 @@
     }
 
     // ===============================================================
-    // 3. LOGIC CHỈNH SỬA PROFILE
+    // 3. PROFILE EDIT LOGIC
     // ===============================================================
     function initProfileLogic(data) {
         const editBtn = document.getElementById('edit-profile-btn');
@@ -102,11 +102,10 @@
         saveBtn.onclick = async () => {
             const newName = inputField.value.trim();
             if(!newName) { 
-                // Sử dụng console.error hoặc modal thay vì alert()
-                console.error("Vui lòng nhập tên!"); 
+                console.error("Please enter a name!"); 
                 return; 
             }
-            saveBtn.disabled = true; saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Lưu...';
+            saveBtn.disabled = true; saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
 
             try {
                 const response = await fetch(`${NGROK_BASE_URL}/editInterviewerInfo.php`, { 
@@ -121,20 +120,20 @@
                     cancelBtn.click(); 
                 } else {
                     const errorText = await response.json();
-                    console.error('Lỗi lưu tên:', errorText.message || 'Lỗi không xác định');
+                    console.error('Error saving name:', errorText.message || 'Unknown error');
                 }
             } catch(e) { 
-                console.error('Lỗi lưu tên:', e);
+                console.error('Error saving name:', e);
             } 
             finally { 
                 saveBtn.disabled = false; 
-                saveBtn.innerHTML = '<i class="fa-solid fa-save"></i> Lưu lại'; 
+                saveBtn.innerHTML = '<i class="fa-solid fa-save"></i> Save'; 
             }
         };
     }
 
     // ===============================================================
-    // 4. LOGIC DANH SÁCH PHỎNG VẤN (CÓ NÚT EXCEL)
+    // 4. INTERVIEW LIST LOGIC (WITH EXCEL EXPORT)
     // ===============================================================
     function initInterviewListLogic() {
         const listEl = document.getElementById('interview-list');
@@ -151,7 +150,7 @@
                         const li = document.createElement('li');
                         li.className = 'interview-item';
                         const hasDesc = item.description && item.description.trim() !== "";
-                        const toggleBtnHtml = hasDesc ? `<button class="btn-small btn-gray toggle-desc-btn">▼ Mô tả</button>` : '';
+                        const toggleBtnHtml = hasDesc ? `<button class="btn-small btn-gray toggle-desc-btn">▼ Description</button>` : '';
 
                         li.innerHTML = `
                             <div class="interview-header">
@@ -161,14 +160,14 @@
                                 </div>
                                 <div class="action-btn-group">
                                     ${toggleBtnHtml}
-                                    <button class="btn-small btn-blue open-interviewee-btn" data-id="${item.id}">Ứng viên</button>
-                                    <button class="btn-small btn-green open-content-btn" data-id="${item.id}">Nội dung</button>
+                                    <button class="btn-small btn-blue open-interviewee-btn" data-id="${item.id}">Candidates</button>
+                                    <button class="btn-small btn-green open-content-btn" data-id="${item.id}">Questions</button>
                                     
                                     <button class="btn-small export-excel-btn" data-id="${item.id}" style="background-color:#217346; color:white; margin-left:5px;">
-                                        <i class="fa-solid fa-file-excel"></i> Xuất Excel
+                                        <i class="fa-solid fa-file-excel"></i> Export Excel
                                     </button>
 
-                                    <button class="btn-small btn-red delete-interview-btn" data-id="${item.id}">Xóa</button>
+                                    <button class="btn-small btn-red delete-interview-btn" data-id="${item.id}">Delete</button>
                                 </div>
                             </div>
                             <div class="interview-desc-content" style="display:none;">${item.description}</div>
@@ -176,10 +175,10 @@
                         listEl.appendChild(li);
                     });
                 } else { 
-                    listEl.innerHTML = '<p style="text-align:center; color:#666;">Chưa có đợt phỏng vấn nào.</p>'; 
+                    listEl.innerHTML = '<p style="text-align:center; color:#666;">No interviews found.</p>'; 
                 }
             } catch (e) { 
-                listEl.innerHTML = '<p style="color:red; text-align:center">Lỗi tải dữ liệu. Vui lòng kiểm tra Ngrok.</p>'; 
+                listEl.innerHTML = '<p style="color:red; text-align:center">Error loading data. Please check Ngrok.</p>'; 
             }
         }
 
@@ -199,7 +198,7 @@
                 window.openContentModal(id);
             }
             else if (btn.classList.contains('delete-interview-btn')) {
-                if(confirm('Bạn có chắc muốn xóa? Toàn bộ dữ liệu và video Drive sẽ bị xóa.')) { 
+                if(confirm('Are you sure you want to delete? All data and Drive videos will be permanently deleted.')) { 
                     fetch(`${NGROK_BASE_URL}/deleteInterview.php`, { 
                         method: 'POST', credentials: 'include', 
                         headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, 
@@ -216,7 +215,7 @@
             e.preventDefault();
             const btn = createForm.querySelector('button[type="submit"]');
             btn.disabled = true; 
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang tạo...';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating...';
             try {
                 await fetch(`${NGROK_BASE_URL}/createInterview.php`, { 
                     method: 'POST', credentials: 'include', 
@@ -231,22 +230,22 @@
                 document.getElementById('interview-desc').value = '';
                 loadInterviews();
             } catch(e) { 
-                console.error('Lỗi tạo mới:', e);
+                console.error('Error creating interview:', e);
             }
             finally { 
                 btn.disabled = false; 
-                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Khởi tạo'; 
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Create'; 
             }
         });
         loadInterviews();
     }
 
     // ===============================================================
-    // 5. HÀM XUẤT EXCEL (Giữ nguyên)
+    // 5. EXPORT EXCEL FUNCTION
     // ===============================================================
     async function handleExportExcel(interviewId, btn) {
         const originalHtml = btn.innerHTML;
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang tải...';
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
         btn.disabled = true;
 
         try {
@@ -257,46 +256,46 @@
             const json = await response.json();
 
             if (!json.success) {
-                console.error("Lỗi xuất Excel: " + json.message);
+                console.error("Export Error: " + json.message);
                 return;
             }
 
             const workbook = new ExcelJS.Workbook();
-            const sheet = workbook.addWorksheet('KetQua');
+            const sheet = workbook.addWorksheet('Results');
 
             const fontBold = { name: 'Times New Roman', size: 12, bold: true };
             const fontNormal = { name: 'Times New Roman', size: 12 };
             const borderStyle = { top: {style:'thin'}, left: {style:'thin'}, bottom: {style:'thin'}, right: {style:'thin'} };
             const centerStyle = { vertical: 'middle', horizontal: 'center', wrapText: true };
 
-            sheet.getCell('B6').value = "Người tạo phỏng vấn: " + json.info.manager;
+            sheet.getCell('B6').value = "Interviewer: " + json.info.manager;
             sheet.getCell('B6').font = fontBold;
-            sheet.getCell('B7').value = "Tên đợt phỏng vấn: " + json.info.interview_name;
+            sheet.getCell('B7').value = "Interview Name: " + json.info.interview_name;
             sheet.getCell('B7').font = fontBold;
 
             const rowH1 = 9; 
             const rowH2 = 10;
             
-            sheet.getCell('B9').value = "STT"; sheet.mergeCells('B9:B10');
-            sheet.getCell('C9').value = "Tài khoản ứng viên"; sheet.mergeCells('C9:C10');
-            sheet.getCell('D9').value = "Tên đầy đủ ứng viên"; sheet.mergeCells('D9:D10');
+            sheet.getCell('B9').value = "No."; sheet.mergeCells('B9:B10');
+            sheet.getCell('C9').value = "Candidate ID"; sheet.mergeCells('C9:C10');
+            sheet.getCell('D9').value = "Full Name"; sheet.mergeCells('D9:D10');
 
             const qCount = json.info.question_count;
             const colStart = 5; 
             
             if (qCount > 0) {
-                sheet.getCell(rowH1, colStart).value = "Kết quả thành phần";
+                sheet.getCell(rowH1, colStart).value = "Component Scores";
                 sheet.mergeCells(rowH1, colStart, rowH1, colStart + qCount - 1);
                 
                 for(let i=0; i<qCount; i++) {
                     const cell = sheet.getCell(rowH2, colStart + i);
-                    cell.value = `Câu ${i+1}`;
+                    cell.value = `Q${i+1}`;
                     sheet.getColumn(colStart+i).width = 10;
                 }
             }
 
             const colFinal = colStart + qCount;
-            sheet.getCell(rowH1, colFinal).value = "Kết quả cuối cùng";
+            sheet.getCell(rowH1, colFinal).value = "Final Score";
             sheet.mergeCells(rowH1, colFinal, rowH2, colFinal);
 
             for(let r=rowH1; r<=rowH2; r++) {
@@ -341,7 +340,7 @@
             saveAs(blob, fileName);
 
         } catch (e) {
-            console.error("Lỗi xuất file: ", e);
+            console.error("File export error: ", e);
         } finally {
             btn.innerHTML = originalHtml;
             btn.disabled = false;
@@ -349,7 +348,7 @@
     }
 
     // ===============================================================
-    // 6. LOGIC MODAL ỨNG VIÊN
+    // 6. CANDIDATE MODAL LOGIC
     // ===============================================================
     function initCandidateModalLogic() {
         const modal = document.getElementById('interviewee-modal');
@@ -357,7 +356,7 @@
         
         window.openCandidateModal = (id) => {
             currentManagingInterview = id;
-            document.getElementById('modal-title').textContent = `Ứng viên: ${id}`;
+            document.getElementById('modal-title').textContent = `Candidate: ${id}`;
             modal.style.display = 'flex';
             loadCandidates();
         };
@@ -375,34 +374,34 @@
                 const data = await res.json();
                 renderTable(data.interviewees || []);
             } catch (e) { 
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:red">Lỗi kết nối</td></tr>'; 
-                console.error("Lỗi tải ứng viên:", e);
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:red">Connection Error</td></tr>'; 
+                console.error("Error loading candidates:", e);
             }
         }
 
         function renderTable(list) {
             tbody.innerHTML = '';
             if(list.length === 0) { 
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Chưa có ứng viên nào.</td></tr>'; 
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">No candidates found.</td></tr>'; 
                 return; 
             }
             list.forEach(user => {
                 const tr = document.createElement('tr');
-                let statusHtml = user.status ? '<span style="color:var(--success);font-weight:bold">Đã nộp</span>' : '<span style="color:gray">Chưa thi</span>';
-                let actionHtml = user.status ? `<button class="btn-small btn-green view-res-btn" data-user="${user.username}" style="margin-right:5px;">📝 Chấm điểm</button>` : `<button class="btn-small btn-gray" disabled style="margin-right:5px; opacity:0.5;">Chờ nộp</button>`;
+                let statusHtml = user.status ? '<span style="color:var(--success);font-weight:bold">Submitted</span>' : '<span style="color:gray">Pending</span>';
+                let actionHtml = user.status ? `<button class="btn-small btn-green view-res-btn" data-user="${user.username}" style="margin-right:5px;">📝 Grade</button>` : `<button class="btn-small btn-gray" disabled style="margin-right:5px; opacity:0.5;">Waiting</button>`;
                 
                 tr.innerHTML = `
                     <td>${user.username}</td>
                     <td>
                         <div style="display:flex; gap:5px; align-items:center;">
                             <input type="text" class="form-input edit-name-input" value="${user.fullname}" id="input-${user.username}" style="padding:5px; width:150px;">
-                            <button class="btn-small btn-blue save-name-btn" data-user="${user.username}" title="Lưu tên"><i class="fa-solid fa-save"></i></button>
+                            <button class="btn-small btn-blue save-name-btn" data-user="${user.username}" title="Save Name"><i class="fa-solid fa-save"></i></button>
                         </div>
                     </td>
                     <td>${user.joincode}</td>
                     <td style="font-weight:bold; color:#d63384;">${user.final_score||0}</td>
                     <td>${statusHtml}</td>
-                    <td>${actionHtml}<button class="btn-small btn-red delete-user-btn" data-user="${user.username}">Xóa</button></td>
+                    <td>${actionHtml}<button class="btn-small btn-red delete-user-btn" data-user="${user.username}">Delete</button></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -410,13 +409,13 @@
         
         document.getElementById('modal-add-interviewee-btn').onclick = async () => {
              const btn = document.getElementById('modal-add-interviewee-btn');
-             btn.disabled = true; btn.textContent = 'Đang thêm...';
+             btn.disabled = true; btn.textContent = 'Adding...';
              await fetch(`${NGROK_BASE_URL}/manageInterviewer.php`, { 
                  method: 'POST', credentials: 'include', 
                  headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, 
                  body: new URLSearchParams({ action: 'add', interview_name: currentManagingInterview }) 
              });
-             btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Thêm ứng viên mới';
+             btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Add New Candidate';
              loadCandidates();
         };
 
@@ -442,7 +441,7 @@
                 setTimeout(() => { btn.innerHTML = '<i class="fa-solid fa-save"></i>'; }, 1000);
             }
             else if (btn.classList.contains('delete-user-btn')) {
-                if(confirm(`Xóa ứng viên ${user}? Video trên Drive cũng sẽ bị xóa.`)) { 
+                if(confirm(`Delete candidate ${user}? Drive videos will also be deleted.`)) { 
                     await fetch(`${NGROK_BASE_URL}/manageInterviewer.php`, { 
                         method: 'POST', credentials: 'include', 
                         headers: {'Content-Type': 'application/x-www-form-urlencoded', 'ngrok-skip-browser-warning':'true'}, 
@@ -455,7 +454,7 @@
                     loadCandidates(); 
                 }
             } else if (btn.classList.contains('view-res-btn')) {
-                // Lưu ứng viên đang xem để dùng khi lưu điểm
+                // Save current candidate for grading
                 currentCandidateUser = user; 
                 window.openGradingModal(currentManagingInterview, user);
             }
@@ -463,7 +462,7 @@
     }
 
     // ===============================================================
-    // 7. LOGIC MODAL NỘI DUNG
+    // 7. CONTENT MODAL LOGIC
     // ===============================================================
     function initContentModalLogic() {
         const modal = document.getElementById('content-modal');
@@ -473,8 +472,8 @@
         window.openContentModal = async (id) => {
             currentManagingInterview = id; modal.style.display = 'flex';
             
-            // Xóa nội dung cũ
-            container.innerHTML = 'Đang tải...';
+            // Clear old content
+            container.innerHTML = 'Loading...';
             
             const res = await fetch(`${NGROK_BASE_URL}/manageContent.php`, { 
                 method: 'POST', credentials: 'include', 
@@ -489,15 +488,15 @@
                 container.innerHTML += `
                     <div class="question-block" style="margin-bottom:15px; padding:15px; background:#f9f9f9; border:1px solid #ddd; border-radius:5px;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                            <h4 style="margin:0; color:var(--primary);">Câu ${item.id}</h4>
+                            <h4 style="margin:0; color:var(--primary);">Question ${item.id}</h4>
                             <div style="display:flex; align-items:center; gap:5px; font-size:0.9rem;">
-                                <label style="margin:0; font-weight:bold;">Giới hạn (giây):</label>
+                                <label style="margin:0; font-weight:bold;">Time Limit (s):</label>
                                 <input type="number" class="form-input time-limit-input" data-id="${item.id}" value="${item.timeLimit || 60}" style="width:70px; padding:5px; margin:0;">
                             </div>
                         </div>
-                        <label style="font-weight:bold;">Nội dung câu hỏi:</label>
+                        <label style="font-weight:bold;">Question Content:</label>
                         <textarea class="q-text form-input" data-id="${item.id}">${item.question}</textarea>
-                        <label style="font-weight:bold;">Tiêu chí chấm:</label>
+                        <label style="font-weight:bold;">Grading Criteria:</label>
                         <textarea class="c-text form-input" data-id="${item.id}">${item.criteria}</textarea>
                     </div>`;
             });
@@ -508,7 +507,7 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = form.querySelector('button[type="submit"]'); 
-            btn.textContent = 'Đang lưu...'; 
+            btn.textContent = 'Saving...'; 
             btn.disabled = true;
             
             const qList = []; 
@@ -534,14 +533,14 @@
                 }) 
             });
             
-            btn.textContent = 'Lưu thay đổi'; 
+            btn.textContent = 'Save Changes'; 
             btn.disabled = false;
             modal.style.display = 'none';
         });
     }
 
     // ===============================================================
-    // 8. LOGIC MODAL CHẤM ĐIỂM (CẬP NHẬT HIỂN THỊ DRIVE & FIX TỶ LỆ)
+    // 8. GRADING MODAL LOGIC (UPDATED DRIVE DISPLAY & RATIO FIX)
     // ===============================================================
     function initGradingModalLogic() {
         const modal = document.getElementById('grading-modal');
@@ -555,11 +554,11 @@
 
         window.openGradingModal = async (intId, u) => {
             currentManagingInterview = intId; 
-            currentCandidateUser = u; // Cập nhật biến ứng viên
+            currentCandidateUser = u; 
             modal.style.display = 'flex';
-            document.getElementById('grading-title').textContent = `Chấm điểm: ${u}`;
+            document.getElementById('grading-title').textContent = `Grading: ${u}`;
             
-            // Tải dữ liệu
+            // Load data
             const res = await fetch(`${NGROK_BASE_URL}/manageGrading.php`, { 
                 method:'POST', 
                 credentials:'include', 
@@ -568,7 +567,7 @@
             });
             const json = await res.json();
             
-            if(finalScoreEl) finalScoreEl.textContent = `TB: ${json.final_score || 0.0}`;
+            if(finalScoreEl) finalScoreEl.textContent = `Avg: ${json.final_score || 0.0}`;
             listEl.innerHTML = '';
             
             if(json.data) {
@@ -576,7 +575,7 @@
                     const d = document.createElement('div');
                     d.className = 'grading-question-item'; 
                     d.dataset.id = q.id;
-                    d.innerHTML = `<h4>Câu ${q.id}</h4><span>Điểm: <strong>${q.score}</strong></span>`;
+                    d.innerHTML = `<h4>Question ${q.id}</h4><span>Score: <strong>${q.score}</strong></span>`;
                     d.onclick = () => showDetail(q);
                     listEl.appendChild(d);
                 });
@@ -584,10 +583,10 @@
             }
         };
         
-        // Sửa lại để mở Modal ứng viên sau khi đóng Modal chấm điểm
+        // Re-open candidate modal after closing grading modal
         document.getElementById('grading-close-btn').onclick = () => { 
             modal.style.display='none'; 
-            // Gọi lại hàm load danh sách ứng viên (để refresh điểm nếu cần)
+            // Refresh candidate list to update score display
             window.openCandidateModal(currentManagingInterview); 
         };
 
@@ -596,13 +595,13 @@
             document.getElementById('detail-q-text').textContent = q.question;
             scoreIn.value = q.score;
             reasonIn.value = ''; 
-            document.getElementById('detail-history').textContent = q.history || '(Chưa có lịch sử)';
+            document.getElementById('detail-history').textContent = q.history || '(No history available)';
             
             const vid = document.getElementById('video-container');
 
-            // --- CẬP NHẬT: HIỂN THỊ DRIVE VIDEO (FIX TỶ LỆ 16:9) ---
+            // --- UPDATE: DRIVE VIDEO DISPLAY (16:9 FIX) ---
             if (q.drive_id) {
-                // Sử dụng lớp CSS mới: .video-display-wrapper
+                // Using new CSS class: .video-display-wrapper
                 vid.innerHTML = `
                     <div class="video-display-wrapper">
                         <iframe 
@@ -612,20 +611,20 @@
                         </iframe>
                     </div>`;
             } else {
-                vid.innerHTML = '<div style="padding:20px;text-align:center;color:#888">Chưa có video hoặc đang xử lý.</div>';
+                vid.innerHTML = '<div style="padding:20px;text-align:center;color:#888">No video available or processing.</div>';
             }
             
-            // Cập nhật trạng thái active sidebar
+            // Update active sidebar state
             document.querySelectorAll('.grading-question-item').forEach(el => el.classList.remove('active'));
             document.querySelector(`.grading-question-item[data-id="${q.id}"]`)?.classList.add('active');
         }
 
         saveBtn.onclick = async () => {
             if (!reasonIn.value.trim()) { 
-                console.error("Vui lòng nhập nhận xét/lý do!"); 
+                console.error("Please enter a comment/reason!"); 
                 return; 
             }
-            saveBtn.textContent = 'Đang lưu...'; 
+            saveBtn.textContent = 'Saving...'; 
             saveBtn.disabled = true;
             
             const response = await fetch(`${NGROK_BASE_URL}/manageGrading.php`, { 
@@ -635,7 +634,7 @@
                 body:new URLSearchParams({
                     'action':'update_score', 
                     'interview_name':currentManagingInterview, 
-                    'candidate_user':currentCandidateUser, // Dùng biến đã lưu
+                    'candidate_user':currentCandidateUser, 
                     'question_id':activeQ, 
                     'score':scoreIn.value, 
                     'reason':reasonIn.value
@@ -644,14 +643,14 @@
             
             const result = await response.json();
             
-            saveBtn.textContent = 'Lưu điểm'; 
+            saveBtn.textContent = 'Save Score'; 
             saveBtn.disabled = false;
             
             if(result.success) {
-                // Tải lại dữ liệu modal để refresh điểm và lịch sử
+                // Reload modal data to refresh score and history
                 window.openGradingModal(currentManagingInterview, currentCandidateUser);
             } else {
-                console.error("Lỗi lưu điểm:", result.message || "Lỗi không xác định");
+                console.error("Error saving score:", result.message || "Unknown error");
             }
         };
     }
