@@ -1,10 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
     
+    // (!!!) NGROK CONFIGURATION (!!!)
     const INTERVIEWER_LOGIN_URL = 'https://nondistinguished-contemplable-della.ngrok-free.dev/login.php';
     const PARTICIPANT_LOGIN_URL = 'https://nondistinguished-contemplable-della.ngrok-free.dev/interviewee.php'; 
 
     // ===============================================
-    // PHẦN 1: LOGIC CHUYỂN TAB (Sẽ chạy bình thường)
+    // PART 1: TAB SWITCHING LOGIC
     // ===============================================
     const tabButtons = document.querySelectorAll('.tab-btn');
     const formContents = document.querySelectorAll('.form-content');
@@ -27,13 +28,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ==========================================================
-    // PHẦN 2: LOGIC SUBMIT FORM
+    // PART 2: FORM SUBMISSION LOGIC
     // ==========================================================
 
     const interviewerForm = document.getElementById('form-interviewer');
     const participantForm = document.getElementById('form-participant');
     
-    // --- 1. Xử lý Form Người khởi tạo (Interviewer) (Không đổi) ---
+    // --- 1. Handle Recruiter (Interviewer) Form ---
     if (interviewerForm) {
         interviewerForm.addEventListener('submit', async function(event) {
             event.preventDefault(); 
@@ -44,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const submitButton = interviewerForm.querySelector('button[type="submit"]');
 
             try {
-                if (interviewerErrorMsg) interviewerErrorMsg.textContent = 'Đang kiểm tra...';
+                if (interviewerErrorMsg) interviewerErrorMsg.textContent = 'Verifying...';
                 submitButton.disabled = true;
 
                 const data = new URLSearchParams();
@@ -68,20 +69,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     window.location.href = 'interviewer.html';
                 } else {
                     if (interviewerErrorMsg) {
-                        interviewerErrorMsg.textContent = textResponse.trim() || 'Lỗi không xác định.';
+                        interviewerErrorMsg.textContent = textResponse.trim() || 'Unknown error.';
                     }
                 }
             } catch (error) {
                 submitButton.disabled = false;
                 if (interviewerErrorMsg) {
-                    interviewerErrorMsg.textContent = 'Đăng nhập không thành công. Vui lòng thử lại';
+                    interviewerErrorMsg.textContent = 'Login failed. Please try again.';
                 }
-                console.error('Lỗi khi gọi API đăng nhập interviewer:', error);
+                console.error('Error calling interviewer login API:', error);
             }
         });
     }
 
-    // --- 2. Xử lý Form Người tham gia (Participant) (ĐÃ SỬA LỖI) ---
+    // --- 2. Handle Candidate (Participant) Form ---
     if (participantForm) {
         participantForm.addEventListener('submit', async function(event) {
             event.preventDefault(); 
@@ -92,12 +93,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const submitButton = participantForm.querySelector('button[type="submit"]');
             
             try {
-                if (participantErrorMsg) participantErrorMsg.textContent = 'Đang kiểm tra...';
+                if (participantErrorMsg) participantErrorMsg.textContent = 'Verifying...';
                 submitButton.disabled = true;
 
                 const data = new URLSearchParams();
                 data.append('username', username);
-                // (!!!) DÒNG BỊ LỖI 'ac' ĐÃ ĐƯỢC XÓA (!!!)
                 data.append('join_code', join_code);
 
                 const response = await fetch(PARTICIPANT_LOGIN_URL, { 
@@ -114,26 +114,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 const textResponse = await response.text();
                 
                 if (response.ok && textResponse.trim() === 'OK') {
-                    // Chuyển hướng đến trang phòng chờ (theo yêu cầu của bạn)
+                    // Redirect to waiting room
                     window.location.href = 'interviewee.html';
                 } else {
                     if (participantErrorMsg) {
-                        participantErrorMsg.textContent = textResponse.trim() || 'Tài khoản hoặc Mã tham gia không đúng.';
+                        participantErrorMsg.textContent = textResponse.trim() || 'Incorrect Username or Access Code.';
                     }
                 }
                 
             } catch (error) {
                 submitButton.disabled = false;
                 if (participantErrorMsg) {
-                    participantErrorMsg.textContent = 'Đăng nhập không thành công. Vui lòng thử lại';
+                    participantErrorMsg.textContent = 'Login failed. Please try again.';
                 }
-                console.error('Lỗi khi gọi API đăng nhập participant:', error);
+                console.error('Error calling participant login API:', error);
             }
         });
     }
 
     // ==========================================================
-    // PHẦN 3: LOGIC HIỆN/ẨN MẬT KHẨU (Giữ nguyên)
+    // PART 3: TOGGLE PASSWORD VISIBILITY
     // ==========================================================
     
     const togglePassword = document.getElementById('togglePassword');
