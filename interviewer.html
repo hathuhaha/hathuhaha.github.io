@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <script src="https://unpkg.com/exceljs/dist/exceljs.min.js"></script>
     <script src="https://unpkg.com/file-saver/dist/FileSaver.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Nhà Tuyển Dụng</title>
+    <title>Recruiter Dashboard</title>
     <link rel="icon" href="/image/favicon.jpg" type="image/jpg">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -15,8 +15,8 @@
     <div class="interviewer-container">
         <div class="sidebar" id="sidebar-profile">
             <div class="sidebar-header">
-                <h3><i class="fa-solid fa-id-card"></i> Hồ sơ</h3>
-                <span id="edit-profile-btn" style="cursor:pointer; color:#cca35e; font-size: 1.2rem;" title="Chỉnh sửa tên">
+                <h3><i class="fa-solid fa-id-card"></i> Profile</h3>
+                <span id="edit-profile-btn" style="cursor:pointer; color:#cca35e; font-size: 1.2rem;" title="Edit Name">
                     <i class="fa-solid fa-pen-to-square"></i>
                 </span>
             </div>
@@ -31,17 +31,17 @@
             </div>
             
             <div class="info-group">
-                <strong>Họ tên hiển thị:</strong> 
-                <span id="info-fullname">Đang tải...</span> 
+                <strong>Display Name:</strong> 
+                <span id="info-fullname">Loading...</span> 
                 <input type="text" id="edit-fullname" class="form-input" style="display:none; margin-top: 5px; color: #333;">
             </div>
             
             <div id="edit-controls" style="display:none; margin-top: 15px;">
                 <button id="save-profile-btn" class="btn-small btn-blue" style="width:100%; margin-bottom:5px;">
-                    <i class="fa-solid fa-save"></i> Lưu lại
+                    <i class="fa-solid fa-save"></i> Save
                 </button> 
                 <button id="cancel-profile-btn" class="btn-small btn-gray" style="width:100%;">
-                    <i class="fa-solid fa-times"></i> Hủy bỏ
+                    <i class="fa-solid fa-times"></i> Cancel
                 </button>
             </div>
         </div>
@@ -49,39 +49,39 @@
         <div class="main-content">
             <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                 <div>
-                    <h1>Xin chào, <span id="username-display" style="color:var(--primary);">...</span> 👋</h1>
-                    <p style="color:var(--text-light);">Quản lý các đợt phỏng vấn và ứng viên của bạn.</p>
+                    <h1>Hello, <span id="username-display" style="color:var(--primary);">...</span> 👋</h1>
+                    <p style="color:var(--text-light);">Manage your interviews and candidates efficiently.</p>
                 </div>
                 <button id="logout-button" class="btn-small btn-red">
-                    <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
                 </button>
             </div>
 
             <div style="margin-top: 40px;">
-                <h2><i class="fa-solid fa-plus-circle"></i> Tạo đợt phỏng vấn mới</h2>
+                <h2><i class="fa-solid fa-plus-circle"></i> Create New Interview</h2>
                 <form id="create-interview-form" style="background:#f8fafc; padding:20px; border-radius:6px; border:1px solid var(--border);">
                     <div style="display: flex; gap: 20px; flex-wrap: wrap;">
                         <div style="flex: 2;">
-                            <label>Tên đợt phỏng vấn</label>
-                            <input type="text" id="interview-fullname" class="form-input" placeholder="Ví dụ: Phỏng vấn Java Senior..." required>
+                            <label>Interview Name</label>
+                            <input type="text" id="interview-fullname" class="form-input" placeholder="e.g., Senior Java Developer Interview..." required>
                         </div>
                         <div style="flex: 1;">
-                            <label>Số lượng câu hỏi</label>
+                            <label>Number of Questions</label>
                             <input type="number" id="question-count" class="form-input" min="1" max="10" value="3" required>
                         </div>
                     </div>
                     <div style="margin-top: 15px;">
-                        <label>Mô tả / Ghi chú</label>
-                        <textarea id="interview-desc" class="form-input" rows="2" placeholder="Nhập mô tả ngắn gọn..."></textarea>
+                        <label>Description / Notes</label>
+                        <textarea id="interview-desc" class="form-input" rows="2" placeholder="Enter a brief description..."></textarea>
                     </div>
                     <button type="submit" class="login-button" style="width: auto; margin-top: 20px;">
-                        <i class="fa-solid fa-paper-plane"></i> Khởi tạo
+                        <i class="fa-solid fa-paper-plane"></i> Initialize
                     </button>
                 </form>
             </div>
 
             <div style="margin-top: 40px;">
-                <h2><i class="fa-solid fa-list-check"></i> Danh sách hiện có</h2>
+                <h2><i class="fa-solid fa-list-check"></i> Existing List</h2>
                 <div id="interview-list-container">
                     <ul id="interview-list" style="padding: 0; list-style: none;"></ul>
                 </div>
@@ -92,16 +92,16 @@
     <div id="interviewee-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modal-title">Quản lý ứng viên</h2>
+                <h2 id="modal-title">Candidate Management</h2>
                 <button class="modal-close-btn" id="modal-close-btn">&times;</button>
             </div>
             <div class="modal-body">
                 <button id="modal-add-interviewee-btn" class="login-button" style="width: auto; margin-bottom: 20px;">
-                    <i class="fa-solid fa-user-plus"></i> Thêm ứng viên mới
+                    <i class="fa-solid fa-user-plus"></i> Add New Candidate
                 </button>
                 <div class="interviewee-table-container">
                     <table id="interviewee-table">
-                        <thead><tr><th>User ID</th><th>Họ và Tên</th><th>Mã tham gia</th><th>Điểm TB</th><th>Trạng thái</th><th>Hành động</th></tr></thead>
+                        <thead><tr><th>User ID</th><th>Full Name</th><th>Access Code</th><th>Avg Score</th><th>Status</th><th>Actions</th></tr></thead>
                         <tbody id="interviewee-list-body"></tbody>
                     </table>
                 </div>
@@ -112,14 +112,14 @@
     <div id="content-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 800px;">
             <div class="modal-header">
-                <h2>Cấu hình câu hỏi</h2>
+                <h2>Question Configuration</h2>
                 <button class="modal-close-btn" id="content-close-btn">&times;</button>
             </div>
             <div class="modal-body">
                 <form id="content-form">
                     <div id="questions-container"></div>
                     <div style="text-align: center; margin-top: 20px;">
-                        <button type="submit" class="login-button" style="width: 50%;">Lưu thay đổi</button>
+                        <button type="submit" class="login-button" style="width: 50%;">Save Changes</button>
                     </div>
                 </form>
             </div>
@@ -130,8 +130,8 @@
         <div class="modal-content" style="max-width: 1200px; height: 90vh;">
             <div class="modal-header">
                 <div style="display: flex; align-items: center; gap: 15px;">
-                    <h2 id="grading-title" style="margin: 0;">Kết quả</h2>
-                    <span id="grading-final-score" style="background: var(--success); color: white; padding: 5px 12px; border-radius: 4px; font-weight: bold;">TB: 0.0</span>
+                    <h2 id="grading-title" style="margin: 0;">Results</h2>
+                    <span id="grading-final-score" style="background: var(--success); color: white; padding: 5px 12px; border-radius: 4px; font-weight: bold;">Avg: 0.0</span>
                 </div>
                 <button class="modal-close-btn" id="grading-close-btn">&times;</button>
             </div>
@@ -149,21 +149,21 @@
                         </div>
                         <div style="display:flex; gap:15px; align-items:flex-end;">
                             <div style="width: 100px;">
-                                <label style="font-weight:bold;">Điểm số:</label>
+                                <label style="font-weight:bold;">Score:</label>
                                 <input type="number" id="detail-score" class="form-input" step="0.1" min="0" max="10">
                             </div>
                             <div style="flex:1;">
-                                <label style="font-weight:bold;">Nhận xét / Lý do thay đổi:</label>
-                                <input type="text" id="detail-reason" class="form-input" placeholder="Nhập lý do...">
+                                <label style="font-weight:bold;">Comment / Reason:</label>
+                                <input type="text" id="detail-reason" class="form-input" placeholder="Enter reason...">
                             </div>
                             <button id="save-score-btn" class="login-button" style="width:auto; margin:0;">
-                                Lưu điểm
+                                Save Score
                             </button>
                         </div>
                     </div>
 
                     <div style="margin-top:20px;">
-                        <h4 style="font-size:0.9rem; color: #666;">Lịch sử chấm</h4>
+                        <h4 style="font-size:0.9rem; color: #666;">Grading History</h4>
                         <pre id="detail-history" style="background:#f1f5f9; padding:15px; border-radius:6px; font-family:monospace; color:#333; white-space: pre-wrap;"></pre>
                     </div>
                 </div>
@@ -174,4 +174,3 @@
     <script src="interviewer.js"></script>
 </body>
 </html>
-
