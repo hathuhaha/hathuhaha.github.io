@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HirePro - Tuyển Dụng Thế Hệ Mới</title>
+    <title>HirePro - Next-Gen Recruitment</title>
     <link rel="icon" href="/image/favicon.jpg" type="image/jpg">
-    <!-- Style gốc -->
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -28,7 +27,7 @@
             flex-direction: column;
         }
 
-        /* 1. NOISE TEXTURE (BÍ QUYẾT SANG TRỌNG) */
+        /* 1. NOISE TEXTURE (LUXURY FEEL SECRETS) */
         .noise-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
@@ -37,7 +36,7 @@
             opacity: 0.4;
         }
 
-        /* 2. AURORA BACKGROUND (MÀU LOANG) */
+        /* 2. AURORA BACKGROUND (BLURRED GRADIENT) */
         .aurora-bg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
@@ -51,8 +50,8 @@
             border-radius: 50%;
             animation: move 20s infinite alternate;
         }
-        .a-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: #e0f2fe; animation-delay: 0s; } /* Xanh nhạt */
-        .a-2 { top: 20%; right: -10%; width: 40vw; height: 40vw; background: #fef3c7; animation-delay: -5s; } /* Vàng nhạt */
+        .a-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: #e0f2fe; animation-delay: 0s; } /* Light Blue */
+        .a-2 { top: 20%; right: -10%; width: 40vw; height: 40vw; background: #fef3c7; animation-delay: -5s; } /* Light Yellow */
         .a-3 { bottom: -10%; left: 20%; width: 60vw; height: 60vw; background: #f0f9ff; animation-delay: -10s; } 
 
         @keyframes move {
@@ -65,7 +64,7 @@
             display: flex; justify-content: space-between; align-items: center;
             padding: 25px 6%;
             position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
-            background: rgba(255,255,255,0.01); /* Siêu trong suốt */
+            background: rgba(255,255,255,0.01); /* Ultra transparent */
             backdrop-filter: blur(10px);
         }
         .logo {
@@ -73,12 +72,12 @@
             font-family: 'Merriweather', serif; letter-spacing: -0.5px;
         }
 
-        /* 4. HERO SECTION - TẬP TRUNG VÀO 1 MÀN HÌNH */
+        /* 4. HERO SECTION - FOCUS ON ONE SCREEN */
         .hero-section {
-            flex: 1; /* Chiếm hết khoảng trống còn lại */
+            flex: 1; /* Takes up remaining space */
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 6%;
-            margin-top: 80px; /* Tránh navbar */
+            margin-top: 80px; /* Avoid navbar overlap */
             position: relative;
         }
 
@@ -99,7 +98,7 @@
         }
 
         h1.big-title {
-            font-size: 4.5rem; /* Cực lớn */
+            font-size: 4.5rem; /* Extra large */
             line-height: 1.05;
             color: var(--primary);
             font-family: 'Merriweather', serif;
@@ -107,7 +106,7 @@
             margin-bottom: 30px;
         }
         
-        /* Hiệu ứng gạch chân marker bút nhớ dòng */
+        /* Highlighter marker underline effect */
         .highlight {
             position: relative;
             white-space: nowrap;
@@ -115,7 +114,7 @@
         }
         .highlight::after {
             content: ''; position: absolute; bottom: 5px; left: 0; width: 100%; height: 15px;
-            background: #fde68a; /* Màu vàng marker */
+            background: #fde68a; /* Yellow marker color */
             z-index: -1; transform: rotate(-1deg); opacity: 0.7;
             border-radius: 4px;
         }
@@ -125,39 +124,39 @@
             font-weight: 300;
         }
 
-        /* --- SỬA LỖI NÚT BẤM TẠI ĐÂY --- */
-        /* Nút bấm thiết kế mới: Vàng Đồng + Chữ Đen (Độ tương phản cao) */
+        /* --- FIX BUTTON HERE --- */
+        /* New Button Design: Bronze/Gold + Black Text (High Contrast) */
         .btn-cta {
             padding: 18px 45px;
             font-size: 1.1rem; font-weight: 700;
             
-            /* SỬA LỖI: Đổi màu chữ thành Primary (Xanh đậm) thay vì White */
+            /* FIXED: Change text color to Primary (Dark Blue) instead of White */
             color: var(--primary); 
             
-            /* SỬA LỖI: Đổi nền thành Accent (Vàng đồng) để nổi bật trên nền trắng */
+            /* FIXED: Change background to Accent (Bronze/Gold) to pop on white bg */
             background: var(--accent);
             
             border-radius: 12px;
             border: none; cursor: pointer;
             transition: 0.3s;
-            box-shadow: 0 10px 20px -5px rgba(204, 163, 94, 0.4); /* Bóng đổ màu vàng */
+            box-shadow: 0 10px 20px -5px rgba(204, 163, 94, 0.4); /* Gold shadow */
             display: inline-flex; align-items: center; gap: 10px;
         }
         
         .btn-cta:hover {
             transform: translateY(-3px) scale(1.02);
-            background: #e2b769; /* Sáng hơn chút khi hover */
+            background: #e2b769; /* Lighter on hover */
             box-shadow: 0 15px 30px -5px rgba(204, 163, 94, 0.5);
         }
         /* -------------------------------- */
 
-        /* 5. HERO VISUAL - TỐI GIẢN NHƯNG SÂU SẮC */
+        /* 5. HERO VISUAL - MINIMAL YET DEEP */
         .hero-right {
             flex: 1; display: flex; justify-content: flex-end; position: relative;
             perspective: 1000px;
         }
 
-        /* Hiệu ứng 3D Stack (Xếp chồng) */
+        /* 3D Stack Effect */
         .card-stack {
             position: relative; width: 500px; height: 350px;
         }
@@ -171,19 +170,19 @@
             border: 1px solid rgba(255,255,255,0.8);
         }
 
-        /* Lớp 1: Background Blur */
+        /* Layer 1: Background Blur */
         .l-1 {
             transform: rotate(-6deg) translate(-20px, 10px);
             background: linear-gradient(135deg, #e2e8f0, #cbd5e0);
             z-index: 1; opacity: 0.6;
         }
-        /* Lớp 2: White Frame */
+        /* Layer 2: White Frame */
         .l-2 {
             transform: rotate(-3deg) translate(-10px, 5px);
             background: #f8fafc;
             z-index: 2; opacity: 0.8;
         }
-        /* Lớp 3: Main Visual */
+        /* Layer 3: Main Visual */
         .l-3 {
             transform: rotate(0deg);
             z-index: 3;
@@ -220,7 +219,7 @@
 
         /* 6. NEW FOOTER - MINIMAL */
         .simple-footer {
-            margin-top: auto; /* Đẩy xuống đáy */
+            margin-top: auto; /* Push to bottom */
             padding: 30px 6%;
             border-top: 1px solid rgba(0,0,0,0.05);
             background: rgba(255,255,255,0.4);
@@ -263,57 +262,51 @@
 </head>
 <body>
 
-    <!-- Lớp hạt nhiễu (Noise) tạo cảm giác sang trọng -->
     <div class="noise-overlay"></div>
 
-    <!-- Nền Aurora -->
     <div class="aurora-bg">
         <div class="aurora-blob a-1"></div>
         <div class="aurora-blob a-2"></div>
         <div class="aurora-blob a-3"></div>
     </div>
 
-    <!-- Navbar -->
     <nav class="navbar">
         <div class="logo">
             <i class="fa-solid fa-layer-group"></i> HirePro.
         </div>
         <a href="login.html" style="font-weight: 600; font-size: 0.95rem; color: var(--primary);">
-            Đăng nhập
+            Login
         </a>
     </nav>
 
-    <!-- Main Hero -->
     <section class="hero-section">
         <div class="hero-left">
             <div class="hero-tag">
                 <i class="fa-solid fa-bolt" style="color: #eab308;"></i> 
-                Nền tảng AI thế hệ 4.0
+                Next-Gen AI Platform
             </div>
 
             <h1 class="big-title">
-                Tuyển dụng không còn là <br>
-                <span class="highlight">gánh nặng.</span>
+                Recruitment is no longer a <br>
+                <span class="highlight">burden.</span>
             </h1>
 
             <p class="desc">
-                Hệ thống phỏng vấn tự động hóa giúp doanh nghiệp loại bỏ 90% các tác vụ thủ công. Đơn giản, tinh gọn và hiệu quả tuyệt đối.
+                Automated interview system helps businesses eliminate 90% of manual tasks. Simple, streamlined, and absolutely effective.
             </p>
 
             <a href="login.html" class="btn-cta">
-                Truy cập Dashboard <i class="fa-solid fa-arrow-right"></i>
+                Access Dashboard <i class="fa-solid fa-arrow-right"></i>
             </a>
         </div>
 
         <div class="hero-right">
-            <!-- 3D Card Stack -->
             <div class="card-stack">
                 <div class="card-layer l-1"></div>
                 <div class="card-layer l-2"></div>
                 <div class="card-layer l-3">
                     <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80" class="video-overlay" alt="Dashboard UI">
                     
-                    <!-- UI Floating Elements -->
                     <div class="ui-float ui-1">
                         <div class="ui-dot"></div> Live Recording
                     </div>
@@ -325,7 +318,6 @@
         </div>
     </section>
 
-    <!-- Clean Footer (No Partners) -->
     <footer class="simple-footer">
         <div class="social-links">
             <a href="#" class="social-link"><i class="fa-brands fa-facebook"></i></a>
