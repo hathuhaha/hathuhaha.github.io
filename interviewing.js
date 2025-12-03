@@ -1,10 +1,10 @@
 (async function() {
     
-    // (!!!) CẤU HÌNH ĐƯỜNG DẪN NGROK (!!!)
+    // (!!!) NGROK URL CONFIGURATION (!!!)
     const NGROK_BASE_URL = 'https://nondistinguished-contemplable-della.ngrok-free.dev'; 
     const UPLOAD_ENDPOINT = `${NGROK_BASE_URL}/upload.php`;
 
-    // Biến toàn cục
+    // Global Variables
     let mediaStream = null;
     let mediaRecorder = null;
     let recordedChunks = [];
@@ -20,7 +20,7 @@
     const btnStart = document.getElementById('btn-start-interview');
     const testStatus = document.getElementById('test-status');
 
-    // UI Interview
+    // UI Interview Elements
     const qListUI = document.getElementById('q-list-ui');
     const qTitle = document.getElementById('q-title');
     const qContent = document.getElementById('q-content');
@@ -30,7 +30,7 @@
     const uploadOverlay = document.getElementById('upload-overlay');
 
     // =========================================================
-    // 1. KHỞI TẠO
+    // 1. INITIALIZATION
     // =========================================================
     
     async function init() {
@@ -42,7 +42,7 @@
             const data = await res.json();
             
             if(!data.success) {
-                alert("Lỗi: " + (data.message || "Chưa đăng nhập"));
+                alert("Error: " + (data.message || "Not logged in"));
                 window.location.href = 'login.html';
                 return;
             }
@@ -50,11 +50,11 @@
             questionsData = data.questions;
             document.getElementById('user-display').textContent = data.candidate_id;
             
-            // Vẽ danh sách câu hỏi
+            // Render question list sidebar
             renderSidebar();
 
         } catch (e) {
-            testStatus.textContent = "Lỗi kết nối Server: " + e.message;
+            testStatus.textContent = "Server Connection Error: " + e.message;
             return;
         }
 
@@ -63,44 +63,44 @@
             testVideo.srcObject = mediaStream;
             mainVideo.srcObject = mediaStream; 
             
-            testStatus.textContent = "✅ Camera sẵn sàng. Bạn có thể bắt đầu.";
+            testStatus.textContent = "✅ Camera ready. You can start now.";
             testStatus.style.color = "green";
             btnStart.disabled = false;
 
         } catch (err) {
-            testStatus.textContent = "❌ Không thể truy cập Camera. Hãy cấp quyền và tải lại trang.";
+            testStatus.textContent = "❌ Cannot access Camera. Please grant permission and reload.";
             console.error(err);
         }
     }
 
-    // Nút BẮT ĐẦU
+    // START BUTTON
     btnStart.addEventListener('click', () => {
         if(questionsData.length === 0) {
-            alert("Không có câu hỏi nào!"); return;
+            alert("No questions found!"); return;
         }
         testScreen.style.display = 'none';
         interviewLayout.style.display = 'flex';
         
-        // [MỚI] Tự động tìm câu hỏi đầu tiên CHƯA LÀM
+        // [NEW] Automatically find the first UNFINISHED question
         let firstUnfinished = questionsData.findIndex(q => !q.is_submitted);
         
         if (firstUnfinished === -1) {
-            // Đã làm hết
-            // Đánh dấu xanh tất cả
+            // All done
+            // Mark all as green
             questionsData.forEach(q => markSidebarDone(q.id));
             finishInterview();
         } else {
-            // Đánh dấu xanh các câu trước đó
+            // Mark previous questions as done
             for(let i=0; i < firstUnfinished; i++) {
                 markSidebarDone(questionsData[i].id);
             }
-            // Bắt đầu từ câu chưa làm
+            // Start from the unfinished question
             startQuestion(firstUnfinished);
         }
     });
 
     // =========================================================
-    // 2. LOGIC PHỎNG VẤN
+    // 2. INTERVIEW LOGIC
     // =========================================================
 
     function startQuestion(index) {
@@ -111,10 +111,10 @@
 
         const qData = questionsData[index];
 
-        // [MỚI] KIỂM TRA NẾU ĐÃ LÀM RỒI THÌ BỎ QUA
+        // [NEW] CHECK IF ALREADY SUBMITTED, THEN SKIP
         if (qData.is_submitted) {
             markSidebarDone(qData.id);
-            // Gọi đệ quy để sang câu tiếp theo
+            // Recursive call to next question
             startQuestion(index + 1);
             return;
         }
@@ -127,7 +127,7 @@
         btnNextQ.style.display = 'none';
         uploadOverlay.style.display = 'none';
         
-        qTitle.textContent = `Câu hỏi số ${qData.id}`;
+        qTitle.textContent = `Question ${qData.id}`;
         qContent.textContent = qData.content;
         updateSidebarActive(qData.id);
 
@@ -138,7 +138,7 @@
         recordedChunks = [];
         try {
             mediaRecorder = new MediaRecorder(mediaStream);
-        } catch (e) { alert("Trình duyệt lỗi MediaRecorder"); return; }
+        } catch (e) { alert("Browser MediaRecorder Error"); return; }
 
         mediaRecorder.ondataavailable = (e) => {
             if (e.data.size > 0) recordedChunks.push(e.data);
@@ -165,7 +165,7 @@
     }
 
     // =========================================================
-    // 3. LOGIC UPLOAD
+    // 3. UPLOAD LOGIC
     // =========================================================
 
     async function uploadVideo() {
@@ -193,10 +193,10 @@
 
             markSidebarDone(qData.id);
             
-            // Cập nhật trạng thái trong mảng để không quay lại được
+            // Update local status to prevent re-taking
             questionsData[currentQIndex].is_submitted = true;
 
-            uploadOverlay.innerHTML = `<h3 style="color:#007bff">✅ Đã nộp câu ${qData.id}</h3>`;
+            uploadOverlay.innerHTML = `<h3 style="color:#007bff">✅ Question ${qData.id} Submitted</h3>`;
             
             setTimeout(() => {
                 uploadOverlay.style.display = 'none';
@@ -211,19 +211,19 @@
 
         } catch (err) {
             console.error(err);
-            // Nếu lỗi do đã nộp rồi (Error: Bạn đã nộp...)
-            if (err.message.includes("đã nộp")) {
-                 alert("Hệ thống ghi nhận bạn đã nộp câu này rồi. Đang chuyển câu tiếp theo.");
+            // Check for specific backend error messages (Vietnamese or English)
+            if (err.message.includes("đã nộp") || err.message.includes("submitted")) {
+                 alert("System recorded this as already submitted. Moving to next question.");
                  questionsData[currentQIndex].is_submitted = true;
                  startQuestion(currentQIndex + 1);
             } else {
-                uploadOverlay.innerHTML = `<h3 style="color:red">Lỗi nộp bài!</h3><p>${err.message}</p><button onclick="location.reload()">Thử lại</button>`;
+                uploadOverlay.innerHTML = `<h3 style="color:red">Upload Error!</h3><p>${err.message}</p><button onclick="location.reload()">Retry</button>`;
             }
         }
     }
 
     btnNextQ.addEventListener('click', () => {
-        uploadOverlay.innerHTML = '<div class="loader"></div><h3>Đang nộp bài...</h3>';
+        uploadOverlay.innerHTML = '<div class="loader"></div><h3>Submitting...</h3>';
         startQuestion(currentQIndex + 1);
     });
 
@@ -231,16 +231,16 @@
         interviewLayout.innerHTML = `
             <div style="text-align:center; padding:50px;">
                 <h1 style="color:green; font-size:3rem;">🎉</h1>
-                <h2 style="color:green">Phỏng vấn hoàn tất!</h2>
-                <p>Cảm ơn bạn đã tham gia. Dữ liệu đã được lưu trữ an toàn.</p>
-                <button onclick="window.close()" class="login-button" style="width:auto; margin-top:20px;">Đóng cửa sổ</button>
+                <h2 style="color:green">Interview Completed!</h2>
+                <p>Thank you for participating. Your data has been securely saved.</p>
+                <button onclick="window.close()" class="login-button" style="width:auto; margin-top:20px;">Close Window</button>
             </div>
         `;
         if(mediaStream) mediaStream.getTracks().forEach(t => t.stop());
     }
 
     // =========================================================
-    // 4. TIỆN ÍCH
+    // 4. UTILITIES
     // =========================================================
 
     function startTimer(seconds) {
@@ -272,11 +272,11 @@
             const li = document.createElement('li');
             li.className = 'q-item';
             li.id = `sidebar-q-${q.id}`;
-            li.textContent = `Câu ${q.id}`;
-            // Nếu đã làm rồi thì tô xanh luôn lúc render
+            li.textContent = `Question ${q.id}`;
+            // If already submitted, mark as done immediately
             if(q.is_submitted) {
                 li.classList.add('done');
-                li.textContent += ' (Xong)';
+                li.textContent += ' (Done)';
             }
             qListUI.appendChild(li);
         });
@@ -293,7 +293,7 @@
         if(item) {
             item.classList.remove('active');
             item.classList.add('done');
-            if(!item.textContent.includes('(Xong)')) item.textContent += ' (Xong)';
+            if(!item.textContent.includes('(Done)')) item.textContent += ' (Done)';
         }
     }
 
